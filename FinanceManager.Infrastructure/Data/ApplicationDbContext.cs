@@ -8,6 +8,9 @@ namespace FinanceManager.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
         { }
         public DbSet<TransactionCategory> TransactionCategories { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+
+        public DbSet<Transaction> Transactions { get; set; }
 
     }
 }
