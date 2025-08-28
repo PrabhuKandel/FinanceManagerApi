@@ -1,4 +1,5 @@
 ﻿using Azure;
+using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Models;
 using Microsoft.AspNetCore.Http;
@@ -42,10 +43,10 @@ namespace FinanceManager.Api.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TransactionCategory transactionCategory)
+        public async Task<IActionResult> Create([FromBody] TransactionCategoryCreateDto transactionCategoryCreateDto)
         {
 
-            var response = await _transactionCategoryService.AddTransactionCategoryAsync(transactionCategory);
+            var response = await _transactionCategoryService.AddTransactionCategoryAsync(transactionCategoryCreateDto);
             if (response.Success)
             {
                 return Ok(response);
@@ -57,9 +58,9 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] TransactionCategory transactionCategory)
+        public async Task<IActionResult> Update(Guid id, [FromBody] TransactionCategoryUpdateDto transactionCategoryUpdateDto)
         {
-            var response = await _transactionCategoryService.UpdateTransactionCategoryAsync(id, transactionCategory);
+            var response = await _transactionCategoryService.UpdateTransactionCategoryAsync(id, transactionCategoryUpdateDto);
             if (response.Success)
             {
                 return Ok(response);
