@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
@@ -26,13 +27,7 @@ namespace FinanceManager.Application.Services
 
             if (transactionCategories == null || !transactionCategories.Any())
             {
-                return new ServiceResponse<IEnumerable<TransactionCategoryResponseDto>>
-                {
-
-                    Success = false,
-                    Message = "No  transactions categories found",
-                    Data = null
-                };
+                throw new NotFoundException(" Transaction categories  not found");
             }
 
             var transactionCategoriesDtos = transactionCategories.ToResponseDtoList();
@@ -41,9 +36,10 @@ namespace FinanceManager.Application.Services
             return new ServiceResponse<IEnumerable<TransactionCategoryResponseDto>>
                 {
 
-                    Success = true,
+                  
                     Message = "Fetched Successfully",
-                    Data = transactionCategoriesDtos
+                    Data = transactionCategoriesDtos,
+                   
                 };
             
         }
@@ -52,13 +48,7 @@ namespace FinanceManager.Application.Services
             var transactionCategory = await _transactionCategoryRepository.GetByIdAsync(id);
             if (transactionCategory == null)
             {
-                return new ServiceResponse<TransactionCategoryResponseDto>
-                {
-
-                    Success = false,
-                    Message = "No  transactions category found ",
-                    Data = null
-                };
+                throw new NotFoundException("Transaction category not found");
             }
 
             var transcationCategoryDto = transactionCategory.ToResponseDto();
@@ -67,7 +57,7 @@ namespace FinanceManager.Application.Services
             return new ServiceResponse<TransactionCategoryResponseDto>
             {
 
-                Success = true,
+              
                 Message = "Fetched Successfully",
                 Data = transcationCategoryDto
             };
@@ -81,7 +71,7 @@ namespace FinanceManager.Application.Services
 
             return new ServiceResponse<TransactionCategoryResponseDto>
             {
-                Success = true,
+           
                 Message = "New transaction category added",
                 Data = entity.ToResponseDto()
             };
@@ -92,12 +82,7 @@ namespace FinanceManager.Application.Services
             var transactionCategoryFromDb = await _transactionCategoryRepository.GetByIdAsync(id, isTracking: false);
             if (transactionCategoryFromDb == null)
             {
-                return new ServiceResponse<TransactionCategoryResponseDto>
-                {
-                    Success = false,
-                    Message = "Transaction category not found",
-                    Data = null
-                };
+                throw new NotFoundException("Transaction category doesn't exist");
             }
             transactionCategoryFromDb.UpdateEntity(transactionCategoryUpdateDto);
 
@@ -105,7 +90,7 @@ namespace FinanceManager.Application.Services
             await _transactionCategoryRepository.UpdateAsync(transactionCategoryFromDb);
             return new ServiceResponse<TransactionCategoryResponseDto>
             {
-                Success = true,
+          
                 Message = "Transaction category updated",
                 Data = transactionCategoryFromDb.ToResponseDto()
             };
@@ -118,13 +103,7 @@ namespace FinanceManager.Application.Services
             if(transactionCategoryFromDb==null)
 
             {
-                return new ServiceResponse<String>
-                {
-
-                    Success = false,
-                    Message = "Transaction category doesn't exist",
-                    Data = null
-                };
+                throw new NotFoundException("Transaction category  doesn't exist");
             }
    
             
@@ -134,7 +113,6 @@ namespace FinanceManager.Application.Services
             return new ServiceResponse<String>
             {
 
-                Success = true,
                 Message = "Transaction category deleted",
                 Data = null
             };

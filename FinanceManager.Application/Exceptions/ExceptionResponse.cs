@@ -4,14 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FinanceManager.Application.Common
+namespace FinanceManager.Application.Exceptions
 {
-    public class ServiceResponse<T>
+    public class ExceptionResponse
     {
-      
         public string Message { get; set; }
-        public T? Data { get; set; }
-
-        
+        public int StatusCode { get; set; }
     }
 }

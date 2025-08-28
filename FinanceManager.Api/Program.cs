@@ -1,3 +1,4 @@
+using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
@@ -31,6 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
