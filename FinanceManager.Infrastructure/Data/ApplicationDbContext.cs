@@ -1,4 +1,6 @@
-﻿using FinanceManager.Domain.Models;
+﻿using FinanceManager.Application.Exceptions;
+using System;
+using FinanceManager.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Infrastructure.Data
@@ -52,6 +54,10 @@ namespace FinanceManager.Infrastructure.Data
                     Type = CategoryType.Expense
                 }
             );
+                modelBuilder.Entity<TransactionCategory>()
+                  .HasIndex(c => c.Name)
+                  .IsUnique();
+
         }
 
 

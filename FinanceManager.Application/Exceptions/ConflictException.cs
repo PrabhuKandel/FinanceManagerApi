@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace FinanceManager.Application.Exceptions
 {
-    public class ExceptionResponse
+    public class ConflictException:Exception
     {
-        public string Message { get; set; }
-        public int StatusCode { get; set; }
-        public IEnumerable<string>? Errors { get; set; }
+        public ConflictException(string message) : base(message) { }
     }
 }

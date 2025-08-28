@@ -18,6 +18,5 @@ namespace FinanceManager.Application.Interfaces.Services
         Task<ServiceResponse<String>> DeleteTransactionCategoryAsync(Guid id);
 
 
-   
     }
 }

@@ -14,8 +14,9 @@ namespace FinanceManager.Application.Interfaces.Repositories
             Task<IEnumerable<TransactionCategory>> GetAllAsync();
             Task<TransactionCategory> GetByIdAsync(Guid id ,bool isTracking = true);
             Task  AddAsync(TransactionCategory transactionCategory);
-            Task UpdateAsync(TransactionCategory transactionCategory);
+            Task UpdateAsync( TransactionCategory transactionCategory);
             Task DeleteAsync(TransactionCategory transactionCategory);
+             Task<bool> ExistsByNameAsync(string name);
         //Task<IEnumerable<TransactionCategory>> GetByCategoryAsync(Guid categoryId); 
     }
 

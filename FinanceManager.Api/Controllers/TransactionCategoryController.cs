@@ -1,5 +1,7 @@
-﻿using Azure;
+﻿using System.ComponentModel.DataAnnotations;
+using Azure;
 using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -46,6 +48,7 @@ namespace FinanceManager.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] TransactionCategoryUpdateDto transactionCategoryUpdateDto)
         {
+           
             var response = await _transactionCategoryService.UpdateTransactionCategoryAsync(id, transactionCategoryUpdateDto);
             return Ok(response);
             

@@ -36,10 +36,21 @@ namespace FinanceManager.Application.Mapping
                 Type = dto.Type
             };
         }
+        public static TransactionCategory ToEntity(this TransactionCategoryUpdateDto dto)
+        {
+            return new TransactionCategory
+            {
+                Name = dto.Name,
+                Description = dto.Description,
+                Type = dto.Type
+            };
+        }
 
-       
+
+      
         public static void UpdateEntity(this TransactionCategory entity, TransactionCategoryUpdateDto dto)
         {
+          
             entity.Name = dto.Name;
             entity.Description = dto.Description;
             entity.Type = dto.Type;

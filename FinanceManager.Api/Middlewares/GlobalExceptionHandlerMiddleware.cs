@@ -1,5 +1,6 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Exceptions;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace FinanceManager.Api.Middlewares
@@ -32,31 +33,35 @@ namespace FinanceManager.Api.Middlewares
         {
             context.Response.ContentType = "application/json";
 
-            context.Response.StatusCode = exception switch
+            int statusCode;
+            IEnumerable<string>? errors = null;
+            string message = exception.Message;
+
+            switch (exception)
             {
-                NotFoundException => StatusCodes.Status404NotFound,
-                _ => StatusCodes.Status500InternalServerError
-            };
+                case NotFoundException:
+                    statusCode = StatusCodes.Status404NotFound;
+                    break;
+
+                case CustomValidationException vex:
+                    statusCode = StatusCodes.Status400BadRequest;
+                    errors = vex.Errors;
+                    break;
+
+
+                default:
+                    statusCode = StatusCodes.Status500InternalServerError;
+                    break;
+            }
+
+            context.Response.StatusCode = statusCode;
 
             var response = new ExceptionResponse
-
             {
-
-                Message = exception.Message,
-                StatusCode = context.Response.StatusCode,
-                
+                Message = message,
+                StatusCode = statusCode,
+                Errors = errors
             };
-
-            // Optionally include validation errors if it's a ValidationException
-            //if (exception is ValidationException validationEx)
-            //{
-            //    return context.Response.WriteAsJsonAsync(new
-            //    {
-            //        error = exception.Message,
-            //        statusCode = context.Response.StatusCode,
-            //        validationErrors = validationEx.Errors
-            //    });
-            //}
 
             return context.Response.WriteAsJsonAsync(response);
         }

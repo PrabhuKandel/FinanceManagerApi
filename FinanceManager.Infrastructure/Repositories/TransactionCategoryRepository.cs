@@ -9,6 +9,7 @@ using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Domain.Models;
 using FinanceManager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FinanceManager.Infrastructure.Repositories
 {
@@ -41,7 +42,7 @@ namespace FinanceManager.Infrastructure.Repositories
         }
         public async Task UpdateAsync(TransactionCategory transactionCategory)
         {
-            _context.TransactionCategories.Update(transactionCategory);
+            
             await _context.SaveChangesAsync();
 
         }
@@ -51,6 +52,12 @@ namespace FinanceManager.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _context.TransactionCategories.AnyAsync(c => c.Name == name);
+        }
+
+       
  
 
   

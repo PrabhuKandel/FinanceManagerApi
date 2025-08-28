@@ -1,47 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Common;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Domain.Models;
+
+using FluentValidation;
 
 namespace FinanceManager.Application.Services
 {
     public class TransactionCategoryService : ITransactionCategoryService
     {
         private readonly ITransactionCategoryRepository _transactionCategoryRepository;
-        public TransactionCategoryService(ITransactionCategoryRepository transactionCategoryRepository)
+        private readonly IValidator<TransactionCategoryCreateDto> _createValidator;
+        private readonly IValidator<TransactionCategoryUpdateDto> _updateValidator;
+        public TransactionCategoryService(ITransactionCategoryRepository transactionCategoryRepository, IValidator<TransactionCategoryCreateDto> createValidator, IValidator<TransactionCategoryUpdateDto> updateValidator)
         {
             _transactionCategoryRepository = transactionCategoryRepository;
-        
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         public async Task<ServiceResponse<IEnumerable<TransactionCategoryResponseDto>>> GetAllTransactionCategoriesAsync()
         {
-            var transactionCategories = await _transactionCategoryRepository.GetAllAsync();
+                var transactionCategories = await _transactionCategoryRepository.GetAllAsync();
 
-            if (transactionCategories == null || !transactionCategories.Any())
-            {
-                throw new NotFoundException(" Transaction categories  not found");
-            }
 
-            var transactionCategoriesDtos = transactionCategories.ToResponseDtoList();
+            var transactionCategoriesDtos = transactionCategories?.ToResponseDtoList();
 
 
             return new ServiceResponse<IEnumerable<TransactionCategoryResponseDto>>
-                {
+            {
+                
 
-                  
-                    Message = "Fetched Successfully",
-                    Data = transactionCategoriesDtos,
-                   
-                };
-            
+                Data = transactionCategoriesDtos,
+                Message = transactionCategoriesDtos.Any()
+                 ? "Transaction categories retrieved successfully"
+             : "  No Transaction categories "
+
+            };
+
+
         }
         public async Task<ServiceResponse<TransactionCategoryResponseDto>> GetTransactionCategoryByIdAsync(Guid id)
         {
@@ -54,20 +52,38 @@ namespace FinanceManager.Application.Services
             var transcationCategoryDto = transactionCategory.ToResponseDto();
 
 
+
             return new ServiceResponse<TransactionCategoryResponseDto>
             {
 
-              
-                Message = "Fetched Successfully",
-                Data = transcationCategoryDto
+                Data = transcationCategoryDto,
+                Message = "Transaction category  retrieved successfully"
+           
+
             };
 
 
         }
         public async Task<ServiceResponse<TransactionCategoryResponseDto>> AddTransactionCategoryAsync(TransactionCategoryCreateDto transactionCategoryCreateDto)
         {
+            if (transactionCategoryCreateDto == null)
+                throw new CustomValidationException(new[] { "Fields cannot be empty" });
+
+            var validationResult = _createValidator.Validate(transactionCategoryCreateDto);
+
+            if (!validationResult.IsValid)
+            {
+                
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
+            if (await _transactionCategoryRepository.ExistsByNameAsync(transactionCategoryCreateDto.Name))
+                throw new CustomValidationException(new[] { "Transaction category name already exists." });
+
             var entity = transactionCategoryCreateDto.ToEntity();
-             await   _transactionCategoryRepository.AddAsync(entity);
+           
+            await   _transactionCategoryRepository.AddAsync(entity);
+
 
             return new ServiceResponse<TransactionCategoryResponseDto>
             {
@@ -77,15 +93,24 @@ namespace FinanceManager.Application.Services
             };
         }
 
-        public async Task<ServiceResponse<TransactionCategoryResponseDto>> UpdateTransactionCategoryAsync(Guid id, TransactionCategoryUpdateDto transactionCategoryUpdateDto)
+        public async Task<ServiceResponse<TransactionCategoryResponseDto>> UpdateTransactionCategoryAsync(Guid id,TransactionCategoryUpdateDto transactionCategoryUpdateDto)
         {
-            var transactionCategoryFromDb = await _transactionCategoryRepository.GetByIdAsync(id, isTracking: false);
+            var transactionCategoryFromDb = await _transactionCategoryRepository.GetByIdAsync(id);
             if (transactionCategoryFromDb == null)
             {
                 throw new NotFoundException("Transaction category doesn't exist");
             }
-            transactionCategoryFromDb.UpdateEntity(transactionCategoryUpdateDto);
+            
+            var validationResult = _updateValidator.Validate(transactionCategoryUpdateDto);
 
+            if (!validationResult.IsValid)
+            {
+                
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
+            
+            transactionCategoryFromDb.UpdateEntity(transactionCategoryUpdateDto);
 
             await _transactionCategoryRepository.UpdateAsync(transactionCategoryFromDb);
             return new ServiceResponse<TransactionCategoryResponseDto>
@@ -114,7 +139,7 @@ namespace FinanceManager.Application.Services
             {
 
                 Message = "Transaction category deleted",
-                Data = null
+             
             };
 
         }
