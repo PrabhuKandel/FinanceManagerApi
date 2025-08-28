@@ -1,4 +1,8 @@
+using FinanceManager.Application.Interfaces.Repositories;
+using FinanceManager.Application.Interfaces.Services;
+using FinanceManager.Application.Services;
 using FinanceManager.Infrastructure.Data;
+using FinanceManager.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +16,10 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<ITransactionCategoryService, TransactionCategoryService>();
+
+// Register repositories if needed
+builder.Services.AddScoped<ITransactionCategoryRepository, TransactionCategoryRepository>();    
 
 var app = builder.Build();
 
