@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using FinanceManager.Domain.Models;
 
 namespace FinanceManager.Application.Dtos.TransactionCategory
@@ -13,9 +8,12 @@ namespace FinanceManager.Application.Dtos.TransactionCategory
       
         [Required]
         public string Name { get; set; }
+
+        [StringLength(200, ErrorMessage = "Description cannot exceed 200 characters.")]
         public string? Description { get; set; }
 
         [Required]
+        [Range(0, 1, ErrorMessage = "Invalid CategoryType value.")]
         public CategoryType Type { get; set; }
     }
 }

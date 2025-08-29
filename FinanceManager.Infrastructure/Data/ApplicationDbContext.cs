@@ -58,7 +58,32 @@ namespace FinanceManager.Infrastructure.Data
                   .HasIndex(c => c.Name)
                   .IsUnique();
 
+            modelBuilder.Entity<PaymentMethod>().HasData(
+
+            new PaymentMethod
+            {
+                Id= Guid.NewGuid(), Name = "Cash", Description = "Cash payment", IsActive = true 
+            },
+            new PaymentMethod
+            {
+                Id = Guid.NewGuid(), Name = "Credit Card", Description = "Payment via credit card", IsActive = true 
+            },
+            new PaymentMethod 
+            {
+                Id = Guid.NewGuid(), Name = "Bank Transfer", Description = "Payment via bank transfer", IsActive = true
+            },
+            new PaymentMethod 
+            {
+                Id = Guid.NewGuid(), Name = "UPI", Description = "Unified Payment Interface", IsActive = true 
+            },
+            new PaymentMethod 
+            {
+                Id = Guid.NewGuid(), Name = "PayPal", Description = "Online PayPal payment", IsActive = true 
+            }
+  );
+
         }
+
 
 
     }

@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using FinanceManager.Application.Interfaces;
-using FinanceManager.Application.Interfaces.Repositories;
+﻿using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Domain.Models;
 using FinanceManager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace FinanceManager.Infrastructure.Repositories
 {

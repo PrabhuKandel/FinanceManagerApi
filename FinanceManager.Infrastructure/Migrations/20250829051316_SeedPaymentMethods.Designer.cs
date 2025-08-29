@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250828043818_SeedTransactionCategories")]
-    partial class SeedTransactionCategories
+    [Migration("20250829051316_SeedPaymentMethods")]
+    partial class SeedPaymentMethods
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,7 +32,8 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
@@ -44,6 +45,43 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PaymentMethods");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f25d3143-51a5-4850-973a-7b22d3ede66d"),
+                            Description = "Cash payment",
+                            IsActive = true,
+                            Name = "Cash"
+                        },
+                        new
+                        {
+                            Id = new Guid("b4c0e23b-833e-412f-a22f-e6b566222ce9"),
+                            Description = "Payment via credit card",
+                            IsActive = true,
+                            Name = "Credit Card"
+                        },
+                        new
+                        {
+                            Id = new Guid("4d7c3391-c38e-4fa3-a548-5c26e57553ed"),
+                            Description = "Payment via bank transfer",
+                            IsActive = true,
+                            Name = "Bank Transfer"
+                        },
+                        new
+                        {
+                            Id = new Guid("b132f9bb-48fa-441d-b841-933f838f6623"),
+                            Description = "Unified Payment Interface",
+                            IsActive = true,
+                            Name = "UPI"
+                        },
+                        new
+                        {
+                            Id = new Guid("4dcc53f8-178f-49b1-81af-c9ea050bc63f"),
+                            Description = "Online PayPal payment",
+                            IsActive = true,
+                            Name = "PayPal"
+                        });
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Models.Transaction", b =>
@@ -83,51 +121,55 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("TransactionCategories");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("016d8792-b664-4404-8a99-42cda6770515"),
+                            Id = new Guid("cd6a376e-01bd-49c4-8e7a-f3028fbbd919"),
                             Description = "Monthly income from job",
                             Name = "Salary",
                             Type = 0
                         },
                         new
                         {
-                            Id = new Guid("33e104b6-782a-4721-923a-f6b33daea95d"),
+                            Id = new Guid("75b4678b-4dc8-4e72-b40d-f27cfaa10800"),
                             Description = "Freelance or side income",
                             Name = "Freelance",
                             Type = 0
                         },
                         new
                         {
-                            Id = new Guid("47009b41-77a3-4822-9718-45b974a0c093"),
+                            Id = new Guid("ea45cab2-1a38-4d85-8d48-68d193d9be33"),
                             Description = "Groceries and dining out",
                             Name = "Food",
                             Type = 1
                         },
                         new
                         {
-                            Id = new Guid("2e475d44-5fb3-4b03-82ab-5fc3e603eba4"),
+                            Id = new Guid("5f67fa5e-8237-4edb-9e3e-bf5552d3c6b2"),
                             Description = "Bus, train, fuel, ride shares",
                             Name = "Transport",
                             Type = 1
                         },
                         new
                         {
-                            Id = new Guid("255bdc72-3652-4a60-b0c7-a7f40bd49110"),
+                            Id = new Guid("bd1d75b7-0cf9-48b6-a12e-fff664a9742a"),
                             Description = "Movies, games, hobbies",
                             Name = "Entertainment",
                             Type = 1

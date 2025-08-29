@@ -1,9 +1,11 @@
 using FinanceManager.Api.Middlewares;
+using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
-using FinanceManager.Application.Validators;
+using FinanceManager.Application.Validators.PaymentMethodValidator;
+using FinanceManager.Application.Validators.TransactionCategoryValidator;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.Repositories;
 using FluentValidation;
@@ -20,19 +22,26 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+//builder.Services.AddControllers()
+//    .ConfigureApiBehaviorOptions(options =>
+//    {
+//        options.SuppressModelStateInvalidFilter = true;
+//    });
+
+
 builder.Services.AddScoped<ITransactionCategoryService, TransactionCategoryService>();
-
-builder.Services.AddControllers()
-    .ConfigureApiBehaviorOptions(options =>
-    {
-        options.SuppressModelStateInvalidFilter = true;
-    });
-
-// Register repositories if needed
 builder.Services.AddScoped<ITransactionCategoryRepository, TransactionCategoryRepository>();
-builder.Services.AddTransient<IValidator<TransactionCategoryCreateDto>, TransactionCategoryCreateDtoValidator>();
-builder.Services.AddTransient<IValidator<TransactionCategoryUpdateDto>, TransactionCategoryUpdateDtoValidator>();
+//builder.Services.AddTransient<IValidator<TransactionCategoryCreateDto>, TransactionCategoryCreateDtoValidator>();
+//builder.Services.AddTransient<IValidator<TransactionCategoryUpdateDto>, TransactionCategoryUpdateDtoValidator>();
 
+builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
+//builder.Services.AddTransient<IValidator<PaymentMethodCreateDto>, PaymentMethodCreateDtoValidator>();
+//builder.Services.AddTransient<IValidator<PaymentMethodUpdateDto>, PaymentMethodUpdateDtoValidator>();
+
+//builder.Services.AddValidatorsFromAssemblyContaining<PaymentMethodCreateDtoValidator>();
 
 var app = builder.Build();
 

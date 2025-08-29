@@ -12,13 +12,11 @@ namespace FinanceManager.Application.Services
     public class TransactionCategoryService : ITransactionCategoryService
     {
         private readonly ITransactionCategoryRepository _transactionCategoryRepository;
-        private readonly IValidator<TransactionCategoryCreateDto> _createValidator;
-        private readonly IValidator<TransactionCategoryUpdateDto> _updateValidator;
-        public TransactionCategoryService(ITransactionCategoryRepository transactionCategoryRepository, IValidator<TransactionCategoryCreateDto> createValidator, IValidator<TransactionCategoryUpdateDto> updateValidator)
+     
+        public TransactionCategoryService(ITransactionCategoryRepository transactionCategoryRepository)
         {
             _transactionCategoryRepository = transactionCategoryRepository;
-            _createValidator = createValidator;
-            _updateValidator = updateValidator;
+        
         }
         public async Task<ServiceResponse<IEnumerable<TransactionCategoryResponseDto>>> GetAllTransactionCategoriesAsync()
         {
@@ -69,13 +67,15 @@ namespace FinanceManager.Application.Services
             if (transactionCategoryCreateDto == null)
                 throw new CustomValidationException(new[] { "Fields cannot be empty" });
 
-            var validationResult = _createValidator.Validate(transactionCategoryCreateDto);
 
-            if (!validationResult.IsValid)
-            {
+            //Default validation is used for now
+            //var validationResult = _createValidator.Validate(transactionCategoryCreateDto);
+
+            //if (!validationResult.IsValid)
+            //{
                 
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
-            }
+            //    throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            //}
 
             if (await _transactionCategoryRepository.ExistsByNameAsync(transactionCategoryCreateDto.Name))
                 throw new CustomValidationException(new[] { "Transaction category name already exists." });
@@ -101,13 +101,13 @@ namespace FinanceManager.Application.Services
                 throw new NotFoundException("Transaction category doesn't exist");
             }
             
-            var validationResult = _updateValidator.Validate(transactionCategoryUpdateDto);
+            //var validationResult = _updateValidator.Validate(transactionCategoryUpdateDto);
 
-            if (!validationResult.IsValid)
-            {
+            //if (!validationResult.IsValid)
+            //{
                 
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
-            }
+            //    throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            //}
 
             
             transactionCategoryFromDb.UpdateEntity(transactionCategoryUpdateDto);

@@ -3,49 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Domain.Models;
 
 namespace FinanceManager.Application.Mapping
 {
-    public  static class TransactionCategoryMapper
+    public  static class PaymentMethodMapper
     {
-        public static TransactionCategoryResponseDto ToResponseDto(this TransactionCategory entity)
+        public static PaymentMethodResponseDto ToResponseDto(this PaymentMethod entity)
         {
             if (entity == null) return null;
 
-            return new TransactionCategoryResponseDto
+            return new PaymentMethodResponseDto
             {
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
-                Type = entity.Type
+                IsActive = entity.IsActive??true,
             };
         }
-        public static List<TransactionCategoryResponseDto> ToResponseDtoList(this IEnumerable<TransactionCategory> entities)
+        public static List<PaymentMethodResponseDto> ToResponseDtoList(this IEnumerable<PaymentMethod> entities)
         {
             return entities?.Select(e => e.ToResponseDto()).ToList();
         }
 
-        public static TransactionCategory ToEntity(this TransactionCategoryCreateDto dto)
+        public static PaymentMethod ToEntity(this PaymentMethodCreateDto dto)
         {
-            return new TransactionCategory
+            return new PaymentMethod
             {
                 Name = dto.Name,
                 Description = dto.Description,
-                Type = dto.Type
+                IsActive = dto.IsActive,
             };
         }
-
+      
 
 
       
-        public static void UpdateEntity(this TransactionCategory entity, TransactionCategoryUpdateDto dto)
+        public static void UpdateEntity(this PaymentMethod entity, PaymentMethodUpdateDto dto)
         {
           
             entity.Name = dto.Name;
             entity.Description = dto.Description;
-            entity.Type = dto.Type;
+            entity.IsActive = dto.IsActive;
         }
 
 
