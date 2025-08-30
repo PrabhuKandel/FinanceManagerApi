@@ -16,7 +16,8 @@ namespace FinanceManager.Application.Interfaces.Repositories
             Task  AddAsync(TransactionCategory transactionCategory);
             Task UpdateAsync( TransactionCategory transactionCategory);
             Task DeleteAsync(TransactionCategory transactionCategory);
-             Task<bool> ExistsByNameAsync(string name);
+            Task<bool> ExistsByNameAsync(string name);
+            Task<bool> ExistByIdAsync(Guid id);
         //Task<IEnumerable<TransactionCategory>> GetByCategoryAsync(Guid categoryId); 
     }
 

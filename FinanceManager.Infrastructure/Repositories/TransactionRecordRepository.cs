@@ -1,0 +1,55 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FinanceManager.Application.Interfaces.Repositories;
+using FinanceManager.Domain.Models;
+using FinanceManager.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace FinanceManager.Infrastructure.Repositories
+{
+    public class TransactionRecordRepository : ITransactionRecordRepository
+    {
+        private readonly ApplicationDbContext _context;
+
+        public TransactionRecordRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+        public async Task<IEnumerable<TransactionRecord>> GetAllAsync()
+        {
+            return await _context.TransactionRecords.Include(tr=>tr.TransactionCategory).Include(tr=>tr.PaymentMethod).ToListAsync();
+        }
+        public async Task<TransactionRecord> GetByIdAsync(Guid id)
+        {
+            return await _context.TransactionRecords.Include(tr => tr.TransactionCategory).Include(tr => tr.PaymentMethod).FirstOrDefaultAsync(tr=>tr.Id==id);
+        }
+        public async Task AddAsync(TransactionRecord transactionRecord)
+        {
+            var entityEntry = await _context.TransactionRecords.AddAsync(transactionRecord);
+            await _context.SaveChangesAsync();
+            await _context.Entry(entityEntry.Entity).Reference(t => t.TransactionCategory).LoadAsync();
+            await _context.Entry(entityEntry.Entity).Reference(t => t.PaymentMethod).LoadAsync();
+
+        }
+        public async Task UpdateAsync(TransactionRecord transactionRecord)
+        {
+
+            await _context.SaveChangesAsync();
+        }
+        public async Task DeleteAsync(TransactionRecord transactionRecord)
+        {
+            _context.TransactionRecords.Remove(transactionRecord);
+            await _context.SaveChangesAsync();
+        }
+
+    
+     
+
+       
+
+     
+    }
+}

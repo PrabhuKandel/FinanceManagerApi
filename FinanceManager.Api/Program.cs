@@ -1,16 +1,12 @@
 using FinanceManager.Api.Middlewares;
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
-using FinanceManager.Application.Validators.PaymentMethodValidator;
-using FinanceManager.Application.Validators.TransactionCategoryValidator;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-
+    
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -23,7 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
+// Disable automatic model state validation
 //builder.Services.AddControllers()
 //    .ConfigureApiBehaviorOptions(options =>
 //    {
@@ -43,8 +39,17 @@ builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
 
 //builder.Services.AddValidatorsFromAssemblyContaining<PaymentMethodCreateDtoValidator>();
 
-var app = builder.Build();
+builder.Services.AddScoped<ITransactionRecordService, TransactionRecordService>();
+builder.Services.AddScoped<ITransactionRecordRepository, TransactionRecordRepository>();
 
+var app = builder.Build();
+// Apply migrations and seed data
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate(); // apply any pending migrations
+    DbSeeder.Seed(context);     // run your manual seeding
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -17,6 +17,7 @@ namespace FinanceManager.Application.Interfaces.Repositories
             Task UpdateAsync( PaymentMethod paymentMethod);
             Task DeleteAsync(PaymentMethod paymentMethod);
              Task<bool> ExistsByNameAsync(string name);
+             Task<bool> ExistByIdAsync(Guid id);
         //Task<IEnumerable<PaymentMethod>> GetByCategoryAsync(Guid categoryId); 
     }
 

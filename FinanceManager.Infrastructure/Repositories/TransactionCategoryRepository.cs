@@ -51,9 +51,13 @@ namespace FinanceManager.Infrastructure.Repositories
         }
 
        
- 
+        public async Task<bool> ExistByIdAsync (Guid id)
+        {
+            return await _context.TransactionCategories.AnyAsync(c => c.Id == id);
+        }
 
-  
+
+
 
     }
 }

@@ -1,0 +1,35 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Dtos.TransactionCategory;
+
+namespace FinanceManager.Application.Dtos.TransactionRecord
+{
+    public class PaymentMethodSummaryDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+
+    }
+    public class EntitySummaryDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+    }
+    public class TransactionRecordResponseDto
+    {
+
+        public Guid Id { get; set; }
+        public EntitySummaryDto TransactionCategory { get; set; }
+        public EntitySummaryDto PaymentMethod { get; set; }
+        public double Amount { get; set; }
+        public string? Description { get; set; }
+        public DateTime TransactionDate { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
+}

@@ -8,6 +8,7 @@ using FinanceManager.Domain.Models;
 
 namespace FinanceManager.Application.Dtos.TransactionCategory
 {
+
     public class TransactionCategoryResponseDto
     {
         public Guid Id { get; set; }

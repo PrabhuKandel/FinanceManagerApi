@@ -49,11 +49,15 @@ namespace FinanceManager.Infrastructure.Repositories
         {
             return await _context.PaymentMethods.AnyAsync(c => c.Name == name);
         }
+        public async Task<bool> ExistByIdAsync(Guid id)
+        {
+            return await _context.PaymentMethods.AnyAsync(c => c.Id == id);
+        }
 
-       
- 
 
-  
+
+
+
 
     }
 }
