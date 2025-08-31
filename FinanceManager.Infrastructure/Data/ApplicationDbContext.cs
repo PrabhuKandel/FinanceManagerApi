@@ -2,10 +2,12 @@
 using System;
 using FinanceManager.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FinanceManager.Infrastructure.Data
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext:IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
         { }
@@ -13,6 +15,9 @@ namespace FinanceManager.Infrastructure.Data
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
 
         public DbSet<TransactionRecord> TransactionRecords { get; set; }
+
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

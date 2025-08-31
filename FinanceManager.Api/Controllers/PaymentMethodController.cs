@@ -3,10 +3,12 @@ using Azure;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PaymentMethodController : ControllerBase
