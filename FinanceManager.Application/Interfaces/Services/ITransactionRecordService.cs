@@ -17,6 +17,8 @@ namespace FinanceManager.Application.Interfaces.Services
         Task<ServiceResponse<TransactionRecordResponseDto>> UpdateTransactionRecordAsync(Guid id, TransactionRecordUpdateDto transactionRecordUpdateDto);
         Task<ServiceResponse<String>> DeleteTransactionRecordAsync(Guid id);
 
+        Task<ServiceResponse<IEnumerable<TransactionRecordResponseDto>>> FilterTransactionRecordsAsync(Decimal? minAmount, Decimal? maxAmount, Guid? transacionCategory, Guid? paymentMethod, DateTime? transactionDate);
+
 
     }
 }

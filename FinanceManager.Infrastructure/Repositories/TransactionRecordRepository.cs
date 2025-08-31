@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Domain.Models;
 using FinanceManager.Infrastructure.Data;
@@ -45,11 +46,27 @@ namespace FinanceManager.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-    
-     
+        public async Task<IEnumerable<TransactionRecord>> FilterTransactionRecordsAsync(
+            decimal? minAmount, decimal? maxAmount, Guid? transactionCategory, Guid? paymentMethod, DateTime? transactionDate)
+        {
+            var query = _context.TransactionRecords.AsQueryable();
 
-       
+            if (minAmount.HasValue && minAmount.Value>0)
+                query = query.Where(t => t.Amount >= minAmount.Value);
 
-     
+            if (maxAmount.HasValue && maxAmount.Value > 0)
+                query = query.Where(t => t.Amount <= maxAmount.Value);
+
+            if (transactionCategory.HasValue)
+                query = query.Where(t => t.TransactionCategoryId == transactionCategory.Value);
+
+            if (paymentMethod.HasValue)
+                query = query.Where(t => t.PaymentMethodId == paymentMethod.Value);
+
+            if(transactionDate.HasValue && transactionDate.Value != DateTime.MinValue)
+                query = query.Where(t => t.TransactionDate.Date == transactionDate.Value.Date);
+
+            return await query.Include(tr => tr.TransactionCategory).Include(tr => tr.PaymentMethod).ToListAsync(); 
+        }
     }
 }

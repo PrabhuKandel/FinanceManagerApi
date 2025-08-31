@@ -69,6 +69,20 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        
+        [HttpGet("filter")]
+        public async Task<IActionResult> FilterTransactionRecords(
+            [FromQuery] decimal? minAmount,
+            [FromQuery] decimal? maxAmount,
+            [FromQuery] Guid? transacionCategory,
+            [FromQuery] Guid? paymentMethod,
+             [FromQuery] DateTime transactionDate
+            )
+        {
+            
+            var response = await _transactionRecordService.FilterTransactionRecordsAsync(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
+            return Ok(response);
+        }
+
+
     }
 }

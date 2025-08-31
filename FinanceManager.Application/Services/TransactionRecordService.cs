@@ -26,10 +26,15 @@ namespace FinanceManager.Application.Services
         }
         public async Task<ServiceResponse<IEnumerable<TransactionRecordResponseDto>>> GetAllTransactionRecordsAsync()
         {
-            var transactionRecords = await _transactionRecordRepository.GetAllAsync();
+            var transactionRecordsFromDb = await _transactionRecordRepository.GetAllAsync();
+            if (!transactionRecordsFromDb.Any())
+            {
+                throw new NotFoundException("Transaction record doesn't exist");
+            }
 
-             
-            var transactionRecordsDtos = transactionRecords?.ToResponseDtoList();
+
+
+            var transactionRecordsDtos = transactionRecordsFromDb.ToResponseDtoList();
 
 
             return new ServiceResponse<IEnumerable<TransactionRecordResponseDto>>
@@ -37,8 +42,7 @@ namespace FinanceManager.Application.Services
 
 
                 Data = transactionRecordsDtos,
-                Message = transactionRecordsDtos.Any()
-                 ? "Transaction records retrieved successfully": "  No Transaction Records "
+                Message ="Transaction records retrieved successfully"
 
             };
 
@@ -52,14 +56,14 @@ namespace FinanceManager.Application.Services
                 throw new NotFoundException("Transaction record not found");
             }
 
-            var transcationRecordDto = transactionRecord.ToResponseDto();
+            var transactionRecordDto = transactionRecord.ToResponseDto();
 
 
 
             return new ServiceResponse<TransactionRecordResponseDto>
             {
 
-                Data = transcationRecordDto,
+                Data = transactionRecordDto,
                 Message = "Transaction record  retrieved successfully"
 
 
@@ -130,10 +134,26 @@ namespace FinanceManager.Application.Services
             };
         }
 
-   
+        public async Task<ServiceResponse<IEnumerable<TransactionRecordResponseDto>>> FilterTransactionRecordsAsync(decimal? minAmount, decimal? maxAmount, Guid? transacionCategory, Guid? paymentMethod, DateTime? transactionDate)
+        {
+            var transactionRecordsFromDb = await _transactionRecordRepository.FilterTransactionRecordsAsync(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
+            if (!transactionRecordsFromDb.Any())
+            {
+                throw new NotFoundException("Transaction record not found");
+            }
 
-  
+            var transactionRecordsDtos = transactionRecordsFromDb.ToResponseDtoList();
 
-     
+
+
+            return new ServiceResponse<IEnumerable<TransactionRecordResponseDto>>
+            {
+
+
+                Data = transactionRecordsDtos,
+                Message ="Transaction records retrieved successfully" 
+
+            };
+        }
     }
 }
