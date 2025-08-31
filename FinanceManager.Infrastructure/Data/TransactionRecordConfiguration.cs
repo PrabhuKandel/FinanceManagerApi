@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FinanceManager.Domain.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+
+namespace FinanceManager.Infrastructure.Data
+{
+    public class TransactionRecordConfiguration : IEntityTypeConfiguration<TransactionRecord>
+    {
+        public void Configure(EntityTypeBuilder<TransactionRecord> builder)
+        {
+            builder.HasKey(e => e.Id);
+
+            builder.Property(e => e.TransactionCategoryId)
+                   .IsRequired();
+
+            builder.Property(e => e.PaymentMethodId)
+                   .IsRequired();
+
+            builder.Property(e => e.Amount)
+                   .IsRequired()
+                   .HasColumnType("decimal(18,2)");
+
+            builder.ToTable(t => t.HasCheckConstraint(
+                name: "CK_TransactionRecord_Amount",
+                sql: "Amount > 0.01"
+            ));
+
+            builder.Property(e => e.TransactionDate)
+                   .IsRequired();
+
+            builder.Property(e => e.Description)
+                   .HasMaxLength(500);
+
+            builder.Property(e => e.CreatedAt)
+                   .IsRequired();
+
+            builder.Property(e => e.UpdatedAt)
+                   .IsRequired();
+
+            builder.HasOne(e => e.TransactionCategory)
+                   .WithMany()
+                   .HasForeignKey(e => e.TransactionCategoryId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(e => e.PaymentMethod)
+                   .WithMany()
+                   .HasForeignKey(e => e.PaymentMethodId)
+                   .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
+}

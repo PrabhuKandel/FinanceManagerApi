@@ -18,11 +18,12 @@ namespace FinanceManager.Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
           
+            //ensures that no transaction category with same name
             modelBuilder.Entity<TransactionCategory>()
                   .HasIndex(c => c.Name)
                   .IsUnique();
 
-         
+            modelBuilder.ApplyConfiguration(new TransactionRecordConfiguration());
 
         }
 

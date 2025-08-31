@@ -23,7 +23,7 @@ namespace FinanceManager.Application.Services
                 var transactionCategories = await _transactionCategoryRepository.GetAllAsync();
 
 
-            var transactionCategoriesDtos = transactionCategories?.ToResponseDtoList();
+            var transactionCategoriesDtos = transactionCategories.ToResponseDtoList();
 
 
             return new ServiceResponse<IEnumerable<TransactionCategoryResponseDto>>
@@ -31,9 +31,7 @@ namespace FinanceManager.Application.Services
                 
 
                 Data = transactionCategoriesDtos,
-                Message = transactionCategoriesDtos.Any()
-                 ? "Transaction categories retrieved successfully"
-             : "  No Transaction categories "
+                Message = transactionCategoriesDtos.Any()? "Transaction categories retrieved successfully": "  No Transaction categories "
 
             };
 
@@ -64,8 +62,7 @@ namespace FinanceManager.Application.Services
         }
         public async Task<ServiceResponse<TransactionCategoryResponseDto>> AddTransactionCategoryAsync(TransactionCategoryCreateDto transactionCategoryCreateDto)
         {
-            if (transactionCategoryCreateDto == null)
-                throw new CustomValidationException(new[] { "Fields cannot be empty" });
+            
 
 
             //Default validation is used for now

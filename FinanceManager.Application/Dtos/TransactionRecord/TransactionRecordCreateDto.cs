@@ -15,8 +15,8 @@ namespace FinanceManager.Application.Dtos.TransactionRecord
      
 
         [Required]
-        [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than 0.")]
-        public double Amount { get; set; }
+        [Range(0.01, double.MaxValue, ErrorMessage = "Amount must be greater than 0.01")]
+        public decimal Amount { get; set; }
 
         [Required(ErrorMessage = "Payment method is required.")]
         public Guid PaymentMethodId { get; set; }

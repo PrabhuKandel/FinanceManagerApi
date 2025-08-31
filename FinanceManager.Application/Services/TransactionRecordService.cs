@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionCategory;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Repositories;
@@ -73,8 +67,7 @@ namespace FinanceManager.Application.Services
         }
         public async  Task<ServiceResponse<TransactionRecordResponseDto>> AddTransactionRecordAsync(TransactionRecordCreateDto transactionRecordCreateDto)
         {
-            if (transactionRecordCreateDto == null)
-                throw new CustomValidationException(new[] { "Fields cannot be empty" });
+            
 
             if (!await _transactionCategoryRepository.ExistByIdAsync(transactionRecordCreateDto.TransactionCategoryId))
                 throw new CustomValidationException(new[] { "Invalid Transaction Category" });

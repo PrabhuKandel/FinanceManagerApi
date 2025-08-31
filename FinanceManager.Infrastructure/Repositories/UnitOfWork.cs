@@ -1,20 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Interfaces.Repositories;
+﻿using FinanceManager.Application.Interfaces.Repositories;
+using FinanceManager.Infrastructure.Data;
 
 namespace FinanceManager.Infrastructure.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
+        private ApplicationDbContext _context;
         public ITransactionCategoryRepository TransactionCategory { get; private set; }
         public IPaymentMethodRepository PaymentMethod { get; private set; }
 
+        public UnitOfWork(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public void Save()
         {
-            throw new NotImplementedException();
+            _context.SaveChanges();
         }
     }
 }

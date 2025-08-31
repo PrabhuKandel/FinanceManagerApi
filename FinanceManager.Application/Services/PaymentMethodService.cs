@@ -63,8 +63,7 @@ namespace FinanceManager.Application.Services
 
         public async Task<ServiceResponse<PaymentMethodResponseDto>> AddPaymentMethodAsync(PaymentMethodCreateDto paymentMethodCreateDto)
         {
-            if (paymentMethodCreateDto == null)
-                throw new CustomValidationException(new[] { "Fields cannot be empty" });
+          
 
             //var validationResult = _createValidator.Validate(paymentMethodCreateDto);
 

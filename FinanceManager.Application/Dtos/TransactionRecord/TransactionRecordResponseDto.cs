@@ -26,7 +26,7 @@ namespace FinanceManager.Application.Dtos.TransactionRecord
         public Guid Id { get; set; }
         public EntitySummaryDto TransactionCategory { get; set; }
         public EntitySummaryDto PaymentMethod { get; set; }
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
         public string? Description { get; set; }
         public DateTime TransactionDate { get; set; }
         public DateTime CreatedAt { get; set; }

@@ -35,22 +35,31 @@ namespace FinanceManager.Api.Middlewares
 
             int statusCode;
             IEnumerable<string>? errors = null;
-            string message = exception.Message;
+            string message;
 
             switch (exception)
             {
                 case NotFoundException:
                     statusCode = StatusCodes.Status404NotFound;
+                    message = exception.Message;
+
                     break;
 
                 case CustomValidationException vex:
                     statusCode = StatusCodes.Status400BadRequest;
+                    message = "Validation Failed";
                     errors = vex.Errors;
                     break;
 
+                case DbUpdateException dbEx:
+                    statusCode = StatusCodes.Status500InternalServerError;
+                    message = "A database error occurred";
+                    break;
 
                 default:
                     statusCode = StatusCodes.Status500InternalServerError;
+                    message = "An unexpected error occurred";
+                    errors = new List<string> { exception.Message };
                     break;
             }
 

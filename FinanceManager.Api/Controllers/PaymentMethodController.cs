@@ -28,7 +28,7 @@ namespace FinanceManager.Api.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var response = await _paymentMethodService.GetPaymentMethodByIdAsync(id);
 
