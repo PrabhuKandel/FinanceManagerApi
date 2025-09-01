@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Application.Interfaces.Repositories;
+﻿using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Domain.Models;
 using FinanceManager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -21,30 +15,21 @@ namespace FinanceManager.Infrastructure.Repositories
         }
         public async Task<IEnumerable<TransactionRecord>> GetAllAsync(String userId)
         {
-            return await _context.TransactionRecords
-                    .Where(tr => tr.ApplicationUserId==userId)
-                 .Include(tr=>tr.TransactionCategory)
-                .Include(tr=>tr.PaymentMethod).ToListAsync();
+            return await BaseQuery(userId).ToListAsync();
         }
         public async Task<TransactionRecord?> GetByIdAsync(Guid id, String userId)
         {
-            return await _context.TransactionRecords
-                .Where(tr => tr.Id == id&& tr.ApplicationUserId==userId )
-                .Include(tr => tr.TransactionCategory)
-                .Include(tr => tr.PaymentMethod)
-               . FirstOrDefaultAsync();
+            return await BaseQuery(userId).FirstOrDefaultAsync(tr => tr.Id == id);
+
         }
         public async Task<TransactionRecord?> AddAsync(TransactionRecord transactionRecord)
         {
             await _context.TransactionRecords.AddAsync(transactionRecord);
             await _context.SaveChangesAsync();
-         
-            return await _context.TransactionRecords
-                .Where(tr => tr.Id == transactionRecord.Id)
-                .Include(tr => tr.TransactionCategory)
-                .Include(tr => tr.PaymentMethod)
-                .FirstOrDefaultAsync();
-   
+
+            return await BaseQuery(transactionRecord.ApplicationUserId)
+           .FirstOrDefaultAsync(tr => tr.Id == transactionRecord.Id);
+           
 
         }
         public async Task UpdateAsync(TransactionRecord transactionRecord)
@@ -61,9 +46,7 @@ namespace FinanceManager.Infrastructure.Repositories
         public async Task<IEnumerable<TransactionRecord>> FilterTransactionRecordsAsync(
             String userId,  decimal? minAmount, decimal? maxAmount, Guid? transactionCategory, Guid? paymentMethod, DateTime? transactionDate)
         {
-            var query = _context.TransactionRecords.AsQueryable();
-
-            query = query.Where(tr=>tr.ApplicationUserId==userId);
+            var query = BaseQuery(userId);
 
             if (minAmount.HasValue && minAmount.Value>0)
                 query = query.Where(t => t.Amount >= minAmount.Value);
@@ -80,7 +63,17 @@ namespace FinanceManager.Infrastructure.Repositories
             if(transactionDate.HasValue && transactionDate.Value != DateTime.MinValue)
                 query = query.Where(t => t.TransactionDate.Date == transactionDate.Value.Date);
 
-            return await query.Include(tr => tr.TransactionCategory).Include(tr => tr.PaymentMethod).ToListAsync(); 
+            return await query.ToListAsync(); 
+        }
+
+
+        // Private helper method that includes common query
+        private IQueryable<TransactionRecord> BaseQuery(string userId)
+        {
+            return _context.TransactionRecords
+                .Where(tr => tr.ApplicationUserId == userId)
+                .Include(tr => tr.TransactionCategory)
+                .Include(tr => tr.PaymentMethod);
         }
     }
 }
