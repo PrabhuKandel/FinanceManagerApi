@@ -13,20 +13,23 @@ namespace FinanceManager.Application.Services
         public readonly ITransactionRecordRepository _transactionRecordRepository;
         public readonly ITransactionCategoryRepository _transactionCategoryRepository;
         public readonly IPaymentMethodRepository _paymentMethodRepository;
+        public readonly IUserContext _userContext;
         public TransactionRecordService(
             ITransactionRecordRepository transactionRecordRepository,
             ITransactionCategoryRepository transactionCategoryRepository,
-            IPaymentMethodRepository paymentMethodRepository
-            
+            IPaymentMethodRepository paymentMethodRepository,
+            IUserContext userContext
+
             )
         {
             _transactionRecordRepository = transactionRecordRepository;
             _transactionCategoryRepository = transactionCategoryRepository;
             _paymentMethodRepository = paymentMethodRepository;
+            _userContext = userContext;
         }
-        public async Task<ServiceResponse<IEnumerable<TransactionRecordResponseDto>>> GetAllTransactionRecordsAsync(String userId)
+        public async Task<ServiceResponse<IEnumerable<TransactionRecordResponseDto>>> GetAllTransactionRecordsAsync()
         {
-            var transactionRecordsFromDb = await _transactionRecordRepository.GetAllAsync(userId);
+            var transactionRecordsFromDb = await _transactionRecordRepository.GetAllAsync(_userContext.UserId);
             if (!transactionRecordsFromDb.Any())
             {
                 throw new NotFoundException("Transaction record doesn't exist");
@@ -47,10 +50,10 @@ namespace FinanceManager.Application.Services
             };
 
         }
-        public async Task<ServiceResponse<TransactionRecordResponseDto>> GetTransactionRecordByIdAsync(Guid id, string userId)
+        public async Task<ServiceResponse<TransactionRecordResponseDto>> GetTransactionRecordByIdAsync(Guid id)
         {
 
-            var transactionRecord = await _transactionRecordRepository.GetByIdAsync(id,userId);
+            var transactionRecord = await _transactionRecordRepository.GetByIdAsync(id, _userContext.UserId);
             if (transactionRecord == null)
             {
                 throw new NotFoundException("Transaction record not found");
@@ -69,7 +72,7 @@ namespace FinanceManager.Application.Services
 
             };
         }
-        public async  Task<ServiceResponse<TransactionRecordResponseDto>> AddTransactionRecordAsync(TransactionRecordCreateDto transactionRecordCreateDto, String userId)
+        public async  Task<ServiceResponse<TransactionRecordResponseDto>> AddTransactionRecordAsync(TransactionRecordCreateDto transactionRecordCreateDto)
         {
             
 
@@ -80,7 +83,7 @@ namespace FinanceManager.Application.Services
                 throw new CustomValidationException(new[] { "Invalid Payment Method" });
 
             var entity = transactionRecordCreateDto.ToEntity();
-            entity.ApplicationUserId = userId;
+            entity.ApplicationUserId = _userContext.UserId;
 
               var savedEntity = await _transactionRecordRepository.AddAsync(entity);
 
@@ -93,9 +96,9 @@ namespace FinanceManager.Application.Services
             };
 
         }
-        public async Task<ServiceResponse<TransactionRecordResponseDto>> UpdateTransactionRecordAsync(Guid id, TransactionRecordUpdateDto transactionRecordUpdateDto, string userId)
+        public async Task<ServiceResponse<TransactionRecordResponseDto>> UpdateTransactionRecordAsync(Guid id, TransactionRecordUpdateDto transactionRecordUpdateDto)
         {
-            var transactionRecordFromDb = await _transactionRecordRepository.GetByIdAsync(id, userId);
+            var transactionRecordFromDb = await _transactionRecordRepository.GetByIdAsync(id, _userContext.UserId);
             if (transactionRecordFromDb == null)
             {
                 throw new NotFoundException("Transaction record doesn't exist");
@@ -114,9 +117,9 @@ namespace FinanceManager.Application.Services
                 Data = transactionRecordFromDb.ToResponseDto()
             };
         }
-        public async Task<ServiceResponse<string>> DeleteTransactionRecordAsync(Guid id, String userId)
+        public async Task<ServiceResponse<string>> DeleteTransactionRecordAsync(Guid id)
         {
-            var transactionRecordFromDb = await _transactionRecordRepository.GetByIdAsync(id, userId);
+            var transactionRecordFromDb = await _transactionRecordRepository.GetByIdAsync(id, _userContext.UserId);
             if (transactionRecordFromDb == null)
 
             {
@@ -135,9 +138,9 @@ namespace FinanceManager.Application.Services
             };
         }
 
-        public async Task<ServiceResponse<IEnumerable<TransactionRecordResponseDto>>> FilterTransactionRecordsAsync(String userId, decimal? minAmount, decimal? maxAmount, Guid? transacionCategory, Guid? paymentMethod, DateTime? transactionDate)
+        public async Task<ServiceResponse<IEnumerable<TransactionRecordResponseDto>>> FilterTransactionRecordsAsync(decimal? minAmount, decimal? maxAmount, Guid? transacionCategory, Guid? paymentMethod, DateTime? transactionDate)
         {
-            var transactionRecordsFromDb = await _transactionRecordRepository.FilterTransactionRecordsAsync(userId, minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
+            var transactionRecordsFromDb = await _transactionRecordRepository.FilterTransactionRecordsAsync(_userContext.UserId, minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
             if (!transactionRecordsFromDb.Any())
             {
                 throw new NotFoundException("Transaction record not found");

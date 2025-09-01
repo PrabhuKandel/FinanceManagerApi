@@ -24,8 +24,8 @@ namespace FinanceManager.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var userId = User?.FindFirst("userId")?.Value;
-            var response = await _transactionRecordService.GetAllTransactionRecordsAsync(userId);
+            
+            var response = await _transactionRecordService.GetAllTransactionRecordsAsync();
 
             return Ok(response);
         }
@@ -34,8 +34,8 @@ namespace FinanceManager.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var userId = User?.FindFirst("userId")?.Value;
-            var response = await _transactionRecordService.GetTransactionRecordByIdAsync(id,userId);
+           
+            var response = await _transactionRecordService.GetTransactionRecordByIdAsync(id);
 
             return Ok(response);
 
@@ -44,8 +44,8 @@ namespace FinanceManager.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TransactionRecordCreateDto transactionRecordCreateDto)
         {
-            var userId = User?.FindFirst("userId")?.Value;
-            var response = await _transactionRecordService.AddTransactionRecordAsync(transactionRecordCreateDto,userId);
+            
+            var response = await _transactionRecordService.AddTransactionRecordAsync(transactionRecordCreateDto);
             return CreatedAtAction(nameof(GetById), new { id = response.Data.Id }, response);
 
         }
@@ -54,8 +54,8 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> Update(Guid id, [FromBody] TransactionRecordUpdateDto transactionRecordUpdateDto)
         {
 
-            var userId = User?.FindFirst("userId")?.Value;
-            var response = await _transactionRecordService.UpdateTransactionRecordAsync(id, transactionRecordUpdateDto ,userId);
+          
+            var response = await _transactionRecordService.UpdateTransactionRecordAsync(id, transactionRecordUpdateDto );
             return Ok(response);
             
 
@@ -67,8 +67,8 @@ namespace FinanceManager.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var userId = User?.FindFirst("userId")?.Value;
-            var response = await _transactionRecordService.DeleteTransactionRecordAsync(id,userId);
+          
+            var response = await _transactionRecordService.DeleteTransactionRecordAsync(id);
             return Ok(response);
          
 
@@ -85,7 +85,7 @@ namespace FinanceManager.Api.Controllers
             )
         {
             var userId = User?.FindFirst("userId")?.Value;
-            var response = await _transactionRecordService.FilterTransactionRecordsAsync(userId,minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
+            var response = await _transactionRecordService.FilterTransactionRecordsAsync(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
             return Ok(response);
         }
 

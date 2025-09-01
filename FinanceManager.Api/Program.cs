@@ -65,6 +65,9 @@ builder.Services.AddSwaggerGen(
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+//This makes IHttpContextAccessor available for dependency injection.
+builder.Services.AddHttpContextAccessor(); 
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -123,6 +126,8 @@ builder.Services.AddScoped<ITransactionRecordService, TransactionRecordService>(
 builder.Services.AddScoped<ITransactionRecordRepository, TransactionRecordRepository>();
 
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+builder.Services.AddScoped<IUserContext, UserContext>();
+
 
 var app = builder.Build();
 // Apply migrations and seed data
