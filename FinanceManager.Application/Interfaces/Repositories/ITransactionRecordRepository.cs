@@ -14,8 +14,8 @@ namespace FinanceManager.Application.Interfaces.Repositories
     {
       
             Task<IEnumerable<TransactionRecord>> GetAllAsync(String userId);
-            Task<TransactionRecord> GetByIdAsync(Guid id , string userId);
-            Task  AddAsync(TransactionRecord transactionRecord);
+            Task<TransactionRecord?> GetByIdAsync(Guid id , string userId);
+            Task<TransactionRecord?> AddAsync (TransactionRecord transactionRecord);
             Task UpdateAsync( TransactionRecord transactionRecord);
             Task DeleteAsync(TransactionRecord transactionRecord);
 

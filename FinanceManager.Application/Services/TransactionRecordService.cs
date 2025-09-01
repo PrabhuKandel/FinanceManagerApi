@@ -82,14 +82,14 @@ namespace FinanceManager.Application.Services
             var entity = transactionRecordCreateDto.ToEntity();
             entity.ApplicationUserId = userId;
 
-            await _transactionRecordRepository.AddAsync(entity);
+              var savedEntity = await _transactionRecordRepository.AddAsync(entity);
 
 
             return new ServiceResponse<TransactionRecordResponseDto>
             {
 
                 Message = "New transaction category added",
-                Data = entity.ToResponseDto()
+                Data = savedEntity.ToResponseDto()
             };
 
         }

@@ -26,7 +26,7 @@ namespace FinanceManager.Infrastructure.Repositories
                  .Include(tr=>tr.TransactionCategory)
                 .Include(tr=>tr.PaymentMethod).ToListAsync();
         }
-        public async Task<TransactionRecord> GetByIdAsync(Guid id, String userId)
+        public async Task<TransactionRecord?> GetByIdAsync(Guid id, String userId)
         {
             return await _context.TransactionRecords
                 .Where(tr => tr.Id == id&& tr.ApplicationUserId==userId )
@@ -34,12 +34,17 @@ namespace FinanceManager.Infrastructure.Repositories
                 .Include(tr => tr.PaymentMethod)
                . FirstOrDefaultAsync();
         }
-        public async Task AddAsync(TransactionRecord transactionRecord)
+        public async Task<TransactionRecord?> AddAsync(TransactionRecord transactionRecord)
         {
-            var entityEntry = await _context.TransactionRecords.AddAsync(transactionRecord);
+            await _context.TransactionRecords.AddAsync(transactionRecord);
             await _context.SaveChangesAsync();
-            await _context.Entry(entityEntry.Entity).Reference(t => t.TransactionCategory).LoadAsync();
-            await _context.Entry(entityEntry.Entity).Reference(t => t.PaymentMethod).LoadAsync();
+         
+            return await _context.TransactionRecords
+                .Where(tr => tr.Id == transactionRecord.Id)
+                .Include(tr => tr.TransactionCategory)
+                .Include(tr => tr.PaymentMethod)
+                .FirstOrDefaultAsync();
+   
 
         }
         public async Task UpdateAsync(TransactionRecord transactionRecord)
@@ -58,7 +63,7 @@ namespace FinanceManager.Infrastructure.Repositories
         {
             var query = _context.TransactionRecords.AsQueryable();
 
-            query = query.Where(tr => tr.ApplicationUserId == userId);
+            query = query.Where(tr=>tr.ApplicationUserId==userId);
 
             if (minAmount.HasValue && minAmount.Value>0)
                 query = query.Where(t => t.Amount >= minAmount.Value);
