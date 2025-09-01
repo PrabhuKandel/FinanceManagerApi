@@ -1,13 +1,14 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FinanceManager.Api.Middlewares
 {
     public class GlobalExceptionHandlerMiddleware
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate _next; // pointer to the next middleware
         private readonly ILogger<GlobalExceptionHandlerMiddleware> _logger;
 
         public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
@@ -16,17 +17,21 @@ namespace FinanceManager.Api.Middlewares
             _logger = logger;
         }
 
+        //Calls that method for each HTTP request that reaches this middleware in the pipeline.
         public async Task InvokeAsync(HttpContext context)
         {
             try
-            {
-                await _next(context);
+            {   //calling the next middlware in pipeline (could be routing, authentication, or the controller action ).
+                //if everything works normally, the request continues down the pipeline
+               // If any of middleware throw an exception, it immediately stops execution in that downstream place and bubbles back.
+                //he  try-catch  catches that exception  which is  in our global exception middleware.
+                await _next(context); 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
                 await HandleExceptionAsync(context, ex);
-            }
+            }   
         }
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)

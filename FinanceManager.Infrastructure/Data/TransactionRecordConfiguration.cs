@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FinanceManager.Domain.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace FinanceManager.Infrastructure.Data
 {
@@ -42,6 +43,9 @@ namespace FinanceManager.Infrastructure.Data
             builder.Property(e => e.UpdatedAt)
                    .IsRequired();
 
+            builder.Property(e => e.ApplicationUserId)
+                   .IsRequired();
+
             builder.HasOne(e => e.TransactionCategory)
                    .WithMany()
                    .HasForeignKey(e => e.TransactionCategoryId)
@@ -51,6 +55,11 @@ namespace FinanceManager.Infrastructure.Data
                    .WithMany()
                    .HasForeignKey(e => e.PaymentMethodId)
                    .OnDelete(DeleteBehavior.Restrict);
+
+             builder.HasOne(tr => tr.ApplicationUser)             // Each TransactionRecord has one User
+                     .WithMany(u => u.TransactionRecords)          // Each User has many TransactionRecords
+                    .HasForeignKey(tr => tr.ApplicationUserId)    // FK property in TransactionRecord
+                    .OnDelete(DeleteBehavior.Cascade);            // Cascade delete: deleting user deletes transactions
         }
     }
 }

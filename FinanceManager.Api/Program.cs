@@ -1,3 +1,5 @@
+using System.Net;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.Interfaces.Repositories;
@@ -12,27 +14,32 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
+//It makes Swagger aware of JWT authentication and enables you to test secured endpoints directly in Swagger UI.
 builder.Services.AddSwaggerGen(
     options =>
     {
+        //This adds a security scheme definition to Swagger so it knows your API uses JWT Bearer authentication.
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
         {
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            Scheme = "Bearer",
-            BearerFormat = "JWT",
-            In = ParameterLocation.Header,
-            Description = "Enter your JWT token : Bearer "
+
+            Name = "Authorization", //The name of the header where the token will be passed (HTTP Authorization header).
+            Type = SecuritySchemeType.Http,//We set the scheme type to http since we're using bearer authentication
+            Scheme = "Bearer",  //The name of the HTTP Authorization scheme to be used in the Authorization header. In this case "bearer".
+            BearerFormat = "JWT",// Indicates that the token format is JSON Web Token (JWT).
+            In = ParameterLocation.Header, //The token must be included in the request header.
+            Description = "Enter your JWT token : Bearer "//Shown in the Swagger UI
         });
 
+        // This specifies every request in this API must use the Bearer security scheme (JWT in the Authorization header).
         options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -41,9 +48,13 @@ builder.Services.AddSwaggerGen(
                 Reference = new OpenApiReference
                 {
                     Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id = "Bearer" //The name of the previously defined security scheme.
                 }
             },
+            //this array represents scopes required for the security scheme.
+            //For JWT Bearer tokens, you usually don’t have scopes because its included in payload so the array is empty.
+            //For OAuth2, the array lists specific scopes/permissions that the token must have for that endpoint,
+            //e.g., "read:users" or "write:orders".
             Array.Empty<string>()
         }
     });
@@ -128,7 +139,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+// This middleware catches any exceptions thrown by downstream middleware or controllers
+// because it wraps the call to _next(context) in a try-catch block.
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 
