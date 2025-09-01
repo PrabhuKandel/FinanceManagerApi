@@ -58,7 +58,8 @@ namespace FinanceManager.Infrastructure.Data
 
              builder.HasOne(tr => tr.ApplicationUser)             // Each TransactionRecord has one User
                      .WithMany(u => u.TransactionRecords)          // Each User has many TransactionRecords
-                    .HasForeignKey(tr => tr.ApplicationUserId)    // FK property in TransactionRecord
+                    .HasForeignKey(tr => tr.ApplicationUserId)
+                     .IsRequired() 
                     .OnDelete(DeleteBehavior.Cascade);            // Cascade delete: deleting user deletes transactions
         }
     }

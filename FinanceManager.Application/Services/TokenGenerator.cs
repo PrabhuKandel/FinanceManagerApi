@@ -36,7 +36,7 @@ namespace FinanceManager.Application.Services
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(60),
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Audience"],
                 signingCredentials: signingCredentials

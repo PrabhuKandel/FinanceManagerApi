@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 using Azure;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
@@ -23,7 +24,8 @@ namespace FinanceManager.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _transactionRecordService.GetAllTransactionRecordsAsync();
+            var userId = User?.FindFirst("userId")?.Value;
+            var response = await _transactionRecordService.GetAllTransactionRecordsAsync(userId);
 
             return Ok(response);
         }
@@ -32,7 +34,8 @@ namespace FinanceManager.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var response = await _transactionRecordService.GetTransactionRecordByIdAsync(id);
+            var userId = User?.FindFirst("userId")?.Value;
+            var response = await _transactionRecordService.GetTransactionRecordByIdAsync(id,userId);
 
             return Ok(response);
 
@@ -41,17 +44,18 @@ namespace FinanceManager.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TransactionRecordCreateDto transactionRecordCreateDto)
         {
-
-            var response = await _transactionRecordService.AddTransactionRecordAsync(transactionRecordCreateDto);
+            var userId = User?.FindFirst("userId")?.Value;
+            var response = await _transactionRecordService.AddTransactionRecordAsync(transactionRecordCreateDto,userId);
             return CreatedAtAction(nameof(GetById), new { id = response.Data.Id }, response);
 
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id}")]   
         public async Task<IActionResult> Update(Guid id, [FromBody] TransactionRecordUpdateDto transactionRecordUpdateDto)
         {
-           
-            var response = await _transactionRecordService.UpdateTransactionRecordAsync(id, transactionRecordUpdateDto);
+
+            var userId = User?.FindFirst("userId")?.Value;
+            var response = await _transactionRecordService.UpdateTransactionRecordAsync(id, transactionRecordUpdateDto ,userId);
             return Ok(response);
             
 
@@ -63,8 +67,8 @@ namespace FinanceManager.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-
-            var response = await _transactionRecordService.DeleteTransactionRecordAsync(id);
+            var userId = User?.FindFirst("userId")?.Value;
+            var response = await _transactionRecordService.DeleteTransactionRecordAsync(id,userId);
             return Ok(response);
          
 
@@ -80,8 +84,8 @@ namespace FinanceManager.Api.Controllers
              [FromQuery] DateTime transactionDate
             )
         {
-            
-            var response = await _transactionRecordService.FilterTransactionRecordsAsync(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
+            var userId = User?.FindFirst("userId")?.Value;
+            var response = await _transactionRecordService.FilterTransactionRecordsAsync(userId,minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
             return Ok(response);
         }
 

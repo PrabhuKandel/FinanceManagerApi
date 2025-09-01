@@ -19,13 +19,20 @@ namespace FinanceManager.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<TransactionRecord>> GetAllAsync()
+        public async Task<IEnumerable<TransactionRecord>> GetAllAsync(String userId)
         {
-            return await _context.TransactionRecords.Include(tr=>tr.TransactionCategory).Include(tr=>tr.PaymentMethod).ToListAsync();
+            return await _context.TransactionRecords
+                    .Where(tr => tr.ApplicationUserId==userId)
+                 .Include(tr=>tr.TransactionCategory)
+                .Include(tr=>tr.PaymentMethod).ToListAsync();
         }
-        public async Task<TransactionRecord> GetByIdAsync(Guid id)
+        public async Task<TransactionRecord> GetByIdAsync(Guid id, String userId)
         {
-            return await _context.TransactionRecords.Include(tr => tr.TransactionCategory).Include(tr => tr.PaymentMethod).FirstOrDefaultAsync(tr=>tr.Id==id);
+            return await _context.TransactionRecords
+                .Where(tr => tr.Id == id&& tr.ApplicationUserId==userId )
+                .Include(tr => tr.TransactionCategory)
+                .Include(tr => tr.PaymentMethod)
+               . FirstOrDefaultAsync();
         }
         public async Task AddAsync(TransactionRecord transactionRecord)
         {
@@ -47,9 +54,11 @@ namespace FinanceManager.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<TransactionRecord>> FilterTransactionRecordsAsync(
-            decimal? minAmount, decimal? maxAmount, Guid? transactionCategory, Guid? paymentMethod, DateTime? transactionDate)
+            String userId,  decimal? minAmount, decimal? maxAmount, Guid? transactionCategory, Guid? paymentMethod, DateTime? transactionDate)
         {
             var query = _context.TransactionRecords.AsQueryable();
+
+            query = query.Where(tr => tr.ApplicationUserId == userId);
 
             if (minAmount.HasValue && minAmount.Value>0)
                 query = query.Where(t => t.Amount >= minAmount.Value);

@@ -59,7 +59,7 @@ namespace FinanceManager.Api.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // should use new Claim(JwtRegisteredClaimNames.Sub, user.Id),  as claim while sending token
 
             var userId = User?.FindFirst("userId")?.Value;
             if (string.IsNullOrEmpty(userId))
