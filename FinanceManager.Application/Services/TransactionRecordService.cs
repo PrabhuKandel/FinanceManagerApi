@@ -83,9 +83,10 @@ namespace FinanceManager.Application.Services
                 throw new CustomValidationException(new[] { "Invalid Payment Method" });
 
             var entity = transactionRecordCreateDto.ToEntity();
-            entity.ApplicationUserId = _userContext.UserId;
+            entity.CreatedByApplicationUserId = _userContext.UserId;
+            entity.UpdatedByApplicationUserId = _userContext.UserId;
 
-              var savedEntity = await _transactionRecordRepository.AddAsync(entity);
+            var savedEntity = await _transactionRecordRepository.AddAsync(entity);
 
 
             return new ServiceResponse<TransactionRecordResponseDto>
@@ -104,7 +105,7 @@ namespace FinanceManager.Application.Services
                 throw new NotFoundException("Transaction record doesn't exist");
             }
 
-    
+            transactionRecordFromDb.UpdatedByApplicationUserId = _userContext.UserId;
 
 
             transactionRecordFromDb.UpdateEntity(transactionRecordUpdateDto);

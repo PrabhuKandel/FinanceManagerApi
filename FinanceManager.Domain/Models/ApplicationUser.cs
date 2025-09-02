@@ -23,6 +23,10 @@ namespace FinanceManager.Domain.Models
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiresAtUtc { get; set; }
 
-        public ICollection<TransactionRecord>? TransactionRecords { get; set; }
+        // Transactions created by this user
+        public ICollection<TransactionRecord>? CreatedTransactionsRecords { get; set; }
+
+        // Transactions updated by this user
+        public ICollection<TransactionRecord>? UpdatedTransactionsRecords { get; set; }
     }
 }

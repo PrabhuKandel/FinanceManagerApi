@@ -7,9 +7,14 @@ namespace FinanceManager.Domain.Models
   
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        
-        public string ApplicationUserId { get; set; }
-        public ApplicationUser ApplicationUser { get; set; }
+
+        // Created By User
+        public string CreatedByApplicationUserId { get; set; }
+        public ApplicationUser CreatedByApplicationUser { get; set; }
+
+        // Updated By User 
+        public string UpdatedByApplicationUserId { get; set; }
+        public ApplicationUser UpdatedByApplicationUser { get; set; }
 
         public Guid TransactionCategoryId{ get; set; }
         public TransactionCategory TransactionCategory { get; set; }

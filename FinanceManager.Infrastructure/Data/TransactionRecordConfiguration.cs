@@ -43,7 +43,11 @@ namespace FinanceManager.Infrastructure.Data
             builder.Property(e => e.UpdatedAt)
                    .IsRequired();
 
-            builder.Property(e => e.ApplicationUserId)
+            builder.Property(e => e.CreatedByApplicationUserId)
+                   .IsRequired();
+
+
+            builder.Property(e => e.UpdatedByApplicationUserId)
                    .IsRequired();
 
             builder.HasOne(e => e.TransactionCategory)
@@ -53,14 +57,22 @@ namespace FinanceManager.Infrastructure.Data
 
             builder.HasOne(e => e.PaymentMethod)
                    .WithMany()
-                   .HasForeignKey(e => e.PaymentMethodId)
+                   .HasForeignKey(e => e.PaymentMethodId)   
                    .OnDelete(DeleteBehavior.Restrict);
 
-             builder.HasOne(tr => tr.ApplicationUser)             // Each TransactionRecord has one User
-                     .WithMany(u => u.TransactionRecords)          // Each User has many TransactionRecords
-                    .HasForeignKey(tr => tr.ApplicationUserId)
+             builder.HasOne(tr => tr.CreatedByApplicationUser)             // Each TransactionRecord has one User
+                     .WithMany(u => u.CreatedTransactionsRecords)          // Each User has many TransactionRecords
+                    .HasForeignKey(tr => tr.CreatedByApplicationUserId)
                      .IsRequired() 
-                    .OnDelete(DeleteBehavior.Cascade);            // Cascade delete: deleting user deletes transactions
+                    .OnDelete(DeleteBehavior.Restrict);            // Cascade delete: deleting user deletes transactions
+
+            builder.HasOne(tr => tr.UpdatedByApplicationUser)            
+               .WithMany(u => u.UpdatedTransactionsRecords)         
+              .HasForeignKey(tr => tr.UpdatedByApplicationUserId)
+               .IsRequired()
+              .OnDelete(DeleteBehavior.Restrict);
+
+
         }
     }
 }

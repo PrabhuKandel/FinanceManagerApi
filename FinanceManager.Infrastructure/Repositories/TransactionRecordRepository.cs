@@ -27,10 +27,10 @@ namespace FinanceManager.Infrastructure.Repositories
             await _context.TransactionRecords.AddAsync(transactionRecord);
             await _context.SaveChangesAsync();
 
-            return await BaseQuery(transactionRecord.ApplicationUserId)
+            return await BaseQuery(transactionRecord.CreatedByApplicationUserId)
            .FirstOrDefaultAsync(tr => tr.Id == transactionRecord.Id);
            
-
+                
         }
         public async Task UpdateAsync(TransactionRecord transactionRecord)
         {
@@ -71,7 +71,7 @@ namespace FinanceManager.Infrastructure.Repositories
         private IQueryable<TransactionRecord> BaseQuery(string userId)
         {
             return _context.TransactionRecords
-                .Where(tr => tr.ApplicationUserId == userId)
+                .Where(tr => tr.CreatedByApplicationUserId == userId)
                 .Include(tr => tr.TransactionCategory)
                 .Include(tr => tr.PaymentMethod);
         }
