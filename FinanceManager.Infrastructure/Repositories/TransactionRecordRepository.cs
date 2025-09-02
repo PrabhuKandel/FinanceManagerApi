@@ -13,13 +13,13 @@ namespace FinanceManager.Infrastructure.Repositories
         {
             _context = context;
         }
-        public async Task<IEnumerable<TransactionRecord>> GetAllAsync(String userId)
+        public async Task<IEnumerable<TransactionRecord>> GetAllAsync()
         {
-            return await BaseQuery(userId).ToListAsync();
+            return await BaseQuery().ToListAsync();
         }
-        public async Task<TransactionRecord?> GetByIdAsync(Guid id, String userId)
+        public async Task<TransactionRecord?> GetByIdAsync(Guid id)
         {
-            return await BaseQuery(userId).FirstOrDefaultAsync(tr => tr.Id == id);
+            return await BaseQuery().FirstOrDefaultAsync(tr => tr.Id == id);
 
         }
         public async Task<TransactionRecord?> AddAsync(TransactionRecord transactionRecord)
@@ -27,7 +27,7 @@ namespace FinanceManager.Infrastructure.Repositories
             await _context.TransactionRecords.AddAsync(transactionRecord);
             await _context.SaveChangesAsync();
 
-            return await BaseQuery(transactionRecord.CreatedByApplicationUserId)
+            return await BaseQuery()
            .FirstOrDefaultAsync(tr => tr.Id == transactionRecord.Id);
            
                 
@@ -44,9 +44,9 @@ namespace FinanceManager.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<TransactionRecord>> FilterTransactionRecordsAsync(
-            String userId,  decimal? minAmount, decimal? maxAmount, Guid? transactionCategory, Guid? paymentMethod, DateTime? transactionDate)
+           decimal? minAmount, decimal? maxAmount, Guid? transactionCategory, Guid? paymentMethod, DateTime? transactionDate)
         {
-            var query = BaseQuery(userId);
+            var query = BaseQuery();
 
             if (minAmount.HasValue && minAmount.Value>0)
                 query = query.Where(t => t.Amount >= minAmount.Value);
@@ -65,13 +65,12 @@ namespace FinanceManager.Infrastructure.Repositories
 
             return await query.ToListAsync(); 
         }
-
+            
 
         // Private helper method that includes common query
-        private IQueryable<TransactionRecord> BaseQuery(string userId)
+        private IQueryable<TransactionRecord> BaseQuery()
         {
             return _context.TransactionRecords
-                .Where(tr => tr.CreatedByApplicationUserId == userId)
                 .Include(tr => tr.TransactionCategory)
                 .Include(tr => tr.PaymentMethod);
         }

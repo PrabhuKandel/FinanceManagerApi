@@ -13,14 +13,14 @@ namespace FinanceManager.Application.Interfaces.Repositories
     public interface ITransactionRecordRepository
     {
       
-            Task<IEnumerable<TransactionRecord>> GetAllAsync(String userId);
-            Task<TransactionRecord?> GetByIdAsync(Guid id , string userId);
+            Task<IEnumerable<TransactionRecord>> GetAllAsync();
+            Task<TransactionRecord?> GetByIdAsync(Guid id);
             Task<TransactionRecord?> AddAsync (TransactionRecord transactionRecord);
             Task UpdateAsync( TransactionRecord transactionRecord);
             Task DeleteAsync(TransactionRecord transactionRecord);
 
             Task<IEnumerable<TransactionRecord>> FilterTransactionRecordsAsync(
-           String userId,  Decimal? minAmount, Decimal? maxAmount, Guid? transacionCategory, Guid? paymentMethod, DateTime? transactionDate);
+          Decimal? minAmount, Decimal? maxAmount, Guid? transacionCategory, Guid? paymentMethod, DateTime? transactionDate);
 
         //Task<IEnumerable<TransactionRecord>> GetByCategoryAsync(Guid categoryId); 
     }

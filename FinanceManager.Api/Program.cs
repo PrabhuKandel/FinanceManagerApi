@@ -1,5 +1,6 @@
 using System.Net;
 using System.Reflection.PortableExecutable;
+using System.Security.Claims;
 using System.Text;
 using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.Interfaces.Repositories;
@@ -89,7 +90,8 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey =
         new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
-        ClockSkew = TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero,
+        
     };
 });
 
@@ -157,6 +159,7 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

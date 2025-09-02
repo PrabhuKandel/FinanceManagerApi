@@ -61,6 +61,7 @@ namespace FinanceManager.Api.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
 

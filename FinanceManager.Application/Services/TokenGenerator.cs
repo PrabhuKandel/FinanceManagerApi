@@ -33,6 +33,7 @@ namespace FinanceManager.Application.Services
             {
                 new Claim("email",user.Email),
                 new Claim("userId", user.Id),
+            
 
             };
             if (role != null)
