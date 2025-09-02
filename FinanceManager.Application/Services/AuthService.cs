@@ -1,4 +1,5 @@
-﻿using System.Security.Authentication;
+﻿using System.Data;
+using System.Security.Authentication;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Exceptions;
@@ -12,11 +13,13 @@ namespace FinanceManager.Application.Services
     public class AuthService:IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         public readonly ITokenGenerator _tokenGenerator;
-        public AuthService(UserManager<ApplicationUser> userManager, ITokenGenerator tokenGenerator)
+        public AuthService(UserManager<ApplicationUser> userManager, ITokenGenerator tokenGenerator, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _tokenGenerator = tokenGenerator;
+            _roleManager = roleManager;
         }
 
         public async Task<ServiceResponse<string>> RegisterAsync(ApplicationUserRegisterDto registerUser)
@@ -48,14 +51,28 @@ namespace FinanceManager.Application.Services
                 throw new InvalidOperationException("Registration failed due to server error.");
             }
 
-            return new ServiceResponse<String>
+           //assingning role based on user input 
+            if (!string.IsNullOrEmpty(registerUser.RoleId))
             {
+                var role = await _roleManager.FindByIdAsync(registerUser.RoleId);
+                if (role == null)
+                    throw new CustomValidationException(new[] { "Invalid role selected." });
 
-                Data = null,
-                Message = "Registration Successfulll!!"
+                await _userManager.AddToRoleAsync(applicationUser, role.Name);
+            }
+            else
+            {
+                await _userManager.AddToRoleAsync(applicationUser, RoleConstants.User);
+            }
+
+                return new ServiceResponse<String>
+                {
+
+                    Data = null,
+                    Message = "Registration Successfulll!!"
 
 
-            };
+                };
         }
 
         public async Task<ServiceResponse<ApplicationUserLoginResponseDto>> LoginAsync(ApplicationUserLoginDto loginUser)
@@ -72,7 +89,7 @@ namespace FinanceManager.Application.Services
                 throw new AuthenticationException("Invalid Credentials");
             }
 
-            var accessToken = _tokenGenerator.GenerateAccessToken(applicationUser);
+            var accessToken = await _tokenGenerator.GenerateAccessToken(applicationUser);
             var refreshToken = _tokenGenerator.GenerateRefreshToken();
 
             applicationUser.RefreshToken = refreshToken;
@@ -114,7 +131,7 @@ namespace FinanceManager.Application.Services
               
             }
 
-            var accessToken = _tokenGenerator.GenerateAccessToken(user);
+            var accessToken = await _tokenGenerator.GenerateAccessToken(user);
             var newRefreshToken = _tokenGenerator.GenerateRefreshToken();
 
             user.RefreshToken = newRefreshToken;

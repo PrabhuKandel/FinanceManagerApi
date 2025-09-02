@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,13 +17,17 @@ namespace FinanceManager.Application.Services
     public class TokenGenerator:ITokenGenerator
     {
         private readonly IConfiguration _config;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TokenGenerator(IConfiguration config)
+        public TokenGenerator(IConfiguration config, UserManager<ApplicationUser> userManager)
         {
             _config = config;
+            _userManager = userManager;
         }
-        public string GenerateAccessToken(ApplicationUser user)
+        public async Task<string> GenerateAccessToken(ApplicationUser user)
         {
+            var roles = await _userManager.GetRolesAsync(user);
+            var role = roles.FirstOrDefault();
 
             var claims = new List<Claim>
             {
@@ -30,6 +35,9 @@ namespace FinanceManager.Application.Services
                 new Claim("userId", user.Id),
 
             };
+            if (role != null)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
             var SignKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]));
 
             SigningCredentials signingCredentials = new SigningCredentials(SignKey, SecurityAlgorithms.HmacSha256);

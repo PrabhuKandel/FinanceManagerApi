@@ -11,6 +11,7 @@ namespace FinanceManager.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -24,6 +25,7 @@ namespace FinanceManager.Api.Controllers
             _authService = authService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(ApplicationUserRegisterDto registerUser)
         {
@@ -48,6 +50,7 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpPost("refresh-token")]
+
         public async Task<IActionResult> RefreshToken(string refreshToken)
         {
 

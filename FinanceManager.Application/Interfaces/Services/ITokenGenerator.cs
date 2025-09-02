@@ -9,7 +9,7 @@ namespace FinanceManager.Application.Interfaces.Services
 {
     public interface ITokenGenerator
     {
-        string GenerateAccessToken(ApplicationUser user);
+        Task<string> GenerateAccessToken(ApplicationUser user);
         string GenerateRefreshToken();
     }
 }

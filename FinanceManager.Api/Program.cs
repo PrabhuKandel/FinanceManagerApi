@@ -62,8 +62,7 @@ builder.Services.AddSwaggerGen(
 
     );
 
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+
 
 //This makes IHttpContextAccessor available for dependency injection.
 builder.Services.AddHttpContextAccessor(); 
@@ -97,7 +96,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 // Disable automatic model state validation
 //builder.Services.AddControllers()
 //    .ConfigureApiBehaviorOptions(options =>
@@ -132,10 +132,18 @@ builder.Services.AddScoped<IUserContext, UserContext>();
 var app = builder.Build();
 // Apply migrations and seed data
 using (var scope = app.Services.CreateScope())
+
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
     context.Database.Migrate(); // apply any pending migrations
     DbSeeder.Seed(context);     // run your manual seeding
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+
+    await RoleSeeder.SeedRolesAsync(roleManager);
+    await RoleSeeder.SeedAdminUserAsync(userManager);
+
 }
 
 // Configure the HTTP request pipeline.
