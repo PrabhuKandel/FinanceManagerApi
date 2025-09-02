@@ -39,6 +39,7 @@ namespace FinanceManager.Api.Controllers
 
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] TransactionCategoryCreateDto transactionCategoryCreateDto)
         {
 
@@ -48,6 +49,7 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, [FromBody] TransactionCategoryUpdateDto transactionCategoryUpdateDto)
         {
            

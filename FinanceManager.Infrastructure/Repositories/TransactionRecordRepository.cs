@@ -15,11 +15,13 @@ namespace FinanceManager.Infrastructure.Repositories
         }
         public async Task<IEnumerable<TransactionRecord>> GetAllAsync()
         {
-            return await BaseQuery().ToListAsync();
+            return await BaseQuery().Include(t => t.CreatedByApplicationUser)
+                                    .Include(t => t.UpdatedByApplicationUser).ToListAsync();
         }
         public async Task<TransactionRecord?> GetByIdAsync(Guid id)
         {
-            return await BaseQuery().FirstOrDefaultAsync(tr => tr.Id == id);
+            return await BaseQuery().Include(t => t.CreatedByApplicationUser)
+                                    .Include(t => t.UpdatedByApplicationUser).FirstOrDefaultAsync(tr => tr.Id == id);
 
         }
         public async Task<TransactionRecord?> AddAsync(TransactionRecord transactionRecord)
@@ -61,7 +63,7 @@ namespace FinanceManager.Infrastructure.Repositories
                 query = query.Where(t => t.PaymentMethodId == paymentMethod.Value);
 
             if(transactionDate.HasValue && transactionDate.Value != DateTime.MinValue)
-                query = query.Where(t => t.TransactionDate.Date == transactionDate.Value.Date);
+                query = query.Where(t => t.TransactionDate.Date == transactionDate.Value.Date); 
 
             return await query.ToListAsync(); 
         }

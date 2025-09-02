@@ -3,22 +3,25 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Dtos.TransactionCategory;
 
 namespace FinanceManager.Application.Dtos.TransactionRecord
 {
-    public class PaymentMethodSummaryDto
-    {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
 
-    }
     public class EntitySummaryDto
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class ApplicationUserSummaryDto
+    {
+        public string Id { get; set; }
+        public string FirstName { get; set; }
+
     }
     public class TransactionRecordResponseDto
     {
@@ -31,5 +34,18 @@ namespace FinanceManager.Application.Dtos.TransactionRecord
         public DateTime TransactionDate { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public ApplicationUserSummaryDto? CreatedBy { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public ApplicationUserSummaryDto? UpdatedBy { get; set; }
+
     }
+
+    //public class AdminTransactionRecordResponseDto
+    //{
+    //    public string CreatedBy { get; set; }
+    //    public string UpdatedBy { get; set; }
+    //}
 }

@@ -30,6 +30,7 @@ namespace FinanceManager.Api.Controllers
 
 
         [HttpGet("{id}")]
+
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var response = await _paymentMethodService.GetPaymentMethodByIdAsync(id);
@@ -39,6 +40,7 @@ namespace FinanceManager.Api.Controllers
 
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] PaymentMethodCreateDto paymentMethodCreateDto)
         {
 
@@ -48,6 +50,7 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, [FromBody] PaymentMethodUpdateDto paymentMethodUpdateDto)
         {
            

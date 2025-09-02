@@ -40,16 +40,17 @@ namespace FinanceManager.Application.Services
             {
                 throw new NotFoundException("Transaction record doesn't exist");
             }
-
+            // Check admin status once
+            var isAdmin = await IsUserAdmin(_userContext.UserId);
             // Filter for non-admin users
-            if (!await IsUserAdmin(_userContext.UserId))
+            if (!isAdmin)
             {
                 transactionRecordsFromDb = transactionRecordsFromDb
                     .Where(t => t.CreatedByApplicationUserId == _userContext.UserId)
                     .ToList();
             }
 
-            var transactionRecordsDtos = transactionRecordsFromDb.ToResponseDtoList();
+            var transactionRecordsDtos = transactionRecordsFromDb.ToResponseDtoList(isAdmin);
 
 
 
@@ -72,15 +73,16 @@ namespace FinanceManager.Application.Services
             {
                 throw new NotFoundException("Transaction record not found");
             }
+            var isAdmin = await IsUserAdmin(_userContext.UserId);
             // Filter for non-admin users
-            if (!await IsUserAdmin(_userContext.UserId))
+            if (!isAdmin)
             {
                 if (transactionRecord.CreatedByApplicationUserId != _userContext.UserId)
                 {
                     throw new UnauthorizedAccessException("You can't access this record.");
                 }
             }
-            var transactionRecordDto = transactionRecord.ToResponseDto();
+            var transactionRecordDto = transactionRecord.ToResponseDto(isAdmin);
 
 
 
