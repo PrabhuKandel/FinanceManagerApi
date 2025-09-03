@@ -4,6 +4,7 @@ using FinanceManager.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using FinanceManager.Infrastructure.Data.Configurations;
 
 namespace FinanceManager.Infrastructure.Data
 {
@@ -23,12 +24,13 @@ namespace FinanceManager.Infrastructure.Data
             base.OnModelCreating(modelBuilder);
 
           
-            //ensures that no transaction category with same name
-            modelBuilder.Entity<TransactionCategory>()
-                  .HasIndex(c => c.Name)
-                  .IsUnique();
+          
 
             modelBuilder.ApplyConfiguration(new TransactionRecordConfiguration());
+            modelBuilder.ApplyConfiguration(new TransactionCategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
+
 
         }
 

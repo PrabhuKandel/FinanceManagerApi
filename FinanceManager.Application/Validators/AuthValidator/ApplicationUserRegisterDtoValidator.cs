@@ -20,7 +20,8 @@ namespace FinanceManager.Application.Validators.AuthValidator
                 .NotEmpty().WithMessage("Last name is required.");
 
             RuleFor(x => x.Address)
-                .NotEmpty().WithMessage("Address is required.");
+                .NotEmpty().WithMessage("Address is required.")
+                .MaximumLength(100).WithMessage("Address cannot exceed 100 characters.");
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")

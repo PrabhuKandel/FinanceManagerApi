@@ -7,8 +7,9 @@ using FinanceManager.Domain.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection.Emit;
+using static System.Formats.Asn1.AsnWriter;
 
-namespace FinanceManager.Infrastructure.Data
+namespace FinanceManager.Infrastructure.Data.Configurations
 {
     public class TransactionRecordConfiguration : IEntityTypeConfiguration<TransactionRecord>
     {
@@ -22,14 +23,10 @@ namespace FinanceManager.Infrastructure.Data
             builder.Property(e => e.PaymentMethodId)
                    .IsRequired();
 
+            //"decimal(18,2)" means:18 → total number of digits(precision) 2 → number of digits after the decimal point(scale)
             builder.Property(e => e.Amount)
                    .IsRequired()
                    .HasColumnType("decimal(18,2)");
-
-            builder.ToTable(t => t.HasCheckConstraint(
-                name: "CK_TransactionRecord_Amount",
-                sql: "Amount > 0.01"
-            ));
 
             builder.Property(e => e.TransactionDate)
                    .IsRequired();
@@ -64,7 +61,7 @@ namespace FinanceManager.Infrastructure.Data
                      .WithMany(u => u.CreatedTransactionsRecords)          // Each User has many TransactionRecords
                     .HasForeignKey(tr => tr.CreatedByApplicationUserId)
                      .IsRequired() 
-                    .OnDelete(DeleteBehavior.Restrict);            // Cascade delete: deleting user deletes transactions
+                    .OnDelete(DeleteBehavior.Restrict);         
 
             builder.HasOne(tr => tr.UpdatedByApplicationUser)            
                .WithMany(u => u.UpdatedTransactionsRecords)         

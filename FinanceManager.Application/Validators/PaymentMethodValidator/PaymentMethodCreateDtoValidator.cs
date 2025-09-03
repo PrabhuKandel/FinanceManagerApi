@@ -18,10 +18,12 @@ namespace FinanceManager.Application.Validators.PaymentMethodValidator
 
 
             RuleFor(c => c.Name)
-                .NotEmpty().WithMessage("Name is required.");
+                .NotEmpty().WithMessage("Name is required.")
+                .MaximumLength(100).WithMessage("Name cannot exceed 100 characters.");
 
             RuleFor(c => c.Description)
-                .MaximumLength(250).WithMessage("Description cannot exceed 250 characters.");
+                .MaximumLength(200).WithMessage("Description cannot exceed 200 characters.");
+
 
         }
 }
