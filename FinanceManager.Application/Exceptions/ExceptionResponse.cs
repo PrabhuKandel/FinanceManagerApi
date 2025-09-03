@@ -10,6 +10,6 @@ namespace FinanceManager.Application.Exceptions
     {
         public string Message { get; set; }
         public int StatusCode { get; set; }
-        public IEnumerable<string>? Errors { get; set; }
+        public IDictionary<string, string>? Errors { get; set; }
     }
 }

@@ -44,7 +44,7 @@ namespace FinanceManager.Api.Middlewares
             context.Response.ContentType = "application/json";
 
             int statusCode;
-            IEnumerable<string>? errors = null;
+            IDictionary<string, string>? errors=null ;
             string message;
 
             switch (exception)
@@ -69,7 +69,7 @@ namespace FinanceManager.Api.Middlewares
                 default:
                     statusCode = StatusCodes.Status500InternalServerError;
                     message = "An unexpected error occurred";
-                    errors = new List<string> { exception.Message };
+                    errors = new Dictionary<string, string> { { "Error", exception.Message } };
                     break;
             }
 
@@ -79,7 +79,8 @@ namespace FinanceManager.Api.Middlewares
             {
                 Message = message,
                 StatusCode = statusCode,
-                Errors = errors
+                Errors = errors 
+
             };
 
             return context.Response.WriteAsJsonAsync(response);

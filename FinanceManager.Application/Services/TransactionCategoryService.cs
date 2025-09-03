@@ -76,11 +76,11 @@ namespace FinanceManager.Application.Services
             if (!validationResult.IsValid)
                 {
 
-                    throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                    throw new CustomValidationException(validationResult.Errors.ToDictionary(e => e.PropertyName, e => e.ErrorMessage));
                 }
 
             if (await _transactionCategoryRepository.ExistsByNameAsync(transactionCategoryCreateDto.Name))
-                throw new CustomValidationException(new[] { "Transaction category name already exists." });
+                throw new CustomValidationException("Transaction category name already exists.");
 
             var entity = transactionCategoryCreateDto.ToEntity();
            
@@ -102,7 +102,7 @@ namespace FinanceManager.Application.Services
             if (!validationResult.IsValid)
             {
 
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new CustomValidationException(validationResult.Errors.ToDictionary(e => e.PropertyName, e => e.ErrorMessage));
             }
             var transactionCategoryFromDb = await _transactionCategoryRepository.GetByIdAsync(id);
             if (transactionCategoryFromDb == null)

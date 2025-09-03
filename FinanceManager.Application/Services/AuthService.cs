@@ -42,12 +42,12 @@ namespace FinanceManager.Application.Services
             if (!validationResult.IsValid)
             {
 
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new CustomValidationException(validationResult.Errors.ToDictionary(e => e.PropertyName, e => e.ErrorMessage));
             }
             var existingUser = await _userManager.FindByEmailAsync(registerUser.Email);
             if (existingUser != null)
             {
-                throw new CustomValidationException( new[] { "Email is already registered." });
+                throw new CustomValidationException( "Email is already registered." );
             }
 
             var applicationUser = new ApplicationUser
@@ -66,7 +66,7 @@ namespace FinanceManager.Application.Services
             {
                 if (result.Errors.Any())
                 {
-                    throw new CustomValidationException(result.Errors.Select(e => e.Description));
+                    throw new CustomValidationException(result.Errors.ToDictionary(e => "Error", e => e.Description));
                 }
                 throw new InvalidOperationException("Registration failed due to server error.");
             }
@@ -76,7 +76,7 @@ namespace FinanceManager.Application.Services
             {
                 var role = await _roleManager.FindByIdAsync(registerUser.RoleId);
                 if (role == null)
-                    throw new CustomValidationException(new[] { "Invalid role selected." });
+                    throw new CustomValidationException("Invalid role selected.");
 
                 await _userManager.AddToRoleAsync(applicationUser, role.Name);
             }
@@ -102,7 +102,7 @@ namespace FinanceManager.Application.Services
             if (!validationResult.IsValid)
             {
 
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new CustomValidationException(validationResult.Errors.ToDictionary(e => e.PropertyName, e => e.ErrorMessage));
             }
 
 

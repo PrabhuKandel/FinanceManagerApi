@@ -110,16 +110,16 @@ namespace FinanceManager.Application.Services
             if (!validationResult.IsValid)
             {
 
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new CustomValidationException(validationResult.Errors.ToDictionary(e => e.PropertyName, e => e.ErrorMessage));
             }
 
 
 
             if (!await _transactionCategoryRepository.ExistByIdAsync(transactionRecordCreateDto.TransactionCategoryId))
-                throw new CustomValidationException(new[] { "Invalid Transaction Category" });
+                throw new CustomValidationException("Invalid Transaction Category");
 
             if (!await _paymentMethodRepository.ExistByIdAsync(transactionRecordCreateDto.PaymentMethodId))
-                throw new CustomValidationException(new[] { "Invalid Payment Method" });
+                throw new CustomValidationException("Invalid Payment Method");
 
             var entity = transactionRecordCreateDto.ToEntity();
             entity.CreatedByApplicationUserId = _userContext.UserId;
@@ -143,7 +143,7 @@ namespace FinanceManager.Application.Services
             if (!validationResult.IsValid)
             {
 
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new CustomValidationException(validationResult.Errors.ToDictionary(e => e.PropertyName, e => e.ErrorMessage));
             }
 
             var transactionRecordFromDb = await _transactionRecordRepository.GetByIdAsync(id);

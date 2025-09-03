@@ -9,12 +9,17 @@ namespace FinanceManager.Application.Exceptions
 {
     public class CustomValidationException: Exception
     {
-        public IEnumerable<string> Errors { get; }
+        public IDictionary<string, string>? Errors { get; }
 
-        public CustomValidationException(IEnumerable<string> errors)
+        public CustomValidationException(IDictionary<string, string> errors)
                   : base("Validation failed")
         {
             Errors = errors;
+        }
+        public CustomValidationException(string errorMessage)
+        : base("Validation failed")
+        {
+            Errors = new Dictionary<string, string> { { "Error", errorMessage } };
         }
     }
 }

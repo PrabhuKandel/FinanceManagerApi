@@ -77,12 +77,14 @@ namespace FinanceManager.Application.Services
 
             if (!validationResult.IsValid)
             {
-
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new CustomValidationException(
+                    validationResult.Errors
+                        .ToDictionary(e => e.PropertyName, e => e.ErrorMessage)
+                );
             }
 
             if (await _paymentMethodRepository.ExistsByNameAsync(paymentMethodCreateDto.Name))
-                throw new CustomValidationException(new[] { "Payment method with this name already exists." });
+                throw new CustomValidationException("Payment method with this name already exists.");
 
             var entity = paymentMethodCreateDto.ToEntity();
 
@@ -103,7 +105,8 @@ namespace FinanceManager.Application.Services
             if (!validationResult.IsValid)
             {
 
-                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                throw new CustomValidationException(validationResult.Errors
+                        .ToDictionary(e => e.PropertyName, e => e.ErrorMessage));
             }
             var paymentMethodFromDb = await _paymentMethodRepository.GetByIdAsync(id);
             if (paymentMethodFromDb == null)
