@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Dtos.TransactionCategory
 {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Interfaces.Repositories
 {

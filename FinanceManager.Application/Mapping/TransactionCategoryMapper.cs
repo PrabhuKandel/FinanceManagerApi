@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Mapping
 {

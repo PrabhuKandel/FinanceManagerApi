@@ -2,6 +2,7 @@
 using FinanceManager.Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -34,7 +35,13 @@ namespace FinanceManager.Api.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, ex.Message);
+                //_logger.LogError(ex, ex.Message);
+                Log.Error("Exception occurred for request {Method} {Path} | ErrorMessage: {ErrorMessage}",
+                 context.Request.Method,
+                 context.Request.Path,
+                 ex.Message);
+
+
                 await HandleExceptionAsync(context, ex);
             }   
         }

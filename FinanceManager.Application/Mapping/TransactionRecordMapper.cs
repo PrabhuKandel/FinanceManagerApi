@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Mapping
 {

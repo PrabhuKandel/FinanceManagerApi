@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Interfaces.Repositories;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

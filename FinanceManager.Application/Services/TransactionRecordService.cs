@@ -4,7 +4,7 @@ using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace FinanceManager.Domain.Models
+namespace FinanceManager.Domain.Entities
 {
     public class PaymentMethod
     {

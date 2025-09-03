@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Interfaces.Services
 {

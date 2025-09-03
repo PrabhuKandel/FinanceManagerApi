@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinanceManager.Domain.Models
+namespace FinanceManager.Domain.Entities
 {
     public class TransactionCategory
     {

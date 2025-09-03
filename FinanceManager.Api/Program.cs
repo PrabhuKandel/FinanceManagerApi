@@ -5,7 +5,7 @@ using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
 using FinanceManager.Application.Validators.TransactionCategoryValidator;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.Repositories;
 using FluentValidation;
@@ -14,8 +14,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("log.txt",
+    rollingInterval: RollingInterval.Day,
+    rollOnFileSizeLimit: true)
+    .CreateLogger();
+
 
 // Add services to the container.
 
