@@ -4,7 +4,6 @@ using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Validators.AuthValidator;
 using FinanceManager.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;

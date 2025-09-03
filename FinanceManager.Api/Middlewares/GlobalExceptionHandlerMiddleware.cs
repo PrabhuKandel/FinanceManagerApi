@@ -1,6 +1,7 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,8 +24,12 @@ namespace FinanceManager.Api.Middlewares
             try
             {   //calling the next middlware in pipeline (could be routing, authentication, or the controller action ).
                 //if everything works normally, the request continues down the pipeline
-               // If any of middleware throw an exception, it immediately stops execution in that downstream place and bubbles back.
+                // If any of middleware throw an exception, it immediately stops execution in that downstream place and bubbles back.
                 //he  try-catch  catches that exception  which is  in our global exception middleware.
+            //   Each middleware constructor receives a RequestDelegate next.
+            //That next is a reference to the next middleware’s function.
+                //When you call _next(context),
+                //you’re just invoking that delegate → which executes the next middleware with the same HttpContext.
                 await _next(context); 
             }
             catch (Exception ex)

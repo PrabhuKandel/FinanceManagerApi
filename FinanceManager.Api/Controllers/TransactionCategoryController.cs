@@ -37,7 +37,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
 
 
-        }
+        }   
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] TransactionCategoryCreateDto transactionCategoryCreateDto)

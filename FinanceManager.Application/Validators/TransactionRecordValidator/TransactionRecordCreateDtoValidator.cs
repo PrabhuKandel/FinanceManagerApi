@@ -17,7 +17,7 @@ namespace FinanceManager.Application.Validators.TransactionRecordValidator
                 .NotEmpty().WithMessage("Transaction category is required.");
 
             RuleFor(x => x.Amount)
-                .GreaterThan(0.01m).WithMessage("Amount must be greater than 0.01");
+                .GreaterThan(0m).WithMessage("Amount must be greater than 0");
 
             RuleFor(x => x.PaymentMethodId)
                 .NotEmpty().WithMessage("Payment method is required.");

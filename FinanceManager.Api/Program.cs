@@ -1,19 +1,10 @@
 using System.Net;
-using System.Reflection.PortableExecutable;
-using System.Security.Claims;
 using System.Text;
 using FinanceManager.Api.Middlewares;
-using FinanceManager.Application.Dtos.ApplicationUser;
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
-using FinanceManager.Application.Validators.AuthValidator;
-using FinanceManager.Application.Validators.PaymentMethodValidator;
 using FinanceManager.Application.Validators.TransactionCategoryValidator;
-using FinanceManager.Application.Validators.TransactionRecordValidator;
 using FinanceManager.Domain.Models;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.Repositories;
@@ -23,7 +14,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using static System.Net.WebRequestMethods;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,16 +1,12 @@
 ﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Application.Validators.TransactionCategoryValidator;
-using FinanceManager.Application.Validators.TransactionRecordValidator;
 using FinanceManager.Domain.Models;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Services
 {
