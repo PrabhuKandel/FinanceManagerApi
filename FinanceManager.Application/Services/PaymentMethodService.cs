@@ -5,6 +5,7 @@ using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
+using FinanceManager.Application.Validators.PaymentMethodValidator;
 using FluentValidation;
 
 namespace FinanceManager.Application.Services
@@ -12,12 +13,19 @@ namespace FinanceManager.Application.Services
     public class PaymentMethodService : IPaymentMethodService
     {
         private readonly IPaymentMethodRepository _paymentMethodRepository;
+        private readonly IValidator<PaymentMethodCreateDto> _createValidator;
+        private readonly IValidator<PaymentMethodUpdateDto> _updateValidator;
   
 
-        public PaymentMethodService(IPaymentMethodRepository paymentMethodRepository
+        public PaymentMethodService(
+            IPaymentMethodRepository paymentMethodRepository,
+            IValidator<PaymentMethodCreateDto> createValidator,
+             IValidator<PaymentMethodUpdateDto> updateValidator
           )
         {
             _paymentMethodRepository = paymentMethodRepository;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         
         }
         public async Task<ServiceResponse<IEnumerable<PaymentMethodResponseDto>>> GetAllPaymentMethodsAsync()
@@ -63,15 +71,15 @@ namespace FinanceManager.Application.Services
 
         public async Task<ServiceResponse<PaymentMethodResponseDto>> AddPaymentMethodAsync(PaymentMethodCreateDto paymentMethodCreateDto)
         {
-          
 
-            //var validationResult = _createValidator.Validate(paymentMethodCreateDto);
 
-            //if (!validationResult.IsValid)
-            //{
+            var validationResult = _createValidator.Validate(paymentMethodCreateDto);
 
-            //    throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
-            //}
+            if (!validationResult.IsValid)
+            {
+
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
 
             if (await _paymentMethodRepository.ExistsByNameAsync(paymentMethodCreateDto.Name))
                 throw new CustomValidationException(new[] { "Payment method with this name already exists." });
@@ -90,19 +98,19 @@ namespace FinanceManager.Application.Services
         }
         public async Task<ServiceResponse<PaymentMethodResponseDto>> UpdatePaymentMethodAsync(Guid id, PaymentMethodUpdateDto paymentMethodUpdateDto)
         {
+            var validationResult = _updateValidator.Validate(paymentMethodUpdateDto);
+
+            if (!validationResult.IsValid)
+            {
+
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
             var paymentMethodFromDb = await _paymentMethodRepository.GetByIdAsync(id);
             if (paymentMethodFromDb == null)
             {
                 throw new NotFoundException("Payment Method doesn't exist");
             }
 
-            //var validationResult = _updateValidator.Validate(paymentMethodUpdateDto);
-
-            //if (!validationResult.IsValid)
-            //{
-
-            //    throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
-            //}
 
 
             paymentMethodFromDb.UpdateEntity(paymentMethodUpdateDto);

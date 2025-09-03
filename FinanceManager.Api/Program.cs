@@ -3,9 +3,17 @@ using System.Reflection.PortableExecutable;
 using System.Security.Claims;
 using System.Text;
 using FinanceManager.Api.Middlewares;
+using FinanceManager.Application.Dtos.ApplicationUser;
+using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
+using FinanceManager.Application.Validators.AuthValidator;
+using FinanceManager.Application.Validators.PaymentMethodValidator;
+using FinanceManager.Application.Validators.TransactionCategoryValidator;
+using FinanceManager.Application.Validators.TransactionRecordValidator;
 using FinanceManager.Domain.Models;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.Repositories;
@@ -21,7 +29,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(); ;
 
 builder.Services.AddEndpointsApiExplorer();
 //It makes Swagger aware of JWT authentication and enables you to test secured endpoints directly in Swagger UI.
@@ -100,29 +108,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-// Disable automatic model state validation
-//builder.Services.AddControllers()
-//    .ConfigureApiBehaviorOptions(options =>
-//    {
-//        options.SuppressModelStateInvalidFilter = true;
-//    });
+//Disable automatic model state validation
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
 
+
+builder.Services.AddValidatorsFromAssembly(typeof(TransactionCategoryCreateDtoValidator).Assembly);
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-
 builder.Services.AddScoped<ITransactionCategoryService, TransactionCategoryService>();
 builder.Services.AddScoped<ITransactionCategoryRepository, TransactionCategoryRepository>();
-//builder.Services.AddTransient<IValidator<TransactionCategoryCreateDto>, TransactionCategoryCreateDtoValidator>();
-//builder.Services.AddTransient<IValidator<TransactionCategoryUpdateDto>, TransactionCategoryUpdateDtoValidator>();
 
 builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
 builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
-//builder.Services.AddTransient<IValidator<PaymentMethodCreateDto>, PaymentMethodCreateDtoValidator>();
-//builder.Services.AddTransient<IValidator<PaymentMethodUpdateDto>, PaymentMethodUpdateDtoValidator>();
-
-//builder.Services.AddValidatorsFromAssemblyContaining<PaymentMethodCreateDtoValidator>();
 
 builder.Services.AddScoped<ITransactionRecordService, TransactionRecordService>();
 builder.Services.AddScoped<ITransactionRecordRepository, TransactionRecordRepository>();

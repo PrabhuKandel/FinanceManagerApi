@@ -4,7 +4,9 @@ using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Services;
+using FinanceManager.Application.Validators.AuthValidator;
 using FinanceManager.Domain.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,15 +17,34 @@ namespace FinanceManager.Application.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         public readonly ITokenGenerator _tokenGenerator;
-        public AuthService(UserManager<ApplicationUser> userManager, ITokenGenerator tokenGenerator, RoleManager<IdentityRole> roleManager)
+        private readonly IValidator<ApplicationUserLoginDto> _loginValidator;
+        private readonly IValidator<ApplicationUserRegisterDto> _registerValidator;
+        public AuthService(
+            UserManager<ApplicationUser> userManager, 
+            ITokenGenerator tokenGenerator, 
+            RoleManager<IdentityRole> roleManager,
+            IValidator<ApplicationUserLoginDto> loginValidator,
+            IValidator<ApplicationUserRegisterDto> registerValidator
+
+
+            )
         {
             _userManager = userManager;
             _tokenGenerator = tokenGenerator;
             _roleManager = roleManager;
+            _loginValidator = loginValidator;
+            _registerValidator = registerValidator;
         }
 
         public async Task<ServiceResponse<string>> RegisterAsync(ApplicationUserRegisterDto registerUser)
         {
+            var validationResult = _registerValidator.Validate(registerUser);
+
+            if (!validationResult.IsValid)
+            {
+
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
             var existingUser = await _userManager.FindByEmailAsync(registerUser.Email);
             if (existingUser != null)
             {
@@ -77,6 +98,14 @@ namespace FinanceManager.Application.Services
 
         public async Task<ServiceResponse<ApplicationUserLoginResponseDto>> LoginAsync(ApplicationUserLoginDto loginUser)
         {
+            var validationResult = _loginValidator.Validate(loginUser);
+
+            if (!validationResult.IsValid)
+            {
+
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
 
             var applicationUser = await _userManager.FindByEmailAsync(loginUser.Email);
             if (applicationUser == null)

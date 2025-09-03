@@ -10,13 +10,13 @@ namespace FinanceManager.Application.Dtos.PaymentMethod
 {
     public class PaymentMethodCreateDto
     {
-        [Required]
+       
         public string Name { get; set; }
 
-        [StringLength(200, ErrorMessage = "Description cannot exceed 200 characters.")]
+        
         public string? Description { get; set; }
 
       
-        public bool IsActive { get; set; }
+        public bool ?IsActive { get; set; }
     }
 }

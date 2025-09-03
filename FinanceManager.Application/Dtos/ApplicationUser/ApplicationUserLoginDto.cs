@@ -9,10 +9,10 @@ namespace FinanceManager.Application.Dtos.ApplicationUser
 {
     public class ApplicationUserLoginDto
     {
-        [Required]
+       
         public string Email { get; set; }
 
-        [Required]
+      
         public string Password { get; set; }
     }
 }

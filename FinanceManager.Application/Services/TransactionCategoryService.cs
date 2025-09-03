@@ -4,7 +4,7 @@ using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
-
+using FinanceManager.Application.Validators.TransactionCategoryValidator;
 using FluentValidation;
 
 namespace FinanceManager.Application.Services
@@ -12,11 +12,19 @@ namespace FinanceManager.Application.Services
     public class TransactionCategoryService : ITransactionCategoryService
     {
         private readonly ITransactionCategoryRepository _transactionCategoryRepository;
-     
-        public TransactionCategoryService(ITransactionCategoryRepository transactionCategoryRepository)
+        private readonly IValidator<TransactionCategoryCreateDto>_createValidator;
+        private readonly IValidator<TransactionCategoryUpdateDto> _updateValidator;
+
+        public TransactionCategoryService(
+            ITransactionCategoryRepository transactionCategoryRepository
+            , IValidator<TransactionCategoryCreateDto> createValidator
+            , IValidator<TransactionCategoryUpdateDto> updateValidator
+
+            )
         {
             _transactionCategoryRepository = transactionCategoryRepository;
-        
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         public async Task<ServiceResponse<IEnumerable<TransactionCategoryResponseDto>>> GetAllTransactionCategoriesAsync()
         {
@@ -62,17 +70,14 @@ namespace FinanceManager.Application.Services
         }
         public async Task<ServiceResponse<TransactionCategoryResponseDto>> AddTransactionCategoryAsync(TransactionCategoryCreateDto transactionCategoryCreateDto)
         {
-            
 
+            var validationResult = _createValidator.Validate(transactionCategoryCreateDto);
 
-            //Default validation is used for now
-            //var validationResult = _createValidator.Validate(transactionCategoryCreateDto);
+            if (!validationResult.IsValid)
+                {
 
-            //if (!validationResult.IsValid)
-            //{
-                
-            //    throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
-            //}
+                    throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+                }
 
             if (await _transactionCategoryRepository.ExistsByNameAsync(transactionCategoryCreateDto.Name))
                 throw new CustomValidationException(new[] { "Transaction category name already exists." });
@@ -92,21 +97,21 @@ namespace FinanceManager.Application.Services
 
         public async Task<ServiceResponse<TransactionCategoryResponseDto>> UpdateTransactionCategoryAsync(Guid id,TransactionCategoryUpdateDto transactionCategoryUpdateDto)
         {
+            var validationResult = _updateValidator.Validate(transactionCategoryUpdateDto);
+
+            if (!validationResult.IsValid)
+            {
+
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
             var transactionCategoryFromDb = await _transactionCategoryRepository.GetByIdAsync(id);
             if (transactionCategoryFromDb == null)
             {
                 throw new NotFoundException("Transaction category doesn't exist");
             }
-            
-            //var validationResult = _updateValidator.Validate(transactionCategoryUpdateDto);
 
-            //if (!validationResult.IsValid)
-            //{
-                
-            //    throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
-            //}
+      
 
-            
             transactionCategoryFromDb.UpdateEntity(transactionCategoryUpdateDto);
 
             await _transactionCategoryRepository.UpdateAsync(transactionCategoryFromDb);

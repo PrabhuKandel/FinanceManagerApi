@@ -30,7 +30,7 @@ namespace FinanceManager.Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
             return await BaseQuery()
-           .FirstOrDefaultAsync(tr => tr.Id == transactionRecord.Id);
+           .FirstOrDefaultAsync(tr => tr.Id == transactionRecord.Id);   
            
                 
         }

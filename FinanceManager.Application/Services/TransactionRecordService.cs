@@ -1,10 +1,14 @@
 ﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
+using FinanceManager.Application.Validators.TransactionCategoryValidator;
+using FinanceManager.Application.Validators.TransactionRecordValidator;
 using FinanceManager.Domain.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,12 +21,17 @@ namespace FinanceManager.Application.Services
         public readonly IPaymentMethodRepository _paymentMethodRepository;
         public readonly IUserContext _userContext;
         public readonly UserManager<ApplicationUser> _userManager;
+        private readonly IValidator<TransactionRecordCreateDto> _createValidator;
+        private readonly IValidator<TransactionRecordUpdateDto> _updateValidator;
         public TransactionRecordService(
             ITransactionRecordRepository transactionRecordRepository,
             ITransactionCategoryRepository transactionCategoryRepository,
             IPaymentMethodRepository paymentMethodRepository,
             IUserContext userContext,
-            UserManager<ApplicationUser> userManager
+            UserManager<ApplicationUser> userManager,
+            IValidator<TransactionRecordCreateDto> createValidator,
+            IValidator<TransactionRecordUpdateDto> updateValidator
+
 
             )
         {
@@ -32,6 +41,8 @@ namespace FinanceManager.Application.Services
             _userContext = userContext;
             _userManager = userManager;
             _userManager = userManager;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
         public async Task<ServiceResponse<IEnumerable<TransactionRecordResponseDto>>> GetAllTransactionRecordsAsync()
         {
@@ -97,7 +108,16 @@ namespace FinanceManager.Application.Services
         }
         public async  Task<ServiceResponse<TransactionRecordResponseDto>> AddTransactionRecordAsync(TransactionRecordCreateDto transactionRecordCreateDto)
         {
-            
+
+            var validationResult = _createValidator.Validate(transactionRecordCreateDto);
+
+            if (!validationResult.IsValid)
+            {
+
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
+
 
             if (!await _transactionCategoryRepository.ExistByIdAsync(transactionRecordCreateDto.TransactionCategoryId))
                 throw new CustomValidationException(new[] { "Invalid Transaction Category" });
@@ -122,6 +142,14 @@ namespace FinanceManager.Application.Services
         }
         public async Task<ServiceResponse<TransactionRecordResponseDto>> UpdateTransactionRecordAsync(Guid id, TransactionRecordUpdateDto transactionRecordUpdateDto)
         {
+            var validationResult = _updateValidator.Validate(transactionRecordUpdateDto);
+
+            if (!validationResult.IsValid)
+            {
+
+                throw new CustomValidationException(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var transactionRecordFromDb = await _transactionRecordRepository.GetByIdAsync(id);
             if (transactionRecordFromDb == null)
             {

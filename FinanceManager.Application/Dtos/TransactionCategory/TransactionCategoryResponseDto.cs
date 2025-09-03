@@ -15,7 +15,6 @@ namespace FinanceManager.Application.Dtos.TransactionCategory
         public string Name { get; set; }
         public string? Description { get; set; }
 
-        [JsonConverter(typeof(JsonStringEnumConverter))]
         public CategoryType Type { get; set; }
     }
 }
