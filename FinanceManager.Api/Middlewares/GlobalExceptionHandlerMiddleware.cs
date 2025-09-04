@@ -11,12 +11,12 @@ namespace FinanceManager.Api.Middlewares
     public class GlobalExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next; // pointer to the next middleware
-        private readonly ILogger<GlobalExceptionHandlerMiddleware> _logger;
+     
 
         public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
         {
             _next = next;
-            _logger = logger;
+           
         }
 
         //Calls that method for each HTTP request that reaches this middleware in the pipeline.
