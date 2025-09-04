@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
-using Azure;
-using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Application.Exceptions;
+﻿using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Application.Features.TransactionRecords.Commands;
+using FinanceManager.Application.Features.TransactionRecords.Queries;
 using FinanceManager.Application.Interfaces.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,21 +11,15 @@ namespace FinanceManager.Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class TransactionRecordController : ControllerBase
+    public class TransactionRecordController(IMediator _mediator) : ControllerBase
     {
-        private readonly ITransactionRecordService _transactionRecordService;
-        public TransactionRecordController(ITransactionRecordService transactionRecordService)
-        {
-            _transactionRecordService = transactionRecordService;
-
-        }
+  
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             
-            var response = await _transactionRecordService.GetAllTransactionRecordsAsync();
-
+            var response = await _mediator.Send(new GetAllTransactionRecordsQuery());
             return Ok(response);
         }
 
@@ -35,7 +28,7 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
            
-            var response = await _transactionRecordService.GetTransactionRecordByIdAsync(id);
+            var response = await _mediator.Send(new GetTransactionRecordByIdQuery(id));
 
             return Ok(response);
 
@@ -45,8 +38,8 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> Create([FromBody] TransactionRecordCreateDto transactionRecordCreateDto)
         {
             
-            var response = await _transactionRecordService.AddTransactionRecordAsync(transactionRecordCreateDto);
-            return CreatedAtAction(nameof(GetById), new { id = response.Data.Id }, response);
+            var response = await _mediator.Send(new CreateTransactionRecordCommand(transactionRecordCreateDto));
+            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
 
         }
 
@@ -55,7 +48,7 @@ namespace FinanceManager.Api.Controllers
         {
 
           
-            var response = await _transactionRecordService.UpdateTransactionRecordAsync(id, transactionRecordUpdateDto );
+            var response = await _mediator.Send(new UpdateTransactionRecordCommand(id, transactionRecordUpdateDto));
             return Ok(response);
             
 
@@ -69,7 +62,7 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
           
-            var response = await _transactionRecordService.DeleteTransactionRecordAsync(id);
+            var response = await _mediator.Send(new DeleteTransactionRecordCommand(id));
             return Ok(response);
          
 
@@ -85,8 +78,8 @@ namespace FinanceManager.Api.Controllers
              [FromQuery] DateTime transactionDate
             )
         {
-            var userId = User?.FindFirst("userId")?.Value;
-            var response = await _transactionRecordService.FilterTransactionRecordsAsync(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
+
+            var response = await _mediator.Send( new FilterTransactionRecordsQuery(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate));
             return Ok(response);
         }
 

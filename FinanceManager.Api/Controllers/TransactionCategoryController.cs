@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Azure;
 using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Application.Features.TransactionCategory.Commands;
-using FinanceManager.Application.Features.TransactionCategory.Queries;
+using FinanceManager.Application.Features.TransactionCategories.Commands;
+using FinanceManager.Application.Features.TransactionCategories.Queries;
 using FinanceManager.Application.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

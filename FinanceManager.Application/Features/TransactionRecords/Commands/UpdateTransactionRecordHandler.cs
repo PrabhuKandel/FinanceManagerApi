@@ -1,0 +1,58 @@
+﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Interfaces.Services;
+using FinanceManager.Application.Mapping;
+using FinanceManager.Domain.Entities;
+using FinanceManager.Infrastructure.Data;
+using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+namespace FinanceManager.Application.Features.TransactionRecords.Commands
+{
+    public class UpdateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext, UserManager<ApplicationUser> _userManager) : IRequestHandler<UpdateTransactionRecordCommand, TransactionRecordResponseDto>
+    {
+        public async Task<TransactionRecordResponseDto> Handle(UpdateTransactionRecordCommand request, CancellationToken cancellationToken)
+        {
+
+            var transactionRecordFromDb = await _context.TransactionRecords.FindAsync(request.Id);
+            if (transactionRecordFromDb == null)
+            {
+                throw new NotFoundException("Transaction record doesn't exist");
+            }
+
+            if (!await IsUserAdmin(_userContext.UserId))
+            {
+                if (transactionRecordFromDb.CreatedByApplicationUserId != _userContext.UserId)
+                {
+                    throw new UnauthorizedAccessException("You can't access this record.");
+                }
+            }
+
+            if (!await _context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
+                throw new CustomValidationException("Invalid Transaction Category");
+
+            if (!await _context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
+                throw new CustomValidationException("Invalid Payment Method");
+
+            transactionRecordFromDb.UpdatedByApplicationUserId = _userContext.UserId;
+
+
+            transactionRecordFromDb.UpdateEntity(request.transactionRecord);
+
+            await _context.SaveChangesAsync();
+            return  transactionRecordFromDb.ToResponseDto();
+
+
+        }
+        private async Task<bool> IsUserAdmin(String userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null) return false;
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.Contains(RoleConstants.Admin);
+        }
+
+    }
+}

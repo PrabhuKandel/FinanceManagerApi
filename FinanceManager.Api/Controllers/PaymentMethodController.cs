@@ -1,6 +1,6 @@
 ﻿using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Features.PaymentMethod.Commands;
-using FinanceManager.Application.Features.PaymentMethod.Queries;
+using FinanceManager.Application.Features.PaymentMethods.Commands;
+using FinanceManager.Application.Features.PaymentMethods.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
