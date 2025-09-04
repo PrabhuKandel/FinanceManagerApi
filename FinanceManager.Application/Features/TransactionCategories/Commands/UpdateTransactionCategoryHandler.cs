@@ -1,17 +1,16 @@
-﻿using FinanceManager.Application.Dtos.TransactionCategory;
+﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Commands.CreateTransactionCategory
 {
-    public  class UpdateTransactionCategoryHandler(ApplicationDbContext _context) : IRequestHandler<UpdateTransactionCategoryCommand, TransactionCategoryResponseDto>
+    public  class UpdateTransactionCategoryHandler(ApplicationDbContext _context) : IRequestHandler<UpdateTransactionCategoryCommand, OperationResult<TransactionCategoryResponseDto>>
     {
 
-        public async Task<TransactionCategoryResponseDto> Handle(UpdateTransactionCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TransactionCategoryResponseDto>> Handle(UpdateTransactionCategoryCommand request, CancellationToken cancellationToken)
         {
 
             var transactionCategory = await _context.TransactionCategories.FindAsync(request.Id);
@@ -21,8 +20,12 @@ namespace FinanceManager.Application.Features.TransactionCategories.Commands.Cre
             }
 
             transactionCategory.UpdateEntity(request.transactionCategory);
+            return new OperationResult<TransactionCategoryResponseDto>
+            {
 
-            return transactionCategory.ToResponseDto();
+                Message = "Transaction category updated",
+                Data = transactionCategory.ToResponseDto()
+            };
 
 
         }

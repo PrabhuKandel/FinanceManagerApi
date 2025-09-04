@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public class GetTransactionRecordByIdHandler (ApplicationDbContext _context,IUserContext _userContext,UserManager<ApplicationUser> _userManager): IRequestHandler<GetTransactionRecordByIdQuery, TransactionRecordResponseDto>
+    public class GetTransactionRecordByIdHandler (ApplicationDbContext _context,IUserContext _userContext,UserManager<ApplicationUser> _userManager): IRequestHandler<GetTransactionRecordByIdQuery, OperationResult<TransactionRecordResponseDto>>
     {
-        public async Task<TransactionRecordResponseDto> Handle(GetTransactionRecordByIdQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TransactionRecordResponseDto>> Handle(GetTransactionRecordByIdQuery request, CancellationToken cancellationToken)
         {
             
             var transactionRecord = await _context.TransactionRecords
@@ -36,7 +36,15 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                     throw new UnauthorizedAccessException("You can't access this record.");
                 }
             }
-                 return  transactionRecord.ToResponseDto(isAdmin);
+                var transactionRecordDto =   transactionRecord.ToResponseDto(isAdmin);
+             return new OperationResult<TransactionRecordResponseDto>
+            {
+
+                Data = transactionRecordDto,
+                Message = "Transaction record  retrieved successfully"
+
+
+            };
 
         }
         private async Task<bool> IsUserAdmin(String userId)

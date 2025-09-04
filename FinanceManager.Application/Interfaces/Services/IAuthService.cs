@@ -10,10 +10,10 @@ namespace FinanceManager.Application.Interfaces.Services
 {
     public interface IAuthService
     {
-        Task<ServiceResponse<string>> RegisterAsync(ApplicationUserRegisterDto registerUser);
-        Task<ServiceResponse<ApplicationUserLoginResponseDto>> LoginAsync(ApplicationUserLoginDto loginUser);
-        Task<ServiceResponse<TokenResponseDto>> RefreshTokenAsync(string refreshToken);
-        Task<ServiceResponse<string>> LogoutAsync(string userId);
+        Task<OperationResult<string>> RegisterAsync(ApplicationUserRegisterDto registerUser);
+        Task<OperationResult<ApplicationUserLoginResponseDto>> LoginAsync(ApplicationUserLoginDto loginUser);
+        Task<OperationResult<TokenResponseDto>> RefreshTokenAsync(string refreshToken);
+        Task<OperationResult<string>> LogoutAsync(string userId);
         
         }
 }

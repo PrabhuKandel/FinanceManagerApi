@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FinanceManager.Application.Common
 {
-    public class ServiceResponse<T>
+    public class OperationResult<T>
     {
       
         public string ?Message { get; set; }

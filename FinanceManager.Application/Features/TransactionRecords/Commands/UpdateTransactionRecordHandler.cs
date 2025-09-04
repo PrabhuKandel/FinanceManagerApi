@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public class UpdateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext, UserManager<ApplicationUser> _userManager) : IRequestHandler<UpdateTransactionRecordCommand, TransactionRecordResponseDto>
+    public class UpdateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext, UserManager<ApplicationUser> _userManager) : IRequestHandler<UpdateTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
     {
-        public async Task<TransactionRecordResponseDto> Handle(UpdateTransactionRecordCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TransactionRecordResponseDto>> Handle(UpdateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
 
             var transactionRecordFromDb = await _context.TransactionRecords.FindAsync(request.Id);
@@ -42,8 +42,13 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             transactionRecordFromDb.UpdateEntity(request.transactionRecord);
 
             await _context.SaveChangesAsync();
-            return  transactionRecordFromDb.ToResponseDto();
+           
+            return new OperationResult<TransactionRecordResponseDto>
+            {
 
+                Message = "Transaction category updated",
+                Data = transactionRecordFromDb.ToResponseDto()
+            };
 
         }
         private async Task<bool> IsUserAdmin(String userId)

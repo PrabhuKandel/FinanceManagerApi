@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public class GetAllTransactionRecordsHandler(ApplicationDbContext _context,UserManager<ApplicationUser> _userManager,IUserContext _userContext) : IRequestHandler<GetAllTransactionRecordsQuery, IEnumerable<TransactionRecordResponseDto>>
+    public class GetAllTransactionRecordsHandler(ApplicationDbContext _context,UserManager<ApplicationUser> _userManager,IUserContext _userContext) : IRequestHandler<GetAllTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
     {
-        public async Task<IEnumerable<TransactionRecordResponseDto>> Handle(GetAllTransactionRecordsQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsQuery request, CancellationToken cancellationToken)
         {
             var transactionRecordsFromDb =  await  _context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
@@ -33,9 +33,17 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                     .ToList();
             }
 
-           return transactionRecordsFromDb.ToResponseDtoList(isAdmin);
+           var  transactionRecordsDtos =  transactionRecordsFromDb.ToResponseDtoList(isAdmin);
+            return new OperationResult<IEnumerable<TransactionRecordResponseDto>>
+            {
 
-           
+
+                Data = transactionRecordsDtos,
+                Message = "Transaction records retrieved successfully"
+
+            };
+
+
 
         }
         private async Task<bool> IsUserAdmin(String userId)

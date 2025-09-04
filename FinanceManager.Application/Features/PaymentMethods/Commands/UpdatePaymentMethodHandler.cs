@@ -1,17 +1,16 @@
-﻿using FinanceManager.Application.Dtos.PaymentMethod;
+﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
 {
-    public  class UpdatePaymentMethodHandler(ApplicationDbContext _context) : IRequestHandler<UpdatePaymentMethodCommand, PaymentMethodResponseDto>
+    public  class UpdatePaymentMethodHandler(ApplicationDbContext _context) : IRequestHandler<UpdatePaymentMethodCommand, OperationResult<PaymentMethodResponseDto>>
     {
 
-        public async Task<PaymentMethodResponseDto> Handle(UpdatePaymentMethodCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<PaymentMethodResponseDto>> Handle(UpdatePaymentMethodCommand request, CancellationToken cancellationToken)
         {
 
             var paymentMethod = await _context.PaymentMethods.FindAsync(request.Id);
@@ -21,8 +20,12 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands.CreatePaym
             }
 
             paymentMethod.UpdateEntity(request.paymentMethod);
+            return new OperationResult<PaymentMethodResponseDto>
+            {
 
-            return paymentMethod.ToResponseDto();
+                Message = "Payment method updated",
+                Data = paymentMethod.ToResponseDto()
+            };
 
 
         }

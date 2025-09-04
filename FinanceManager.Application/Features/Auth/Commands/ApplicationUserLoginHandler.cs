@@ -13,9 +13,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FinanceManager.Application.Features.Auth.Commands
 {
-    public class ApplicationUserLoginHandler(UserManager<ApplicationUser> _userManager,ITokenGenerator _tokenGenerator) : IRequestHandler<ApplicationUserLoginCommand, ApplicationUserLoginResponseDto>
+    public class ApplicationUserLoginHandler(UserManager<ApplicationUser> _userManager,ITokenGenerator _tokenGenerator) : IRequestHandler<ApplicationUserLoginCommand, OperationResult<ApplicationUserLoginResponseDto>>
     {
-        public async Task<ApplicationUserLoginResponseDto> Handle(ApplicationUserLoginCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<ApplicationUserLoginResponseDto>> Handle(ApplicationUserLoginCommand request, CancellationToken cancellationToken)
         {
              var applicationUser = await _userManager.FindByEmailAsync(request.loginUser.Email);
             if (applicationUser == null)
@@ -36,16 +36,19 @@ namespace FinanceManager.Application.Features.Auth.Commands
             await _userManager.UpdateAsync(applicationUser);
 
 
+            return new OperationResult<ApplicationUserLoginResponseDto>
+            {
 
-            return  new ApplicationUserLoginResponseDto { 
-      
+                Message = "Login Successfull!!",
+                Data = new ApplicationUserLoginResponseDto
+                {
                     UserId = applicationUser.Id,
                     Email = applicationUser.Email,
                     FirstName = applicationUser.FirstName,
                     LastName = applicationUser.LastName,
                     AccessToken = accessToken,
                     RefreshToken = refreshToken,
-                
+                }
             };
         }
     }

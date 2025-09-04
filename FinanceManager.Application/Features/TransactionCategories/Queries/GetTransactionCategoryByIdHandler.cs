@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Mapping;
@@ -11,11 +7,11 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Queries
 {
-    public class GetTransactionCategoryByIdHandler(ApplicationDbContext _context) : IRequestHandler<GetTransactionCategoryByIdQuery, TransactionCategoryResponseDto>
+    public class GetTransactionCategoryByIdHandler(ApplicationDbContext _context) : IRequestHandler<GetTransactionCategoryByIdQuery, OperationResult<TransactionCategoryResponseDto>>
     {
 
 
-        public async Task<TransactionCategoryResponseDto> Handle(GetTransactionCategoryByIdQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TransactionCategoryResponseDto>> Handle(GetTransactionCategoryByIdQuery request, CancellationToken cancellationToken)
         {
             var transactionCategory = await _context.TransactionCategories.FindAsync(request.Id);
             if (transactionCategory == null)
@@ -24,8 +20,15 @@ namespace FinanceManager.Application.Features.TransactionCategories.Queries
             }
 
             var transactionCategoryDto = transactionCategory.ToResponseDto();
-            
-            return transactionCategory.ToResponseDto();
+
+            return new OperationResult<TransactionCategoryResponseDto>
+            {
+
+                Data = transactionCategory.ToResponseDto(),
+                Message = "Transaction category  retrieved successfully"
+
+
+            };
         }
     }
 }

@@ -13,7 +13,7 @@ namespace FinanceManager.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
    
-    public class AuthController(IMediator _mediator,UserManager<ApplicationUser> _userManager,IAuthService _authService) : ControllerBase
+    public class AuthController(IMediator _mediator ,IAuthService _authService) : ControllerBase
     {
     
 
@@ -54,7 +54,7 @@ namespace FinanceManager.Api.Controllers
 
             var userId = User?.FindFirst("userId")?.Value;
             if (string.IsNullOrEmpty(userId))
-                return BadRequest(new ServiceResponse<string> { Data = null, Message = "User not found" });
+                return BadRequest(new OperationResult<string> { Data = null, Message = "User not found" });
             var response = await _authService.LogoutAsync(userId);
             return Ok(response);
         }

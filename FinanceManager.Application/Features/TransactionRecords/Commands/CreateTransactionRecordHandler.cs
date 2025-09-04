@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Services;
@@ -14,9 +15,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public class CreateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext) : IRequestHandler<CreateTransactionRecordCommand, TransactionRecordResponseDto>
+    public class CreateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext) : IRequestHandler<CreateTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
     {
-        public async Task<TransactionRecordResponseDto> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TransactionRecordResponseDto>> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
 
 
@@ -38,7 +39,12 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
                 .Include(tr => tr.PaymentMethod)
                  .FirstOrDefaultAsync(tr => tr.Id == entity.Id);
 
-            return savedEntity.ToResponseDto()
+            return new OperationResult<TransactionRecordResponseDto>
+            {
+
+                Message = "New transaction category added",
+                Data = savedEntity.ToResponseDto()
+            };
 
             ;
         }

@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Dtos.PaymentMethod;
+﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Mapping;
 using FinanceManager.Domain.Entities;
@@ -8,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands
 {
-    public  class CreatePaymentMethodHandler(ApplicationDbContext _context) : IRequestHandler<CreatePaymentMethodCommand, PaymentMethodResponseDto>
+    public  class CreatePaymentMethodHandler(ApplicationDbContext _context) : IRequestHandler<CreatePaymentMethodCommand, OperationResult<PaymentMethodResponseDto>>
     {
 
-        public async Task<PaymentMethodResponseDto> Handle(CreatePaymentMethodCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<PaymentMethodResponseDto>> Handle(CreatePaymentMethodCommand request, CancellationToken cancellationToken)
         {
 
 
@@ -21,7 +22,13 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands
             var entity = request.paymentMethod.ToEntity();
             await _context.PaymentMethods.AddAsync(entity);
             await _context.SaveChangesAsync(cancellationToken);
-            return entity.ToResponseDto();
+          
+            return new OperationResult<PaymentMethodResponseDto>
+            {
+
+                Message = "New payment method added",
+                Data = entity.ToResponseDto()
+            };
 
 
         }

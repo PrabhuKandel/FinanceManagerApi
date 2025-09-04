@@ -35,7 +35,7 @@ namespace FinanceManager.Application.Services
             _registerValidator = registerValidator;
         }
 
-        public async Task<ServiceResponse<string>> RegisterAsync(ApplicationUserRegisterDto registerUser)
+        public async Task<OperationResult<string>> RegisterAsync(ApplicationUserRegisterDto registerUser)
         {
             var validationResult = _registerValidator.Validate(registerUser);
 
@@ -85,7 +85,7 @@ namespace FinanceManager.Application.Services
                 await _userManager.AddToRoleAsync(applicationUser, RoleConstants.User);
             }
 
-                return new ServiceResponse<String>
+                return new OperationResult<String>
                 {
 
                     Data = null,
@@ -95,7 +95,7 @@ namespace FinanceManager.Application.Services
                 };
         }
 
-        public async Task<ServiceResponse<ApplicationUserLoginResponseDto>> LoginAsync(ApplicationUserLoginDto loginUser)
+        public async Task<OperationResult<ApplicationUserLoginResponseDto>> LoginAsync(ApplicationUserLoginDto loginUser)
         {
             var validationResult = _loginValidator.Validate(loginUser);
 
@@ -126,7 +126,7 @@ namespace FinanceManager.Application.Services
 
 
 
-            return new ServiceResponse<ApplicationUserLoginResponseDto>
+            return new OperationResult<ApplicationUserLoginResponseDto>
             {       
 
                 Message = "Login Successfull!!",
@@ -143,7 +143,7 @@ namespace FinanceManager.Application.Services
 
         }
 
-        public async Task<ServiceResponse<TokenResponseDto>> RefreshTokenAsync(string refreshToken)
+        public async Task<OperationResult<TokenResponseDto>> RefreshTokenAsync(string refreshToken)
         {
 
             if (string.IsNullOrEmpty(refreshToken))
@@ -166,7 +166,7 @@ namespace FinanceManager.Application.Services
             user.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
             await _userManager.UpdateAsync(user);
 
-            return new ServiceResponse<TokenResponseDto>
+            return new OperationResult<TokenResponseDto>
             {
 
                 Message = "Token Refreshed!!",
@@ -180,7 +180,7 @@ namespace FinanceManager.Application.Services
 
         }
 
-        public async Task<ServiceResponse<string>> LogoutAsync(string userId)
+        public async Task<OperationResult<string>> LogoutAsync(string userId)
         {
 
             var user = await _userManager.FindByIdAsync(userId);
@@ -194,7 +194,7 @@ namespace FinanceManager.Application.Services
             user.RefreshTokenExpiresAtUtc = null;
             await _userManager.UpdateAsync(user);
 
-            return new ServiceResponse<string>
+            return new OperationResult<string>
             {
                 Message = "Logout Successfull!!",
                 Data = null

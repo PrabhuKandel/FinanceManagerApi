@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Mapping;
@@ -11,21 +7,27 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Queries
 {
-    public class GetPaymentMethodByIdHandler(ApplicationDbContext _context) : IRequestHandler<GetPaymentMethodByIdQuery, PaymentMethodResponseDto>
+    public class GetPaymentMethodByIdHandler(ApplicationDbContext _context) : IRequestHandler<GetPaymentMethodByIdQuery, OperationResult<PaymentMethodResponseDto>>
     {
 
 
-        public async Task<PaymentMethodResponseDto> Handle(GetPaymentMethodByIdQuery request, CancellationToken cancellationToken)
+        public async Task<OperationResult<PaymentMethodResponseDto>> Handle(GetPaymentMethodByIdQuery request, CancellationToken cancellationToken)
         {
             var paymentMethod = await _context.PaymentMethods.FindAsync(request.Id);
             if (paymentMethod == null)
             {
-                throw new NotFoundException("Payment Method not found");
+                throw new NotFoundException("Payment method not found");
             }
 
-            var paymentMethodDto = paymentMethod.ToResponseDto();
-            
-            return paymentMethod.ToResponseDto();
+           
+            return new OperationResult<PaymentMethodResponseDto>
+            {
+
+                Data = paymentMethod.ToResponseDto(),
+                Message = "Payment Method retrieved successfully"
+
+
+            };
         }
     }
 }

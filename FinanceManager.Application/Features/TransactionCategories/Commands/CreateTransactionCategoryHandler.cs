@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Dtos.TransactionCategory;
+﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Mapping;
 using FinanceManager.Domain.Entities;
@@ -8,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Commands
 {
-    public  class CreateTransactionCategoryHandler(ApplicationDbContext _context) : IRequestHandler<CreateTransactionCategoryCommand, TransactionCategoryResponseDto>
+    public  class CreateTransactionCategoryHandler(ApplicationDbContext _context) : IRequestHandler<CreateTransactionCategoryCommand, OperationResult<TransactionCategoryResponseDto>>
     {
 
-        public async Task<TransactionCategoryResponseDto> Handle(CreateTransactionCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<TransactionCategoryResponseDto>> Handle(CreateTransactionCategoryCommand request, CancellationToken cancellationToken)
         {
 
 
@@ -21,7 +22,13 @@ namespace FinanceManager.Application.Features.TransactionCategories.Commands
             var entity = request.transactionCategory.ToEntity();
             await _context.TransactionCategories.AddAsync(entity);
             await _context.SaveChangesAsync(cancellationToken);
-            return entity.ToResponseDto();
+
+            return new OperationResult<TransactionCategoryResponseDto>
+            {
+
+                Message = "New transaction category added",
+                Data = entity.ToResponseDto()
+            };
 
 
         }

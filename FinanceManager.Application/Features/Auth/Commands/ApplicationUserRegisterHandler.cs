@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FinanceManager.Application.Features.Auth.Commands
 {
-    public class ApplicationUserRegisterHandler(UserManager<ApplicationUser> _userManager, RoleManager<IdentityRole> _roleManager ) : IRequestHandler<ApplicationUserRegisterCommand, string>
+    public class ApplicationUserRegisterHandler(UserManager<ApplicationUser> _userManager, RoleManager<IdentityRole> _roleManager ) : IRequestHandler<ApplicationUserRegisterCommand, OperationResult<string>>
     {
-        public async Task<string> Handle(ApplicationUserRegisterCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<string>> Handle(ApplicationUserRegisterCommand request, CancellationToken cancellationToken)
         {
             var existingUser = await _userManager.FindByEmailAsync(request.registerUser.Email);
             if (existingUser != null)
@@ -50,7 +50,14 @@ namespace FinanceManager.Application.Features.Auth.Commands
             {
                 await _userManager.AddToRoleAsync(applicationUser, RoleConstants.User);
             }
-             return "User registered successfully.";
+            return new OperationResult<String>
+            {
+
+                Data = null,
+                Message = "Registration Successfulll!!"
+
+
+            };
 
         }
     }
