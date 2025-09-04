@@ -11,7 +11,7 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethod.Queries
 {
-    public class GetMethodByIdHandler(ApplicationDbContext _context) : IRequestHandler<GetPaymentMethodByIdQuery, PaymentMethodResponseDto>
+    public class GetPaymentMethodByIdHandler(ApplicationDbContext _context) : IRequestHandler<GetPaymentMethodByIdQuery, PaymentMethodResponseDto>
     {
 
 
