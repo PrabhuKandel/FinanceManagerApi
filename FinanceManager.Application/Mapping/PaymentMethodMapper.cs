@@ -10,7 +10,7 @@ namespace FinanceManager.Application.Mapping
 {
     public  static class PaymentMethodMapper
     {
-        public static PaymentMethodResponseDto ToResponseDto(this PaymentMethod entity)
+        public static PaymentMethodResponseDto? ToResponseDto(this PaymentMethod entity)
         {
             if (entity == null) return null;
 
@@ -19,10 +19,10 @@ namespace FinanceManager.Application.Mapping
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
-                IsActive = entity.IsActive??true,
+                IsActive = entity.IsActive,
             };
         }
-        public static List<PaymentMethodResponseDto> ToResponseDtoList(this IEnumerable<PaymentMethod> entities)
+        public static List<PaymentMethodResponseDto?>? ToResponseDtoList(this IEnumerable<PaymentMethod> entities)
         {
             return entities?.Select(e => e.ToResponseDto()).ToList();
         }
@@ -33,7 +33,7 @@ namespace FinanceManager.Application.Mapping
             {
                 Name = dto.Name,
                 Description = dto.Description,
-                IsActive = dto.IsActive,
+                IsActive = dto.IsActive??true,
             };
         }
       
@@ -45,7 +45,7 @@ namespace FinanceManager.Application.Mapping
           
             entity.Name = dto.Name;
             entity.Description = dto.Description;
-            entity.IsActive = dto.IsActive;
+            entity.IsActive = dto.IsActive ?? true;
         }
 
 

@@ -1,6 +1,4 @@
-﻿using FinanceManager.Application.Exceptions;
-using System;
-using FinanceManager.Domain.Entities;
+﻿using FinanceManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

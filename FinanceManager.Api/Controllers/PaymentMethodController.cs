@@ -1,7 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Azure;
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Interfaces.Services;
+﻿using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Features.PaymentMethod.Commands;
+using FinanceManager.Application.Features.PaymentMethod.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -12,13 +12,13 @@ namespace FinanceManager.Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentMethodController(IPaymentMethodService paymentMethodService) : ControllerBase
+    public class PaymentMethodController( IMediator _mediator) : ControllerBase
     {
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var response = await paymentMethodService.GetAllPaymentMethodsAsync();
+            var response = await _mediator.Send(new GetAllPaymentMethodsQuery());
 
             return Ok(response);
         }
@@ -28,7 +28,7 @@ namespace FinanceManager.Api.Controllers
 
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var response = await paymentMethodService.GetPaymentMethodByIdAsync(id);
+            var response = await _mediator.Send(new GetPaymentMethodByIdQuery(id));
 
             return Ok(response);
 
@@ -40,8 +40,8 @@ namespace FinanceManager.Api.Controllers
         {
             Log.Information("Payment Create Request: {@Request}", paymentMethodCreateDto);
 
-            var response = await paymentMethodService.AddPaymentMethodAsync(paymentMethodCreateDto);
-            return CreatedAtAction(nameof(GetById), new { id = response.Data.Id }, response);
+            var response = await _mediator.Send(new CreatePaymentMethodCommand(paymentMethodCreateDto));
+            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
 
         }
 
@@ -49,12 +49,9 @@ namespace FinanceManager.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(Guid id, [FromBody] PaymentMethodUpdateDto paymentMethodUpdateDto)
         {
-           
-            var response = await paymentMethodService.UpdatePaymentMethodAsync(id, paymentMethodUpdateDto);
+            var response = await _mediator.Send(new UpdatePaymentMethodCommand(id, paymentMethodUpdateDto));
             return Ok(response);
             
-
-
         }
 
 
@@ -63,11 +60,8 @@ namespace FinanceManager.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
-
-            var response = await paymentMethodService.DeletePaymentMethodAsync(id);
+            var response = await _mediator.Send(new DeletePaymentMethodCommand(id));
             return Ok(response);
-         
-
 
 
         }

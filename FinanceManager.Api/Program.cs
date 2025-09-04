@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using FinanceManager.Api.Middlewares;
+using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
@@ -73,6 +74,7 @@ builder.Services.AddSwaggerGen(
     );
 
 
+builder.Services.AddApplicationServices();
 
 //This makes IHttpContextAccessor available for dependency injection.
 builder.Services.AddHttpContextAccessor(); 
