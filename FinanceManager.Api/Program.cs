@@ -2,13 +2,11 @@ using System.Net;
 using System.Text;
 using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.DependencyInjection;
-using FinanceManager.Application.Interfaces.Repositories;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
 using FinanceManager.Application.Validators.TransactionCategoryValidator;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
-using FinanceManager.Infrastructure.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -123,15 +121,6 @@ builder.Services.AddValidatorsFromAssembly(typeof(TransactionCategoryCreateDtoVa
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddScoped<ITransactionCategoryService, TransactionCategoryService>();
-builder.Services.AddScoped<ITransactionCategoryRepository, TransactionCategoryRepository>();
-
-builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
-builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
-
-builder.Services.AddScoped<ITransactionRecordService, TransactionRecordService>();
-builder.Services.AddScoped<ITransactionRecordRepository, TransactionRecordRepository>();
 
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IUserContext, UserContext>();

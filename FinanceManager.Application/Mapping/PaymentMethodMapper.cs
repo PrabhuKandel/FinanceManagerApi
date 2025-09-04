@@ -33,7 +33,7 @@ namespace FinanceManager.Application.Mapping
             {
                 Name = dto.Name,
                 Description = dto.Description,
-                IsActive = dto.IsActive??true,
+                IsActive = dto.IsActive,
             };
         }
       
@@ -45,7 +45,7 @@ namespace FinanceManager.Application.Mapping
           
             entity.Name = dto.Name;
             entity.Description = dto.Description;
-            entity.IsActive = dto.IsActive ?? true;
+            entity.IsActive = dto.IsActive;
         }
 
 

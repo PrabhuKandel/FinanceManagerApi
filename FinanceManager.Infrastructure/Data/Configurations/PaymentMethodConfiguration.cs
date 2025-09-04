@@ -29,7 +29,7 @@ namespace FinanceManager.Infrastructure.Data.Configurations
                    .IsRequired(false);
 
             builder.Property(pm => pm.IsActive)
-                   .IsRequired(false);
+                   .IsRequired(true);
         }
     }
     
