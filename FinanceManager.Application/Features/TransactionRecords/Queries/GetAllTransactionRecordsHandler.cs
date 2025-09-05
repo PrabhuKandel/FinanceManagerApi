@@ -11,11 +11,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public class GetAllTransactionRecordsHandler(ApplicationDbContext _context,IUserContext _userContext) : IRequestHandler<GetAllTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
+    public class GetAllTransactionRecordsHandler : IRequestHandler<GetAllTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
     {
+        private readonly ApplicationDbContext context;
+        private readonly IUserContext userContext;
+
+        public GetAllTransactionRecordsHandler(ApplicationDbContext _context,IUserContext _userContext)
+        {
+            context = _context;
+            userContext = _userContext;
+        }
+
         public async Task<OperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsQuery request, CancellationToken cancellationToken)
         {
-            var transactionRecordsFromDb =  await  _context.TransactionRecords
+            var transactionRecordsFromDb =  await  context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
                 .Include(tr => tr.PaymentMethod)
                 .Include(t => t.CreatedByApplicationUser)
@@ -25,12 +34,12 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                 throw new NotFoundException("Transaction record doesn't exist");
             }
             // Check admin status once
-            var isAdmin = _userContext.IsAdmin();
+            var isAdmin = userContext.IsAdmin();
             // Filter for non-admin users
             if (!isAdmin)
             {
                 transactionRecordsFromDb = transactionRecordsFromDb
-                    .Where(t => t.CreatedByApplicationUserId == _userContext.UserId)
+                    .Where(t => t.CreatedByApplicationUserId == userContext.UserId)
                     .ToList();
             }
 

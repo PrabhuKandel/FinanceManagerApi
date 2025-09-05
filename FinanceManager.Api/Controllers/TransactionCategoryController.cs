@@ -13,14 +13,19 @@ namespace FinanceManager.Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class TransactionCategoryController(IMediator _mediator) : ControllerBase
+    public class TransactionCategoryController : ControllerBase
     {
-      
+        private readonly IMediator mediator;
+
+        public TransactionCategoryController(IMediator _mediator)
+        {
+            mediator = _mediator;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _mediator.Send(new GetAllTransactionCategoriesQuery());
+            var response = await mediator.Send(new GetAllTransactionCategoriesQuery());
 
             return Ok(response);
         }
@@ -29,7 +34,7 @@ namespace FinanceManager.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var response = await _mediator.Send(new GetTransactionCategoryByIdQuery(id));
+            var response = await mediator.Send(new GetTransactionCategoryByIdQuery(id));
 
             return Ok(response);
 
@@ -37,19 +42,19 @@ namespace FinanceManager.Api.Controllers
         }   
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] TransactionCategoryCreateDto transactionCategoryCreateDto)
+        public async Task<IActionResult> Create(TransactionCategoryCreateDto transactionCategoryCreateDto)
         {
 
-            var response = await _mediator.Send(new CreateTransactionCategoryCommand(transactionCategoryCreateDto));
+            var response = await mediator.Send(new CreateTransactionCategoryCommand(transactionCategoryCreateDto));
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] TransactionCategoryUpdateDto transactionCategoryUpdateDto)
+        public async Task<IActionResult> Update(Guid id,  TransactionCategoryUpdateDto transactionCategoryUpdateDto)
         {
-            var response = await _mediator.Send(new UpdateTransactionCategoryCommand(id,transactionCategoryUpdateDto));
+            var response = await mediator.Send(new UpdateTransactionCategoryCommand(id,transactionCategoryUpdateDto));
             return Ok(response);
             
 
@@ -62,7 +67,7 @@ namespace FinanceManager.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var response = await _mediator.Send(new DeleteTransactionCategoryCommand(id));
+            var response = await mediator.Send(new DeleteTransactionCategoryCommand(id));
             return Ok(response);
          
 

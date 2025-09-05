@@ -82,6 +82,18 @@ builder.Services.AddApplicationServices();
 builder.Services.AddHttpContextAccessor(); 
 
 
+
+
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+//using cookies so throwing errors
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -104,15 +116,17 @@ builder.Services.AddAuthentication(options =>
         new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
         ClockSkew = TimeSpan.Zero,
-        
+
     };
 });
 
+//builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
+//    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Add Identity API endpoints (optional for minimal API support)
+//builder.Services.AddIdentityApiEndpoints<ApplicationUser>();
+
 //Disable automatic model state validation
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>

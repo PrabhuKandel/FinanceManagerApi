@@ -7,13 +7,18 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Queries
 {
-    public class GetTransactionCategoryByIdHandler(ApplicationDbContext _context) : IRequestHandler<GetTransactionCategoryByIdQuery, OperationResult<TransactionCategoryResponseDto>>
+    public class GetTransactionCategoryByIdHandler : IRequestHandler<GetTransactionCategoryByIdQuery, OperationResult<TransactionCategoryResponseDto>>
     {
+        private readonly ApplicationDbContext context;
 
+        public GetTransactionCategoryByIdHandler(ApplicationDbContext _context)
+        {
+            context = _context;
+        }
 
         public async Task<OperationResult<TransactionCategoryResponseDto>> Handle(GetTransactionCategoryByIdQuery request, CancellationToken cancellationToken)
         {
-            var transactionCategory = await _context.TransactionCategories.FindAsync(request.Id);
+            var transactionCategory = await context.TransactionCategories.FindAsync(request.Id);
             if (transactionCategory == null)
             {
                 throw new NotFoundException("Transaction category not found");

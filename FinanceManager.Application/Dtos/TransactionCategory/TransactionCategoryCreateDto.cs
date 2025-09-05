@@ -11,7 +11,7 @@ namespace FinanceManager.Application.Dtos.TransactionCategory
     public class TransactionCategoryCreateDto
     {
        
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
    
         public string? Description { get; set; }

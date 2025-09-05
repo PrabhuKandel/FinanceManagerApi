@@ -11,15 +11,20 @@ namespace FinanceManager.Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class TransactionRecordController(IMediator _mediator) : ControllerBase
+    public class TransactionRecordController : ControllerBase
     {
-  
+        private readonly IMediator mediator;
+
+        public TransactionRecordController(IMediator _mediator)
+        {
+            mediator = _mediator;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             
-            var response = await _mediator.Send(new GetAllTransactionRecordsQuery());
+            var response = await mediator.Send(new GetAllTransactionRecordsQuery());
             return Ok(response);
         }
 
@@ -28,27 +33,27 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
            
-            var response = await _mediator.Send(new GetTransactionRecordByIdQuery(id));
+            var response = await mediator.Send(new GetTransactionRecordByIdQuery(id));
 
             return Ok(response);
 
 
         }
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TransactionRecordCreateDto transactionRecordCreateDto)
+        public async Task<IActionResult> Create( TransactionRecordCreateDto transactionRecordCreateDto)
         {
             
-            var response = await _mediator.Send(new CreateTransactionRecordCommand(transactionRecordCreateDto));
+            var response = await mediator.Send(new CreateTransactionRecordCommand(transactionRecordCreateDto));
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
         [HttpPut("{id}")]   
-        public async Task<IActionResult> Update(Guid id, [FromBody] TransactionRecordUpdateDto transactionRecordUpdateDto)
+        public async Task<IActionResult> Update(Guid id,  TransactionRecordUpdateDto transactionRecordUpdateDto)
         {
 
           
-            var response = await _mediator.Send(new UpdateTransactionRecordCommand(id, transactionRecordUpdateDto));
+            var response = await mediator.Send(new UpdateTransactionRecordCommand(id, transactionRecordUpdateDto));
             return Ok(response);
             
 
@@ -56,10 +61,10 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(Guid id, [FromBody] TransactionRecordPatchDto transactionRecordPatchDto)
+        public async Task<IActionResult> Patch(Guid id,TransactionRecordPatchDto transactionRecordPatchDto)
         {
 
-            var response = await _mediator.Send(new PatchTransactionRecordCommand(id, transactionRecordPatchDto));
+            var response = await mediator.Send(new PatchTransactionRecordCommand(id, transactionRecordPatchDto));
             return Ok(response);
         }
 
@@ -70,7 +75,7 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
           
-            var response = await _mediator.Send(new DeleteTransactionRecordCommand(id));
+            var response = await mediator.Send(new DeleteTransactionRecordCommand(id));
             return Ok(response);
          
 
@@ -87,7 +92,7 @@ namespace FinanceManager.Api.Controllers
             )
         {
 
-            var response = await _mediator.Send( new FilterTransactionRecordsQuery(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate));
+            var response = await mediator.Send( new FilterTransactionRecordsQuery(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate));
             return Ok(response);
         }
 

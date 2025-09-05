@@ -7,13 +7,19 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
 {
-    public  class UpdatePaymentMethodHandler(ApplicationDbContext _context) : IRequestHandler<UpdatePaymentMethodCommand, OperationResult<PaymentMethodResponseDto>>
+    public  class UpdatePaymentMethodHandler : IRequestHandler<UpdatePaymentMethodCommand, OperationResult<PaymentMethodResponseDto>>
     {
+        private readonly ApplicationDbContext context;
+
+        public UpdatePaymentMethodHandler(ApplicationDbContext _context)
+        {
+            context = _context;
+        }
 
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(UpdatePaymentMethodCommand request, CancellationToken cancellationToken)
         {
 
-            var paymentMethod = await _context.PaymentMethods.FindAsync(request.Id);
+            var paymentMethod = await context.PaymentMethods.FindAsync(request.Id);
             if (paymentMethod == null)
             {
                 throw new NotFoundException("Payment Method doesn't exist");

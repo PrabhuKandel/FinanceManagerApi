@@ -5,19 +5,26 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public class DeleteTransactionRecordHandler(ApplicationDbContext _context) : IRequestHandler<DeleteTransactionRecordCommand, OperationResult<string>>
+    public class DeleteTransactionRecordHandler : IRequestHandler<DeleteTransactionRecordCommand, OperationResult<string>>
 
     {
+        private readonly ApplicationDbContext context;
+
+        public DeleteTransactionRecordHandler(ApplicationDbContext _context)
+        {
+            context = _context;
+        }
+
         public async Task<OperationResult<string>> Handle(DeleteTransactionRecordCommand request, CancellationToken cancellationToken)
         {
-            var transactionRecord = await _context.TransactionRecords.FindAsync(request.Id);
+            var transactionRecord = await context.TransactionRecords.FindAsync(request.Id);
             if (transactionRecord == null)
 
             {
                 throw new NotFoundException("Transaction record  doesn't exist");
             }
-            _context.TransactionRecords.Remove(transactionRecord);
-            await _context.SaveChangesAsync();
+            context.TransactionRecords.Remove(transactionRecord);
+            await context.SaveChangesAsync();
 
             return new OperationResult<String>
             {

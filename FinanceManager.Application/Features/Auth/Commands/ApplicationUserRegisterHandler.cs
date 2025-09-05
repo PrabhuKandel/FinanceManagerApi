@@ -6,11 +6,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FinanceManager.Application.Features.Auth.Commands
 {
-    public class ApplicationUserRegisterHandler(UserManager<ApplicationUser> _userManager, RoleManager<IdentityRole> _roleManager ) : IRequestHandler<ApplicationUserRegisterCommand, OperationResult<string>>
+    public class ApplicationUserRegisterHandler : IRequestHandler<ApplicationUserRegisterCommand, OperationResult<string>>
     {
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+
+        public ApplicationUserRegisterHandler(UserManager<ApplicationUser> _userManager, RoleManager<IdentityRole> _roleManager )
+        {
+            userManager = _userManager;
+            roleManager = _roleManager;
+        }
+
         public async Task<OperationResult<string>> Handle(ApplicationUserRegisterCommand request, CancellationToken cancellationToken)
         {
-            var existingUser = await _userManager.FindByEmailAsync(request.registerUser.Email);
+            var existingUser = await userManager.FindByEmailAsync(request.registerUser.Email);
             if (existingUser != null)
             {
                 throw new BusinessValidationException("Email is already registered.");
@@ -26,7 +35,7 @@ namespace FinanceManager.Application.Features.Auth.Commands
 
             };
 
-            var result = await _userManager.CreateAsync(applicationUser, request.registerUser.Password);
+            var result = await userManager.CreateAsync(applicationUser, request.registerUser.Password);
 
             if (!result.Succeeded)
             {
@@ -40,15 +49,15 @@ namespace FinanceManager.Application.Features.Auth.Commands
             //assingning role based on user input 
             if (!string.IsNullOrEmpty(request.registerUser.RoleId))
             {
-                var role = await _roleManager.FindByIdAsync(request.registerUser.RoleId);
+                var role = await roleManager.FindByIdAsync(request.registerUser.RoleId);
                 if (role == null)
                     throw new BusinessValidationException("Invalid role selected.");
 
-                await _userManager.AddToRoleAsync(applicationUser, role.Name);
+                await userManager.AddToRoleAsync(applicationUser, role.Name);
             }
             else
             {
-                await _userManager.AddToRoleAsync(applicationUser, RoleConstants.User);
+                await userManager.AddToRoleAsync(applicationUser, RoleConstants.User);
             }
             return new OperationResult<String>
             {

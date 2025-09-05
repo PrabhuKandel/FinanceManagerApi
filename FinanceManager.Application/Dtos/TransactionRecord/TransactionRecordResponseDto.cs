@@ -14,21 +14,21 @@ namespace FinanceManager.Application.Dtos.TransactionRecord
     public class EntitySummaryDto
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
+        public required string Name { get; set; }
     }
 
     public class ApplicationUserSummaryDto
     {
-        public string Id { get; set; }
-        public string FirstName { get; set; }
+        public required string Id { get; set; }
+        public required string FirstName { get; set; }
 
     }
     public class TransactionRecordResponseDto
     {
 
         public Guid Id { get; set; }
-        public EntitySummaryDto TransactionCategory { get; set; }
-        public EntitySummaryDto PaymentMethod { get; set; }
+        public EntitySummaryDto? TransactionCategory { get; set; }
+        public EntitySummaryDto? PaymentMethod { get; set; }
         public decimal Amount { get; set; }
         public string? Description { get; set; }
         public DateTime TransactionDate { get; set; }

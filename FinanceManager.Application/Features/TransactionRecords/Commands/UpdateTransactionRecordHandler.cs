@@ -11,39 +11,48 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public class UpdateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext) : IRequestHandler<UpdateTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
+    public class UpdateTransactionRecordHandler : IRequestHandler<UpdateTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
     {
+        private readonly ApplicationDbContext context;
+        private readonly IUserContext userContext;
+
+        public UpdateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext)
+        {
+            context = _context;
+            userContext = _userContext;
+        }
+
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(UpdateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
 
-            var transactionRecordFromDb = await _context.TransactionRecords.FindAsync(request.Id);
+            var transactionRecordFromDb = await context.TransactionRecords.FindAsync(request.Id);
             if (transactionRecordFromDb == null)
             {
                 throw new NotFoundException("Transaction record doesn't exist");
             }
 
-            if (!_userContext.IsAdmin())
+            if (!userContext.IsAdmin())
             {
-                if (transactionRecordFromDb.CreatedByApplicationUserId != _userContext.UserId)
+                if (transactionRecordFromDb.CreatedByApplicationUserId != userContext.UserId)
                 {
                     throw new AuthorizationException("You can't access this record.");
                 }
             }
 
-            if (!await _context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
+            if (!await context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
                 throw new BusinessValidationException("Invalid Transaction Category");
 
-            if (!await _context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
+            if (!await context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
                 throw new BusinessValidationException("Invalid Payment Method");
 
-            transactionRecordFromDb.UpdatedByApplicationUserId = _userContext.UserId;
+            transactionRecordFromDb.UpdatedByApplicationUserId = userContext.UserId;
 
 
             transactionRecordFromDb.UpdateEntity(request.transactionRecord);
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
-            var transactionRecord = await _context.TransactionRecords
+            var transactionRecord = await context.TransactionRecords
            .Include(t => t.TransactionCategory)
            .Include(t => t.PaymentMethod)
            .Include(t => t.CreatedByApplicationUser)
@@ -54,7 +63,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             {
 
                 Message = "Transaction category updated",
-                Data = transactionRecord.ToResponseDto(_userContext.IsAdmin())
+                Data = transactionRecord.ToResponseDto(userContext.IsAdmin())
             };
 
         }

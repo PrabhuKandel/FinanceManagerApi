@@ -8,27 +8,36 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FinanceManager.Application.Features.Auth.Commands
 {
-    public class ApplicationUserLoginHandler(UserManager<ApplicationUser> _userManager,ITokenGenerator _tokenGenerator) : IRequestHandler<ApplicationUserLoginCommand, OperationResult<ApplicationUserLoginResponseDto>>
+    public class ApplicationUserLoginHandler : IRequestHandler<ApplicationUserLoginCommand, OperationResult<ApplicationUserLoginResponseDto>>
     {
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly ITokenGenerator tokenGenerator;
+
+        public ApplicationUserLoginHandler(UserManager<ApplicationUser> _userManager,ITokenGenerator _tokenGenerator)
+        {
+            userManager = _userManager;
+            tokenGenerator = _tokenGenerator;
+        }
+
         public async Task<OperationResult<ApplicationUserLoginResponseDto>> Handle(ApplicationUserLoginCommand request, CancellationToken cancellationToken)
         {
-             var applicationUser = await _userManager.FindByEmailAsync(request.loginUser.Email);
+             var applicationUser = await userManager.FindByEmailAsync(request.loginUser.Email);
             if (applicationUser == null)
             {
                 throw new AuthenticationException("Invalid email");
             }
-            var result = await _userManager.CheckPasswordAsync(applicationUser, request.loginUser.Password);
+            var result = await userManager.CheckPasswordAsync(applicationUser, request.loginUser.Password);
             if (!result)
             {
                 throw new AuthenticationException("Invalid Credentials");
             }
 
-            var accessToken = await _tokenGenerator.GenerateAccessToken(applicationUser);
-            var refreshToken = _tokenGenerator.GenerateRefreshToken();
+            var accessToken = await tokenGenerator.GenerateAccessToken(applicationUser);
+            var refreshToken = tokenGenerator.GenerateRefreshToken();
 
             applicationUser.RefreshToken = refreshToken;
             applicationUser.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
-            await _userManager.UpdateAsync(applicationUser);
+            await userManager.UpdateAsync(applicationUser);
 
 
             return new OperationResult<ApplicationUserLoginResponseDto>

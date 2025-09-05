@@ -1,11 +1,7 @@
-﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.ApplicationUser;
+﻿    using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Features.Auth.Commands;
-using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
@@ -13,15 +9,20 @@ namespace FinanceManager.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
    
-    public class AuthController(IMediator _mediator ) : ControllerBase
+    public class AuthController : ControllerBase
     {
-    
+        private readonly IMediator mediator;
+
+        public AuthController(IMediator _mediator )
+        {
+            mediator = _mediator;
+        }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(ApplicationUserRegisterDto registerUser)
         {
-            var response  =  await _mediator.Send(new ApplicationUserRegisterCommand(registerUser));
+            var response  =  await mediator.Send(new ApplicationUserRegisterCommand(registerUser));
                 return Ok(response);
            
           
@@ -32,7 +33,7 @@ namespace FinanceManager.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(ApplicationUserLoginDto loginUser)
         {
-            var response = await _mediator.Send(new ApplicationUserLoginCommand(loginUser));
+            var response = await mediator.Send(new ApplicationUserLoginCommand(loginUser));
             return Ok(response);
 
         }
@@ -42,7 +43,7 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> RefreshToken(string refreshToken)
         {
 
-            var response  = await _mediator.Send(new RefreshTokenCommand(refreshToken));
+            var response  = await mediator.Send(new RefreshTokenCommand(refreshToken));
             return Ok(response);
         }
 

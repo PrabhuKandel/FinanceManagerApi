@@ -11,26 +11,35 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public class CreateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext) : IRequestHandler<CreateTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
+    public class CreateTransactionRecordHandler : IRequestHandler<CreateTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
     {
+        private readonly ApplicationDbContext context;
+        private readonly IUserContext userContext;
+
+        public CreateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext)
+        {
+            context = _context;
+            userContext = _userContext;
+        }
+
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
 
 
-            if (!await _context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
+            if (!await context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
                 throw new BusinessValidationException("Invalid Transaction Category");
 
-            if (!await _context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
+            if (!await context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
                 throw new BusinessValidationException("Invalid Payment Method");
 
             var entity = request.transactionRecord.ToEntity();
-            entity.CreatedByApplicationUserId = _userContext.UserId;
-            entity.UpdatedByApplicationUserId = _userContext.UserId;
+            entity.CreatedByApplicationUserId = userContext.UserId;
+            entity.UpdatedByApplicationUserId = userContext.UserId;
 
-            await _context.TransactionRecords.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            await context.TransactionRecords.AddAsync(entity);
+            await context.SaveChangesAsync();
 
-            var savedEntity =  await _context.TransactionRecords
+            var savedEntity =  await context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
                 .Include(tr => tr.PaymentMethod)
                 .Include(tr=>tr.CreatedByApplicationUser)
@@ -43,7 +52,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             {
 
                 Message = "New transaction category added",
-                Data = savedEntity?.ToResponseDto(_userContext.IsAdmin())
+                Data = savedEntity?.ToResponseDto(userContext.IsAdmin())
             };
 
             ;

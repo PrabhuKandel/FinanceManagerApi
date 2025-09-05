@@ -5,17 +5,24 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands
 {
-    public class DeletePaymentMethodHandler(ApplicationDbContext _context) : IRequestHandler<DeletePaymentMethodCommand, OperationResult<string>>
+    public class DeletePaymentMethodHandler : IRequestHandler<DeletePaymentMethodCommand, OperationResult<string>>
     {
+        private readonly ApplicationDbContext context;
+
+        public DeletePaymentMethodHandler(ApplicationDbContext _context)
+        {
+            context = _context;
+        }
+
         public async Task<OperationResult<string>> Handle(DeletePaymentMethodCommand request, CancellationToken cancellationToken)
         {
-            var paymentMethod = await _context.PaymentMethods.FindAsync(request.Id);
+            var paymentMethod = await context.PaymentMethods.FindAsync(request.Id);
             if (paymentMethod == null)
             {
                 throw new NotFoundException("Payment Method doesn't exist");
             }
-            _context.PaymentMethods.Remove(paymentMethod);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.PaymentMethods.Remove(paymentMethod);
+            await context.SaveChangesAsync(cancellationToken);
             return new OperationResult<string>
             {
 

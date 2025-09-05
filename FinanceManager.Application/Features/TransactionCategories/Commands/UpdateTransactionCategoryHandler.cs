@@ -7,13 +7,19 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Commands.CreateTransactionCategory
 {
-    public  class UpdateTransactionCategoryHandler(ApplicationDbContext _context) : IRequestHandler<UpdateTransactionCategoryCommand, OperationResult<TransactionCategoryResponseDto>>
+    public  class UpdateTransactionCategoryHandler : IRequestHandler<UpdateTransactionCategoryCommand, OperationResult<TransactionCategoryResponseDto>>
     {
+        private readonly ApplicationDbContext context;
+
+        public UpdateTransactionCategoryHandler(ApplicationDbContext _context)
+        {
+            context = _context;
+        }
 
         public async Task<OperationResult<TransactionCategoryResponseDto>> Handle(UpdateTransactionCategoryCommand request, CancellationToken cancellationToken)
         {
 
-            var transactionCategory = await _context.TransactionCategories.FindAsync(request.Id);
+            var transactionCategory = await context.TransactionCategories.FindAsync(request.Id);
             if (transactionCategory == null)
             {
                 throw new NotFoundException("Transaction Category doesn't exist");

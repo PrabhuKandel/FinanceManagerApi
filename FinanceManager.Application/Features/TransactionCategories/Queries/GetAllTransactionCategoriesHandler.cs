@@ -7,12 +7,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Queries
 {
-    public class GetAllTransactionCategoriesHandler(ApplicationDbContext _context) : IRequestHandler<GetAllTransactionCategoriesQuery, OperationResult<IEnumerable<TransactionCategoryResponseDto>>>
+    public class GetAllTransactionCategoriesHandler : IRequestHandler<GetAllTransactionCategoriesQuery, OperationResult<IEnumerable<TransactionCategoryResponseDto>>>
     {
-    
+        private readonly ApplicationDbContext context;
+
+        public GetAllTransactionCategoriesHandler(ApplicationDbContext _context)
+        {
+            context = _context;
+        }
+
         public async Task<OperationResult<IEnumerable<TransactionCategoryResponseDto>>>Handle(GetAllTransactionCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var transactionCategories = await _context.TransactionCategories.ToListAsync();
+            var transactionCategories = await context.TransactionCategories.ToListAsync();
             var transactionCategoriesDtos = transactionCategories.ToResponseDtoList();
 
             return new OperationResult<IEnumerable<TransactionCategoryResponseDto>>

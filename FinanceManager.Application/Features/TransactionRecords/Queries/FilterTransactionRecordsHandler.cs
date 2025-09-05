@@ -6,17 +6,24 @@ using FinanceManager.Application.Mapping;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public class FilterTransactionRecordsHandler(ApplicationDbContext _context,IUserContext _userContext) : IRequestHandler<FilterTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
+    public class FilterTransactionRecordsHandler : IRequestHandler<FilterTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
     {
-      
+        private readonly ApplicationDbContext context;
+        private readonly IUserContext userContext;
+
+        public FilterTransactionRecordsHandler(ApplicationDbContext _context,IUserContext _userContext)
+        {
+            context = _context;
+            userContext = _userContext;
+        }
+
         public async Task<OperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(FilterTransactionRecordsQuery request, CancellationToken cancellationToken)
         {
-             IQueryable<TransactionRecord> query =  _context.TransactionRecords
+             IQueryable<TransactionRecord> query =  context.TransactionRecords
                   .Include(tr => tr.TransactionCategory)
                   .Include(tr => tr.PaymentMethod);
 
@@ -35,12 +42,12 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
             if (request.transactionDate.HasValue && request.transactionDate.Value != DateTime.MinValue)
                 query = query.Where(t => t.TransactionDate.Date == request.transactionDate.Value.Date);
 
-            bool isAdmin = _userContext.IsAdmin();
+            bool isAdmin = userContext.IsAdmin();
             // Filter for non-admin users
             if (!isAdmin)
             {
                 query = query
-                    .Where(t => t.CreatedByApplicationUserId == _userContext.UserId);
+                    .Where(t => t.CreatedByApplicationUserId == userContext.UserId);
 
             }
             else

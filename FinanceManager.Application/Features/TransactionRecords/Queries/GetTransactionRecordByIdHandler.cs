@@ -3,20 +3,27 @@ using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public class GetTransactionRecordByIdHandler (ApplicationDbContext _context,IUserContext _userContext): IRequestHandler<GetTransactionRecordByIdQuery, OperationResult<TransactionRecordResponseDto>>
+    public class GetTransactionRecordByIdHandler : IRequestHandler<GetTransactionRecordByIdQuery, OperationResult<TransactionRecordResponseDto>>
     {
+        private readonly ApplicationDbContext context;
+        private readonly IUserContext userContext;
+
+        public GetTransactionRecordByIdHandler(ApplicationDbContext _context,IUserContext _userContext)
+        {
+            context = _context;
+            userContext = _userContext;
+        }
+
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(GetTransactionRecordByIdQuery request, CancellationToken cancellationToken)
         {
             
-            var transactionRecord = await _context.TransactionRecords
+            var transactionRecord = await context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
                 .Include(tr => tr.PaymentMethod)
                 .Include(t => t.CreatedByApplicationUser)
@@ -27,11 +34,11 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
             {
                 throw new NotFoundException("Transaction record not found");
             }
-            var isAdmin = _userContext.IsAdmin();
+            var isAdmin = userContext.IsAdmin();
             // Filter for non-admin users
             if (!isAdmin)
             {
-                if (transactionRecord.CreatedByApplicationUserId != _userContext.UserId)
+                if (transactionRecord.CreatedByApplicationUserId != userContext.UserId)
                 {
                     throw new AuthorizationException("You can't access this record.");
                 }

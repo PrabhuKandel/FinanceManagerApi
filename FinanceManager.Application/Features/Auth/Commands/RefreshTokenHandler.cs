@@ -9,15 +9,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.Auth.Commands
 {
-    public class RefreshTokenHandler(UserManager<ApplicationUser> _userManager, ITokenGenerator _tokenGenerator) : IRequestHandler<RefreshTokenCommand, OperationResult<TokenResponseDto>>
+    public class RefreshTokenHandler : IRequestHandler<RefreshTokenCommand, OperationResult<TokenResponseDto>>
     {
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly ITokenGenerator tokenGenerator;
+
+        public RefreshTokenHandler(UserManager<ApplicationUser> _userManager, ITokenGenerator _tokenGenerator)
+        {
+            userManager = _userManager;
+            tokenGenerator = _tokenGenerator;
+        }
+
         public async Task<OperationResult<TokenResponseDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(request.refreshToken))
             {
                 throw new AuthenticationException("Refresh token is missing ");
             }
-            var user = await _userManager.Users
+            var user = await userManager.Users
                 .FirstOrDefaultAsync(u => u.RefreshToken == request.refreshToken);
 
             if (user == null || user.RefreshTokenExpiresAtUtc < DateTime.UtcNow)
@@ -26,12 +35,12 @@ namespace FinanceManager.Application.Features.Auth.Commands
 
             }
 
-            var accessToken = await _tokenGenerator.GenerateAccessToken(user);
-            var newRefreshToken = _tokenGenerator.GenerateRefreshToken();
+            var accessToken = await tokenGenerator.GenerateAccessToken(user);
+            var newRefreshToken = tokenGenerator.GenerateRefreshToken();
 
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
-            await _userManager.UpdateAsync(user);
+            await userManager.UpdateAsync(user);
 
             return new OperationResult<TokenResponseDto>
             {

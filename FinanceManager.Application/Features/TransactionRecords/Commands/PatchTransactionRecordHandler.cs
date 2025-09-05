@@ -11,18 +11,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public class PatchTransactionRecordHandler( ApplicationDbContext _context, IUserContext _userContext) : IRequestHandler<PatchTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
+    public class PatchTransactionRecordHandler : IRequestHandler<PatchTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
     {
+        private readonly ApplicationDbContext context;
+        private readonly IUserContext userContext;
+
+        public PatchTransactionRecordHandler( ApplicationDbContext _context, IUserContext _userContext)
+        {
+            context = _context;
+            userContext = _userContext;
+        }
+
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(PatchTransactionRecordCommand request, CancellationToken cancellationToken)
         {
-            var transactionRecordFromDb = await _context.TransactionRecords.FindAsync(request.Id,cancellationToken);
+            var transactionRecordFromDb = await context.TransactionRecords.FindAsync(request.Id,cancellationToken);
             if (transactionRecordFromDb == null)
             {
                 throw new NotFoundException("Transaction record doesn't exist");
             }
 
             // Authorization check
-            if (!_userContext.IsAdmin() && transactionRecordFromDb.CreatedByApplicationUserId != _userContext.UserId)
+            if (!userContext.IsAdmin() && transactionRecordFromDb.CreatedByApplicationUserId != userContext.UserId)
             {
                 
                    throw new AuthorizationException();
@@ -34,7 +43,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             // Update only provided properties
             if (patchDto.TransactionCategoryId.HasValue)
             {
-                if (!await _context.TransactionCategories
+                if (!await context.TransactionCategories
                     .AnyAsync(c => c.Id == patchDto.TransactionCategoryId.Value, cancellationToken))
                     throw new BusinessValidationException("Invalid Transaction Category");
 
@@ -43,7 +52,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
 
             if (patchDto.PaymentMethodId.HasValue)
             {
-                if (!await _context.PaymentMethods
+                if (!await context.PaymentMethods
                     .AnyAsync(p => p.Id == patchDto.PaymentMethodId.Value, cancellationToken))
                     throw new BusinessValidationException("Invalid Payment Method");
 
@@ -60,12 +69,12 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
                 transactionRecordFromDb.TransactionDate = patchDto.TransactionDate.Value;
 
            
-            transactionRecordFromDb.UpdatedByApplicationUserId = _userContext.UserId;
+            transactionRecordFromDb.UpdatedByApplicationUserId = userContext.UserId;
 
-              await _context.SaveChangesAsync(cancellationToken);
+              await context.SaveChangesAsync(cancellationToken);
 
 
-               var transactionRecord = await _context.TransactionRecords
+               var transactionRecord = await context.TransactionRecords
              .Include(t => t.TransactionCategory)
              .Include(t => t.PaymentMethod)
              .Include(t => t.CreatedByApplicationUser)
@@ -75,7 +84,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             return new OperationResult<TransactionRecordResponseDto>
             {
                 Message = "Transaction record patched",
-                Data = transactionRecord.ToResponseDto(_userContext.IsAdmin())
+                Data = transactionRecord.ToResponseDto(userContext.IsAdmin())
             };
         }
 

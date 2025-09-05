@@ -12,13 +12,19 @@ namespace FinanceManager.Api.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentMethodController( IMediator _mediator) : ControllerBase
+    public class PaymentMethodController : ControllerBase
     {
+        private readonly IMediator mediator;
+
+        public PaymentMethodController( IMediator _mediator)
+        {
+            mediator = _mediator;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _mediator.Send(new GetAllPaymentMethodsQuery());
+            var response = await mediator.Send(new GetAllPaymentMethodsQuery());
 
             return Ok(response);
         }
@@ -26,9 +32,9 @@ namespace FinanceManager.Api.Controllers
 
         [HttpGet("{id}")]
 
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById( Guid id)
         {
-            var response = await _mediator.Send(new GetPaymentMethodByIdQuery(id));
+            var response = await mediator.Send(new GetPaymentMethodByIdQuery(id));
 
             return Ok(response);
 
@@ -36,20 +42,20 @@ namespace FinanceManager.Api.Controllers
         }
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] PaymentMethodCreateDto paymentMethodCreateDto)
+        public async Task<IActionResult> Create(PaymentMethodCreateDto paymentMethodCreateDto)
         {
             Log.Information("Payment Create Request: {@Request}", paymentMethodCreateDto);
 
-            var response = await _mediator.Send(new CreatePaymentMethodCommand(paymentMethodCreateDto));
+            var response = await mediator.Send(new CreatePaymentMethodCommand(paymentMethodCreateDto));
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] PaymentMethodUpdateDto paymentMethodUpdateDto)
+        public async Task<IActionResult> Update(Guid id, PaymentMethodUpdateDto paymentMethodUpdateDto)
         {
-            var response = await _mediator.Send(new UpdatePaymentMethodCommand(id, paymentMethodUpdateDto));
+            var response = await mediator.Send(new UpdatePaymentMethodCommand(id, paymentMethodUpdateDto));
             return Ok(response);
             
         }
@@ -60,7 +66,7 @@ namespace FinanceManager.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var response = await _mediator.Send(new DeletePaymentMethodCommand(id));
+            var response = await mediator.Send(new DeletePaymentMethodCommand(id));
             return Ok(response);
 
 

@@ -8,19 +8,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands
 {
-    public  class CreatePaymentMethodHandler(ApplicationDbContext _context) : IRequestHandler<CreatePaymentMethodCommand, OperationResult<PaymentMethodResponseDto>>
+    public  class CreatePaymentMethodHandler : IRequestHandler<CreatePaymentMethodCommand, OperationResult<PaymentMethodResponseDto>>
     {
+        private readonly ApplicationDbContext context;
+
+        public CreatePaymentMethodHandler(ApplicationDbContext _context)
+        {
+            context = _context;
+        }
 
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(CreatePaymentMethodCommand request, CancellationToken cancellationToken)
         {
 
 
-            if (await  _context.PaymentMethods.AnyAsync(c => c.Name == request.paymentMethod.Name))
+            if (await  context.PaymentMethods.AnyAsync(c => c.Name == request.paymentMethod.Name))
                 throw new BusinessValidationException("Payment method with this name already exists.");
 
             var entity = request.paymentMethod.ToEntity();
-            await _context.PaymentMethods.AddAsync(entity);
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.PaymentMethods.AddAsync(entity);
+            await context.SaveChangesAsync(cancellationToken);
           
             return new OperationResult<PaymentMethodResponseDto>
             {

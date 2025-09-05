@@ -11,7 +11,7 @@ namespace FinanceManager.Application.Dtos.PaymentMethod
     public class PaymentMethodCreateDto
     {
        
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         
         public string? Description { get; set; }

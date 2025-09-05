@@ -6,7 +6,7 @@ namespace FinanceManager.Application.Dtos.TransactionCategory
     public class TransactionCategoryUpdateDto
     {
       
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public string? Description { get; set; }
 

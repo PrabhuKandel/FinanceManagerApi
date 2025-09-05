@@ -7,12 +7,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Queries
 {
-    public class GetAllPaymentMethodsHandler(ApplicationDbContext _context) : IRequestHandler<GetAllPaymentMethodsQuery, OperationResult<IEnumerable<PaymentMethodResponseDto>>>
+    public class GetAllPaymentMethodsHandler : IRequestHandler<GetAllPaymentMethodsQuery, OperationResult<IEnumerable<PaymentMethodResponseDto>>>
     {
-    
+        private readonly ApplicationDbContext context;
+
+        public GetAllPaymentMethodsHandler(ApplicationDbContext _context)
+        {
+            context = _context;
+        }
+
         public async Task<OperationResult<IEnumerable<PaymentMethodResponseDto>>>Handle(GetAllPaymentMethodsQuery request, CancellationToken cancellationToken)
         {
-            var paymentMethods = await _context.PaymentMethods.ToListAsync();
+            var paymentMethods = await context.PaymentMethods.ToListAsync();
 
             var paymentMethodDtos = paymentMethods.ToResponseDtoList();
             return new OperationResult<IEnumerable<PaymentMethodResponseDto>>

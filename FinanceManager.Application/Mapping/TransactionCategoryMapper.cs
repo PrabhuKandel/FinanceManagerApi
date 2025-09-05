@@ -20,7 +20,7 @@ namespace FinanceManager.Application.Mapping
         public static List<TransactionCategoryResponseDto> ToResponseDtoList(this IEnumerable<TransactionCategory> entities)
         {
             return entities.Select(e => e.ToResponseDto())
-                .OfType<TransactionCategoryResponseDto>()
+                .OfType<TransactionCategoryResponseDto>()// filters nulls and makes non-nullable
                 .ToList();
         }
 
