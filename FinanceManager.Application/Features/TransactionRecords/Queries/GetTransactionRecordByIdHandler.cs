@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public class GetTransactionRecordByIdHandler (ApplicationDbContext _context,IUserContext _userContext,UserManager<ApplicationUser> _userManager): IRequestHandler<GetTransactionRecordByIdQuery, OperationResult<TransactionRecordResponseDto>>
+    public class GetTransactionRecordByIdHandler (ApplicationDbContext _context,IUserContext _userContext): IRequestHandler<GetTransactionRecordByIdQuery, OperationResult<TransactionRecordResponseDto>>
     {
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(GetTransactionRecordByIdQuery request, CancellationToken cancellationToken)
         {
@@ -27,13 +27,13 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
             {
                 throw new NotFoundException("Transaction record not found");
             }
-            var isAdmin = await IsUserAdmin(_userContext.UserId);
+            var isAdmin = _userContext.IsAdmin();
             // Filter for non-admin users
             if (!isAdmin)
             {
                 if (transactionRecord.CreatedByApplicationUserId != _userContext.UserId)
                 {
-                    throw new UnauthorizedAccessException("You can't access this record.");
+                    throw new AuthorizationException("You can't access this record.");
                 }
             }
                 var transactionRecordDto =   transactionRecord.ToResponseDto(isAdmin);
@@ -47,12 +47,6 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
             };
 
         }
-        private async Task<bool> IsUserAdmin(String userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return false;
-            var roles = await _userManager.GetRolesAsync(user);
-            return roles.Contains(RoleConstants.Admin);
-        }
+
     }
 }

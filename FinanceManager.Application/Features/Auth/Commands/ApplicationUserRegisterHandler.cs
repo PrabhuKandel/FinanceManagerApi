@@ -13,7 +13,7 @@ namespace FinanceManager.Application.Features.Auth.Commands
             var existingUser = await _userManager.FindByEmailAsync(request.registerUser.Email);
             if (existingUser != null)
             {
-                throw new CustomValidationException("Email is already registered.");
+                throw new BusinessValidationException("Email is already registered.");
             }
 
             var applicationUser = new ApplicationUser
@@ -32,9 +32,9 @@ namespace FinanceManager.Application.Features.Auth.Commands
             {
                 if (result.Errors.Any())
                 {
-                    throw new CustomValidationException(result.Errors.ToDictionary(e => "Error", e => e.Description));
+                    throw new BusinessValidationException(result.Errors.ToDictionary(e => "Error", e => e.Description));
                 }
-                throw new InvalidOperationException("Registration failed due to server error.");
+                throw new Exception("Registration failed due to server error.");
             }
 
             //assingning role based on user input 
@@ -42,7 +42,7 @@ namespace FinanceManager.Application.Features.Auth.Commands
             {
                 var role = await _roleManager.FindByIdAsync(request.registerUser.RoleId);
                 if (role == null)
-                    throw new CustomValidationException("Invalid role selected.");
+                    throw new BusinessValidationException("Invalid role selected.");
 
                 await _userManager.AddToRoleAsync(applicationUser, role.Name);
             }

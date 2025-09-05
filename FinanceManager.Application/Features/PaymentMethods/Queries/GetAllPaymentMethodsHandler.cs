@@ -13,15 +13,15 @@ namespace FinanceManager.Application.Features.PaymentMethods.Queries
         public async Task<OperationResult<IEnumerable<PaymentMethodResponseDto>>>Handle(GetAllPaymentMethodsQuery request, CancellationToken cancellationToken)
         {
             var paymentMethods = await _context.PaymentMethods.ToListAsync();
-            var paymentMethodDtos = paymentMethods?.ToResponseDtoList();
+
+            var paymentMethodDtos = paymentMethods.ToResponseDtoList();
             return new OperationResult<IEnumerable<PaymentMethodResponseDto>>
             {
 
 
                 Data = paymentMethodDtos,
-                Message = paymentMethodDtos.Any()
-                     ? "Payment methods retrieved successfully"
-                 : "  No payment methods "
+                Message =  "Payment methods retrieved successfully"
+              
 
             };
         }

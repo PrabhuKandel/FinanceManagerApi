@@ -2,7 +2,6 @@
 using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,7 @@ namespace FinanceManager.Application.Features.TransactionCategories.Commands
 
 
             if (await  _context.TransactionCategories.AnyAsync(c => c.Name == request.transactionCategory.Name))
-                throw new CustomValidationException("Transaction category  with this name already exists.");
+                throw new BusinessValidationException("Transaction category  with this name already exists.");
 
             var entity = request.transactionCategory.ToEntity();
             await _context.TransactionCategories.AddAsync(entity);

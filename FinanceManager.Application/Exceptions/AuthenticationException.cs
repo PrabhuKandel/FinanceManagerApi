@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace FinanceManager.Application.Exceptions
 {
-    public class NotFoundException:ApiException
+    public class AuthenticationException : ApiException
     {
-       
-        public NotFoundException(string message) : base(message, StatusCodes.Status404NotFound) { }
+        public AuthenticationException(string message = "Invalid credentials") : base(message, StatusCodes.Status401Unauthorized) { }
     }
 }

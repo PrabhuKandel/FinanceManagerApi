@@ -11,21 +11,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public class PatchTransactionRecordHandler(UserManager<ApplicationUser> _userManager, ApplicationDbContext _context, IUserContext _userContext) : IRequestHandler<PatchTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
+    public class PatchTransactionRecordHandler( ApplicationDbContext _context, IUserContext _userContext) : IRequestHandler<PatchTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
     {
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(PatchTransactionRecordCommand request, CancellationToken cancellationToken)
         {
-            var transactionRecordFromDb = await _context.TransactionRecords.FindAsync(request.Id);
+            var transactionRecordFromDb = await _context.TransactionRecords.FindAsync(request.Id,cancellationToken);
             if (transactionRecordFromDb == null)
             {
                 throw new NotFoundException("Transaction record doesn't exist");
             }
 
             // Authorization check
-            if (!await IsUserAdmin(_userContext.UserId) && transactionRecordFromDb.CreatedByApplicationUserId != _userContext.UserId)
+            if (!_userContext.IsAdmin() && transactionRecordFromDb.CreatedByApplicationUserId != _userContext.UserId)
             {
                 
-                   throw new UnauthorizedAccessException("You can't access this record.");
+                   throw new AuthorizationException();
                 
             }
 
@@ -36,7 +36,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             {
                 if (!await _context.TransactionCategories
                     .AnyAsync(c => c.Id == patchDto.TransactionCategoryId.Value, cancellationToken))
-                    throw new CustomValidationException("Invalid Transaction Category");
+                    throw new BusinessValidationException("Invalid Transaction Category");
 
                 transactionRecordFromDb.TransactionCategoryId = patchDto.TransactionCategoryId.Value;
             }
@@ -45,7 +45,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             {
                 if (!await _context.PaymentMethods
                     .AnyAsync(p => p.Id == patchDto.PaymentMethodId.Value, cancellationToken))
-                    throw new CustomValidationException("Invalid Payment Method");
+                    throw new BusinessValidationException("Invalid Payment Method");
 
                 transactionRecordFromDb.PaymentMethodId = patchDto.PaymentMethodId.Value;
             }
@@ -75,18 +75,12 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             return new OperationResult<TransactionRecordResponseDto>
             {
                 Message = "Transaction record patched",
-                Data = transactionRecord.ToResponseDto(await IsUserAdmin(_userContext.UserId))
+                Data = transactionRecord.ToResponseDto(_userContext.IsAdmin())
             };
         }
 
 
 
-        private async Task<bool> IsUserAdmin(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return false;
-            var roles = await _userManager.GetRolesAsync(user);
-            return roles.Contains(RoleConstants.Admin);
-        }
+  
     }
 }

@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace FinanceManager.Application.Exceptions
 {
-    public class NotFoundException:ApiException
+    public class AuthorizationException : ApiException
     {
-       
-        public NotFoundException(string message) : base(message, StatusCodes.Status404NotFound) { }
+        public AuthorizationException(string message = "Access denied") : base(message, StatusCodes.Status403Forbidden) { }
     }
 }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public class GetAllTransactionRecordsHandler(ApplicationDbContext _context,UserManager<ApplicationUser> _userManager,IUserContext _userContext) : IRequestHandler<GetAllTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
+    public class GetAllTransactionRecordsHandler(ApplicationDbContext _context,IUserContext _userContext) : IRequestHandler<GetAllTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
     {
         public async Task<OperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsQuery request, CancellationToken cancellationToken)
         {
@@ -25,7 +25,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                 throw new NotFoundException("Transaction record doesn't exist");
             }
             // Check admin status once
-            var isAdmin = await IsUserAdmin(_userContext.UserId);
+            var isAdmin = _userContext.IsAdmin();
             // Filter for non-admin users
             if (!isAdmin)
             {
@@ -47,12 +47,6 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
 
 
         }
-        private async Task<bool> IsUserAdmin(String userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return false;
-            var roles = await _userManager.GetRolesAsync(user);
-            return roles.Contains(RoleConstants.Admin);
-        }
+  
     }
 }

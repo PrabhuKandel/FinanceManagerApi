@@ -56,21 +56,11 @@ namespace FinanceManager.Api.Middlewares
 
             switch (exception)
             {
-                case NotFoundException:
-                    statusCode = StatusCodes.Status404NotFound;
-                    message = exception.Message;
 
-                    break;
-
-                case CustomValidationException vex:
-                    statusCode = StatusCodes.Status400BadRequest;
-                    message = "Validation Failed";
-                    errors = vex.Errors;
-                    break;
-
-                case DbUpdateException dbEx:
-                    statusCode = StatusCodes.Status500InternalServerError;
-                    message = "A database error occurred";
+                case ApiException apiEx:
+                    statusCode = apiEx.StatusCode;
+                    message = apiEx.Message;
+                    errors = apiEx.Errors;
                     break;
 
                 default:

@@ -20,8 +20,7 @@ namespace FinanceManager.Application.Features.TransactionCategories.Queries
 
 
                 Data = transactionCategoriesDtos,
-                Message = transactionCategoriesDtos.Any() ? "Transaction categories retrieved successfully" : "  No Transaction categories "
-
+                Message = "Transaction categories retrieved successfully"
             };
         }
     }

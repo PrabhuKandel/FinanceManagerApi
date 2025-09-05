@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Authentication;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Common;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Entities;
+using FinanceManager.Application.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -20,7 +15,7 @@ namespace FinanceManager.Application.Features.Auth.Commands
              var applicationUser = await _userManager.FindByEmailAsync(request.loginUser.Email);
             if (applicationUser == null)
             {
-                throw new AuthenticationException("Invalid Email");
+                throw new AuthenticationException("Invalid email");
             }
             var result = await _userManager.CheckPasswordAsync(applicationUser, request.loginUser.Password);
             if (!result)
@@ -43,7 +38,7 @@ namespace FinanceManager.Application.Features.Auth.Commands
                 Data = new ApplicationUserLoginResponseDto
                 {
                     UserId = applicationUser.Id,
-                    Email = applicationUser.Email,
+                    Email = applicationUser.Email??"",
                     FirstName = applicationUser.FirstName,
                     LastName = applicationUser.LastName,
                     AccessToken = accessToken,

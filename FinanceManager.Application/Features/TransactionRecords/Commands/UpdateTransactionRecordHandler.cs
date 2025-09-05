@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public class UpdateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext, UserManager<ApplicationUser> _userManager) : IRequestHandler<UpdateTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
+    public class UpdateTransactionRecordHandler(ApplicationDbContext _context, IUserContext _userContext) : IRequestHandler<UpdateTransactionRecordCommand, OperationResult<TransactionRecordResponseDto>>
     {
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(UpdateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
@@ -22,19 +22,19 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
                 throw new NotFoundException("Transaction record doesn't exist");
             }
 
-            if (!await IsUserAdmin(_userContext.UserId))
+            if (!_userContext.IsAdmin())
             {
                 if (transactionRecordFromDb.CreatedByApplicationUserId != _userContext.UserId)
                 {
-                    throw new UnauthorizedAccessException("You can't access this record.");
+                    throw new AuthorizationException("You can't access this record.");
                 }
             }
 
             if (!await _context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
-                throw new CustomValidationException("Invalid Transaction Category");
+                throw new BusinessValidationException("Invalid Transaction Category");
 
-            if (!await _context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
-                throw new CustomValidationException("Invalid Payment Method");
+            if (!await _context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
+                throw new BusinessValidationException("Invalid Payment Method");
 
             transactionRecordFromDb.UpdatedByApplicationUserId = _userContext.UserId;
 
@@ -54,17 +54,11 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             {
 
                 Message = "Transaction category updated",
-                Data = transactionRecord.ToResponseDto(await IsUserAdmin(_userContext.UserId))
+                Data = transactionRecord.ToResponseDto(_userContext.IsAdmin())
             };
 
         }
-        private async Task<bool> IsUserAdmin(String userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return false;
-            var roles = await _userManager.GetRolesAsync(user);
-            return roles.Contains(RoleConstants.Admin);
-        }
+
 
     }
 }

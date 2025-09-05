@@ -17,9 +17,11 @@ namespace FinanceManager.Application.Mapping
                 Type = entity.Type
             };
         }
-        public static List<TransactionCategoryResponseDto?>? ToResponseDtoList(this IEnumerable<TransactionCategory> entities)
+        public static List<TransactionCategoryResponseDto> ToResponseDtoList(this IEnumerable<TransactionCategory> entities)
         {
-            return entities?.Select(e => e.ToResponseDto()).ToList();
+            return entities.Select(e => e.ToResponseDto())
+                .OfType<TransactionCategoryResponseDto>()
+                .ToList();
         }
 
         public static TransactionCategory ToEntity(this TransactionCategoryCreateDto dto)

@@ -3,6 +3,7 @@ using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
+using FinanceManager.Application.Validators.PaymentMethodValidator;
 using FinanceManager.Application.Validators.TransactionCategoryValidator;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,15 +23,18 @@ Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .WriteTo.Console()
     .WriteTo.File("log.txt",
-    rollingInterval: RollingInterval.Day,
+    rollingInterval: RollingInterval.Day,   
     rollOnFileSizeLimit: true)
     .CreateLogger();
 
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddNewtonsoftJson(); ;
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 
+builder.Services.AddValidatorsFromAssemblyContaining<PaymentMethodCreateDtoValidator>();
+builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 //It makes Swagger aware of JWT authentication and enables you to test secured endpoints directly in Swagger UI.
 builder.Services.AddSwaggerGen(

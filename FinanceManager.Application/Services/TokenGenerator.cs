@@ -27,7 +27,7 @@ namespace FinanceManager.Application.Services
 
             var claims = new List<Claim>
             {
-                new Claim("email",user.Email),
+                new Claim("email",user.Email??""),
                 new Claim("userId", user.Id),
             
 
