@@ -5,3 +5,6 @@
 2025-09-04 21:36:24.287 +05:45 [INF] Payment Create Request: {"Name":"string","Description":"string","IsActive":true,"$type":"PaymentMethodCreateDto"}
 2025-09-04 21:36:24.536 +05:45 [ERR] Exception occurred for request POST /api/PaymentMethod | ErrorMessage: Validation failed
 2025-09-04 21:36:31.553 +05:45 [INF] Payment Create Request: {"Name":"strrrrrring","Description":"string","IsActive":true,"$type":"PaymentMethodCreateDto"}
+2025-09-04 22:48:53.319 +05:45 [ERR] Exception occurred for request POST /api/Auth/login | ErrorMessage: Invalid Credentials
+2025-09-04 22:49:18.965 +05:45 [ERR] Exception occurred for request POST /api/Auth/refresh-token | ErrorMessage: Invalid or expired refresh token 
+2025-09-04 22:50:18.061 +05:45 [ERR] Exception occurred for request POST /api/Auth/register | ErrorMessage: Validation failed

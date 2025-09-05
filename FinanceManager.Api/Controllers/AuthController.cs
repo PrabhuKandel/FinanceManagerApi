@@ -13,7 +13,7 @@ namespace FinanceManager.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
    
-    public class AuthController(IMediator _mediator ,IAuthService _authService) : ControllerBase
+    public class AuthController(IMediator _mediator ) : ControllerBase
     {
     
 
@@ -42,22 +42,10 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> RefreshToken(string refreshToken)
         {
 
-            var response = await _authService.RefreshTokenAsync(refreshToken);
+            var response  = await _mediator.Send(new RefreshTokenCommand(refreshToken));
             return Ok(response);
         }
 
-        [HttpPost("logout")]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // should use new Claim(JwtRegisteredClaimNames.Sub, user.Id),  as claim while sending token
-
-            var userId = User?.FindFirst("userId")?.Value;
-            if (string.IsNullOrEmpty(userId))
-                return BadRequest(new OperationResult<string> { Data = null, Message = "User not found" });
-            var response = await _authService.LogoutAsync(userId);
-            return Ok(response);
-        }
-
+       
     }
 }

@@ -17,8 +17,9 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
         {
             var transactionRecordsFromDb =  await  _context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
-                .Include(tr => tr.PaymentMethod).Include(t => t.CreatedByApplicationUser)
-                                    .Include(t => t.UpdatedByApplicationUser).ToListAsync();
+                .Include(tr => tr.PaymentMethod)
+                .Include(t => t.CreatedByApplicationUser)
+                 .Include(t => t.UpdatedByApplicationUser).ToListAsync();
             if (!transactionRecordsFromDb.Any())
             {
                 throw new NotFoundException("Transaction record doesn't exist");

@@ -1,4 +1,3 @@
-using System.Net;
 using System.Text;
 using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.DependencyInjection;
@@ -119,8 +118,6 @@ builder.Services.AddControllers()
 
 builder.Services.AddValidatorsFromAssembly(typeof(TransactionCategoryCreateDtoValidator).Assembly);
 
-
-builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IUserContext, UserContext>();

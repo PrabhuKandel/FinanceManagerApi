@@ -39,7 +39,7 @@ namespace FinanceManager.Api.Controllers
         {
             
             var response = await _mediator.Send(new CreateTransactionRecordCommand(transactionRecordCreateDto));
-            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
@@ -55,9 +55,17 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(Guid id, [FromBody] TransactionRecordPatchDto transactionRecordPatchDto)
+        {
+
+            var response = await _mediator.Send(new PatchTransactionRecordCommand(id, transactionRecordPatchDto));
+            return Ok(response);
+        }
 
 
-        [HttpDelete("{id}")]
+
+            [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {

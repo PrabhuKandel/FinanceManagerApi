@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.TransactionCategory;
+﻿using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Mapping
 {
     public  static class TransactionCategoryMapper
     {
-        public static TransactionCategoryResponseDto ToResponseDto(this TransactionCategory entity)
+        public static TransactionCategoryResponseDto? ToResponseDto(this TransactionCategory entity)
         {
             if (entity == null) return null;
 
@@ -22,7 +17,7 @@ namespace FinanceManager.Application.Mapping
                 Type = entity.Type
             };
         }
-        public static List<TransactionCategoryResponseDto> ToResponseDtoList(this IEnumerable<TransactionCategory> entities)
+        public static List<TransactionCategoryResponseDto?>? ToResponseDtoList(this IEnumerable<TransactionCategory> entities)
         {
             return entities?.Select(e => e.ToResponseDto()).ToList();
         }

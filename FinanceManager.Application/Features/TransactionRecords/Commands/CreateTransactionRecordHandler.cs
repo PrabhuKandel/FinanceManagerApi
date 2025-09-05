@@ -43,7 +43,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             {
 
                 Message = "New transaction category added",
-                Data = savedEntity.ToResponseDto()
+                Data = savedEntity?.ToResponseDto()
             };
 
             ;

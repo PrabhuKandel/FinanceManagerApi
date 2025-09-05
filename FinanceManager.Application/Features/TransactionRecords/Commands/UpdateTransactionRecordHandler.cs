@@ -42,12 +42,19 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             transactionRecordFromDb.UpdateEntity(request.transactionRecord);
 
             await _context.SaveChangesAsync();
-           
+
+            var transactionRecord = await _context.TransactionRecords
+           .Include(t => t.TransactionCategory)
+           .Include(t => t.PaymentMethod)
+           .Include(t => t.CreatedByApplicationUser)
+           .Include(t => t.UpdatedByApplicationUser)
+           .FirstAsync(t => t.Id == request.Id, cancellationToken);
+
             return new OperationResult<TransactionRecordResponseDto>
             {
 
                 Message = "Transaction category updated",
-                Data = transactionRecordFromDb.ToResponseDto()
+                Data = transactionRecord.ToResponseDto(await IsUserAdmin(_userContext.UserId))
             };
 
         }

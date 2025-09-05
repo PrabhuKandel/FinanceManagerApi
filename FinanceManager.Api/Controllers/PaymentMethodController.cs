@@ -41,7 +41,7 @@ namespace FinanceManager.Api.Controllers
             Log.Information("Payment Create Request: {@Request}", paymentMethodCreateDto);
 
             var response = await _mediator.Send(new CreatePaymentMethodCommand(paymentMethodCreateDto));
-            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 

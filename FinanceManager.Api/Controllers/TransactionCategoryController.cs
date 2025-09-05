@@ -41,7 +41,7 @@ namespace FinanceManager.Api.Controllers
         {
 
             var response = await _mediator.Send(new CreateTransactionCategoryCommand(transactionCategoryCreateDto));
-            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
