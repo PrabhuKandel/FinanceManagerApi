@@ -55,7 +55,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                 query = query.Include(tr => tr.CreatedByApplicationUser).Include(tr => tr.UpdatedByApplicationUser);
             }
 
-                IEnumerable<TransactionRecord> transactionRecordsFromDb = await query.ToListAsync();
+               var  transactionRecordsFromDb = await query.ToListAsync();
         
 
 

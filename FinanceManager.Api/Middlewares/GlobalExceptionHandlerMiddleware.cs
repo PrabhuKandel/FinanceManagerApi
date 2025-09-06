@@ -1,10 +1,12 @@
-﻿using FinanceManager.Application.Common;
+﻿using Azure.Core;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 
 namespace FinanceManager.Api.Middlewares
 {
@@ -13,7 +15,7 @@ namespace FinanceManager.Api.Middlewares
         private readonly RequestDelegate _next; // pointer to the next middleware
      
 
-        public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
+        public GlobalExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
            
@@ -35,11 +37,24 @@ namespace FinanceManager.Api.Middlewares
             }
             catch (Exception ex)
             {
-                //_logger.LogError(ex, ex.Message);
-                Log.Error("Exception occurred for request {Method} {Path} | ErrorMessage: {ErrorMessage}",
-                 context.Request.Method,
-                 context.Request.Path,
-                 ex.Message);
+
+                // Log exception with full details
+               
+                var stopwatch = Stopwatch.StartNew();
+                var traceId = context.TraceIdentifier;
+                stopwatch.Stop();
+
+                // Log exception cleanly
+                Log.Error( " Exception |Message: {Message} |  Method: {Method} | Path: {Path} | TraceId: {TraceId} | DurationMs: {Duration} | Query: {QueryString} |  UserId: {UserId} | Role: {UserRole}",
+                    ex.Message,
+                    context.Request.Method,
+                    context.Request.Path,
+                    traceId,
+                    stopwatch?.ElapsedMilliseconds,
+                   context.Request.QueryString,
+                   context.User?.FindFirst("userId")?.Value ?? "Anonymous",
+                   context.User?.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "No Role"
+                );
 
 
                 await HandleExceptionAsync(context, ex);

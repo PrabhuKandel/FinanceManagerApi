@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Dtos.TransactionCategory;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace FinanceManager.Application.Dtos.TransactionRecord
 {

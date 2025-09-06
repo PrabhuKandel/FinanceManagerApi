@@ -20,12 +20,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
+        .MinimumLevel.Debug()
+         .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)  // suppress most system logs
+        .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+         .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
+    .Enrich.FromLogContext()
     .WriteTo.Console()
     .WriteTo.File("log.txt",
     rollingInterval: RollingInterval.Day,   
     rollOnFileSizeLimit: true)
     .CreateLogger();
+
+builder.Host.UseSerilog();
 
 
 // Add services to the container.
@@ -162,13 +169,13 @@ if (app.Environment.IsDevelopment())
 }
 // This middleware catches any exceptions thrown by downstream middleware or controllers
 // because it wraps the call to _next(context) in a try-catch block.
+//  
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<LoggingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-//app.MapGroup("/api")
-//    .MapIdentityApi<IdentityUser>();
 app.Run();

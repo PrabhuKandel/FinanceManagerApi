@@ -3,10 +3,8 @@ using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using MediatR;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries

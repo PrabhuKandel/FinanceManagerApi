@@ -44,7 +44,7 @@ namespace FinanceManager.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(PaymentMethodCreateDto paymentMethodCreateDto)
         {
-            Log.Information("Payment Create Request: {@Request}", paymentMethodCreateDto);
+            
 
             var response = await mediator.Send(new CreatePaymentMethodCommand(paymentMethodCreateDto));
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
