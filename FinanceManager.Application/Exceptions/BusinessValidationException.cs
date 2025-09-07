@@ -11,8 +11,8 @@ namespace FinanceManager.Application.Exceptions
                   : base("Validation failed", 400, errors) { }
         
             
-        public BusinessValidationException(string errorMessage)
-        : base("Validation failed", StatusCodes.Status400BadRequest, new Dictionary<string, string> { { "Error", errorMessage } })
+        public BusinessValidationException(string errorMessage = "Validation failed")
+        : base(errorMessage, StatusCodes.Status400BadRequest)
         {
             
         }

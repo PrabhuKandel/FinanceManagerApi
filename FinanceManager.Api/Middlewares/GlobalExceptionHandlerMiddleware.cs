@@ -39,22 +39,33 @@ namespace FinanceManager.Api.Middlewares
             {
 
                 // Log exception with full details
-               
-                var stopwatch = Stopwatch.StartNew();
+
+                var stopwatch = context.Items["ActionStopwatch"] as Stopwatch;
+                var routeParams = context.Items["RouteParams"] as IDictionary<string, string>;
+                var queryParams = context.Items["QueryParams"] as IDictionary<string, string>;
+                var actionArgs = context.Items["ActionArgs"] as IDictionary<string, object>;
+
                 var traceId = context.TraceIdentifier;
-                stopwatch.Stop();
+
+                // Stop stopwatch if running
+                stopwatch?.Stop();
 
                 // Log exception cleanly
-                Log.Error( " Exception |Message: {Message} |  Method: {Method} | Path: {Path} | TraceId: {TraceId} | DurationMs: {Duration} | Query: {QueryString} |  UserId: {UserId} | Role: {UserRole}",
+                Log.Error(" Exception |Message: {Message} | Method: {Method} | Path: {Path} | Controller: {Controller} | Action: {Action} |" + "" +
+                    " RouteParams: {@RouteParams} | QueryParams: {@QueryParams} | Action Args: {@ActionArgs} | " + 
+                    "UserId: {UserId} | Role: {UserRole} | StatusCode: {StatusCode} | DurationMs: {Duration} | TraceId: {TraceId}", 
                     ex.Message,
-                    context.Request.Method,
-                    context.Request.Path,
-                    traceId,
+                    context.Request.Method, context.Request.Path,
+                    context.GetRouteData()?.Values?["controller"]??"Unknown",
+                    context.GetRouteData()?.Values?["action"]??"Unknown",
+                    routeParams, 
+                    queryParams,
+                    actionArgs,
+                    context.User?.FindFirst("userId")?.Value ?? "Anonymous",
+                    context.User?.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "No Role",
+                    context.Response.StatusCode,
                     stopwatch?.ElapsedMilliseconds,
-                   context.Request.QueryString,
-                   context.User?.FindFirst("userId")?.Value ?? "Anonymous",
-                   context.User?.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "No Role"
-                );
+                    traceId );
 
 
                 await HandleExceptionAsync(context, ex);

@@ -1,4 +1,5 @@
 using System.Text;
+using FinanceManager.Api.Filters;
 using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Application.Interfaces.Services;
@@ -14,22 +15,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
+// Add Serilog
 Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Debug()
-         .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)  // suppress most system logs
-        .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
-         .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
-        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File("log.txt",
-    rollingInterval: RollingInterval.Day,   
-    rollOnFileSizeLimit: true)
+    .ReadFrom.Configuration(builder.Configuration)
+     .Redact()
     .CreateLogger();
 
 builder.Host.UseSerilog();
@@ -130,10 +125,11 @@ builder.Services.AddAuthentication(options =>
 
 
 //Disable automatic model state validation
-builder.Services.AddControllers()
+builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLoggingFillter>())
     .ConfigureApiBehaviorOptions(options =>
     {
         options.SuppressModelStateInvalidFilter = true;
+    
     });
 
 
@@ -171,7 +167,7 @@ if (app.Environment.IsDevelopment())
 // because it wraps the call to _next(context) in a try-catch block.
 //  
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
-app.UseMiddleware<LoggingMiddleware>();
+//app.UseMiddleware<LoggingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
