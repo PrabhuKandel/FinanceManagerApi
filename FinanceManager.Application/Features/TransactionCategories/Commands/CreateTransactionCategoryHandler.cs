@@ -21,8 +21,8 @@ namespace FinanceManager.Application.Features.TransactionCategories.Commands
         {
 
 
-            if (await  context.TransactionCategories.AnyAsync(c => c.Name == request.transactionCategory.Name))
-                throw new BusinessValidationException("Transaction category  with this name already exists.");
+            //if (await  context.TransactionCategories.AnyAsync(c => c.Name == request.transactionCategory.Name))
+            //    throw new BusinessValidationException("Transaction category  with this name already exists.");
 
             var entity = request.transactionCategory.ToEntity();
             await context.TransactionCategories.AddAsync(entity);

@@ -3,30 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Infrastructure.Data;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Validators.TransactionRecordValidator
 {
-    public class TransactionRecordCreateDtoValidator : AbstractValidator<TransactionRecordCreateDto>
+    public class TransactionRecordCreateDtoValidator : TransactionRecordBaseDtoValidator<TransactionRecordCreateDto>
     {
-        public TransactionRecordCreateDtoValidator()
+        public TransactionRecordCreateDtoValidator(ApplicationDbContext _context) : base(_context)
         {
-            RuleFor(x => x.TransactionCategoryId)
-                .NotEmpty().WithMessage("Transaction category is required.");
 
-            RuleFor(x => x.Amount)
-                .GreaterThan(0m).WithMessage("Amount must be greater than 0");
-
-            RuleFor(x => x.PaymentMethodId)
-                .NotEmpty().WithMessage("Payment method is required.");
-
-            RuleFor(x => x.Description)
-                .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");
-
-            RuleFor(x => x.TransactionDate)
-                .NotEmpty().WithMessage("Transaction date is required.");
         }
     }
 }

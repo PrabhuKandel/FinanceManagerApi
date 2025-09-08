@@ -24,11 +24,11 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
         {
 
 
-            if (!await context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
-                throw new BusinessValidationException("Invalid Transaction Category");
+            //if (!await context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
+            //    throw new BusinessValidationException("Invalid Transaction Category");
 
-            if (!await context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
-                throw new BusinessValidationException("Invalid Payment Method");
+            //if (!await context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
+            //    throw new BusinessValidationException("Invalid Payment Method");
 
             var entity = request.transactionRecord.ToEntity();
             entity.CreatedByApplicationUserId = userContext.UserId;

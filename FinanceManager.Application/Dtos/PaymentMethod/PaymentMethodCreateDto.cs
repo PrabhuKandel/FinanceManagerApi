@@ -8,15 +8,8 @@ using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Dtos.PaymentMethod
 {
-    public class PaymentMethodCreateDto
+    public class PaymentMethodCreateDto : PaymentMethodBaseDto
     {
-       
-        public required string Name { get; set; }
-
-        
-        public string? Description { get; set; }
-
-      
-        public bool IsActive { get; set; }
+  
     }
 }

@@ -4,21 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Infrastructure.Data;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Validators.PaymentMethodValidator
 {
-    public class PaymentMethodUpdateDtoValidator : AbstractValidator<PaymentMethodUpdateDto>
+    public class PaymentMethodUpdateDtoValidator : PaymentMethodBaseDtoValidator<PaymentMethodUpdateDto>
     {
-        public PaymentMethodUpdateDtoValidator()
+        public PaymentMethodUpdateDtoValidator(ApplicationDbContext _context):base(_context)
         {
 
-
-            RuleFor(c => c.Name)
-                .NotEmpty().WithMessage("Name is required.");
-
-            RuleFor(c => c.Description)
-                .MaximumLength(250).WithMessage("Description cannot exceed 250 characters.");
 
         }
     }

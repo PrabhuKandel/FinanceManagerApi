@@ -5,6 +5,7 @@ using FinanceManager.Application.Mapping;
 using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+  
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands
 {
@@ -21,12 +22,16 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands
         {
 
 
-            if (await  context.PaymentMethods.AnyAsync(c => c.Name == request.paymentMethod.Name))
-                throw new BusinessValidationException("Payment method with this name already exists.");
+            //if (await  context.PaymentMethods.AnyAsync(c => c.Name == request.paymentMethod.Name))
+            //    throw new BusinessValidationException("Payment method with this name already exists.");
 
             var entity = request.paymentMethod.ToEntity();
+
+         
+
+
             await context.PaymentMethods.AddAsync(entity);
-            await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);  
           
             return new OperationResult<PaymentMethodResponseDto>
             {
