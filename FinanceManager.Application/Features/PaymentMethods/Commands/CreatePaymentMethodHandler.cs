@@ -21,15 +21,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(CreatePaymentMethodCommand request, CancellationToken cancellationToken)
         {
 
-
-            //if (await  context.PaymentMethods.AnyAsync(c => c.Name == request.paymentMethod.Name))
-            //    throw new BusinessValidationException("Payment method with this name already exists.");
-
-            var entity = request.paymentMethod.ToEntity();
-
-         
-
-
+            var entity = request.PaymentMethod.ToEntity();
             await context.PaymentMethods.AddAsync(entity);
             await context.SaveChangesAsync(cancellationToken);  
           

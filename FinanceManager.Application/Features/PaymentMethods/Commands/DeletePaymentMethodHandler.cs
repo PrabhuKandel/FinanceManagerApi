@@ -17,10 +17,6 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands
         public async Task<OperationResult<string>> Handle(DeletePaymentMethodCommand request, CancellationToken cancellationToken)
         {
             var paymentMethod = await context.PaymentMethods.FindAsync(request.Id);
-            if (paymentMethod == null)
-            {
-                throw new NotFoundException("Payment Method doesn't exist");
-            }
             context.PaymentMethods.Remove(paymentMethod);
             await context.SaveChangesAsync(cancellationToken);
             return new OperationResult<string>

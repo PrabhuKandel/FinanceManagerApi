@@ -22,12 +22,12 @@ namespace FinanceManager.Application.Features.Auth.Commands
 
         public async Task<OperationResult<TokenResponseDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(request.refreshToken))
+            if (string.IsNullOrEmpty(request.RefreshToken))
             {
                 throw new AuthenticationException("Refresh token is missing ");
             }
             var user = await userManager.Users
-                .FirstOrDefaultAsync(u => u.RefreshToken == request.refreshToken);
+                .FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
 
             if (user == null || user.RefreshTokenExpiresAtUtc < DateTime.UtcNow)
             {

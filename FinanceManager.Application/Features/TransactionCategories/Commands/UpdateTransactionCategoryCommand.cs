@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Commands
 {
-    public  record UpdateTransactionCategoryCommand(Guid Id, TransactionCategoryUpdateDto transactionCategory):IRequest<OperationResult<TransactionCategoryResponseDto>>
+    public  record UpdateTransactionCategoryCommand(Guid Id, TransactionCategoryUpdateDto TransactionCategory):IRequest<OperationResult<TransactionCategoryResponseDto>>
     {
 
     }

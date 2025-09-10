@@ -29,21 +29,16 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                 .Include(t => t.CreatedByApplicationUser)
                 .Include(t => t.UpdatedByApplicationUser).FirstOrDefaultAsync(tr => tr.Id == request.Id);
 
-
-            if (transactionRecord == null)
-            {
-                throw new NotFoundException("Transaction record not found");
-            }
             var isAdmin = userContext.IsAdmin();
             // Filter for non-admin users
             if (!isAdmin)
             {
-                if (transactionRecord.CreatedByApplicationUserId != userContext.UserId)
+                if (transactionRecord?.CreatedByApplicationUserId != userContext.UserId)
                 {
                     throw new AuthorizationException("You can't access this record.");
                 }
             }
-                var transactionRecordDto =   transactionRecord.ToResponseDto(isAdmin);
+                var transactionRecordDto =   transactionRecord?.ToResponseDto(isAdmin);
              return new OperationResult<TransactionRecordResponseDto>
             {
 

@@ -22,15 +22,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
 
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
-
-
-            //if (!await context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
-            //    throw new BusinessValidationException("Invalid Transaction Category");
-
-            //if (!await context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
-            //    throw new BusinessValidationException("Invalid Payment Method");
-
-            var entity = request.transactionRecord.ToEntity();
+            var entity = request.TransactionRecord.ToEntity();
             entity.CreatedByApplicationUserId = userContext.UserId;
             entity.UpdatedByApplicationUserId = userContext.UserId;
 

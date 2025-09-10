@@ -10,9 +10,9 @@ namespace FinanceManager.Application.Exceptions
     public abstract class ApiException : Exception
     {
         public int StatusCode { get; }
-        public IDictionary<string, string>? Errors { get; }
+        public IDictionary<string, string[]>? Errors { get; }
 
-        protected ApiException(string message, int statusCode= StatusCodes.Status500InternalServerError, IDictionary<string, string>? errors = null)
+        protected ApiException(string message, int statusCode= StatusCodes.Status500InternalServerError, IDictionary<string, string[]>? errors = null)
             : base(message)
         {
             StatusCode = statusCode;

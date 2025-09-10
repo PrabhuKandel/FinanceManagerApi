@@ -9,7 +9,7 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.Auth.Commands
 {
-    public record ApplicationUserRegisterCommand(ApplicationUserRegisterDto registerUser):IRequest<OperationResult<string>>
+    public record ApplicationUserRegisterCommand(ApplicationUserRegisterDto RegisterUser):IRequest<OperationResult<string>>
     {
     }
 }

@@ -9,7 +9,7 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.Auth.Commands
 {
-    public record ApplicationUserLoginCommand(ApplicationUserLoginDto loginUser):IRequest<OperationResult<ApplicationUserLoginResponseDto>>
+    public record ApplicationUserLoginCommand(ApplicationUserLoginDto LoginUser):IRequest<OperationResult<ApplicationUserLoginResponseDto>>
     {
     }
 }

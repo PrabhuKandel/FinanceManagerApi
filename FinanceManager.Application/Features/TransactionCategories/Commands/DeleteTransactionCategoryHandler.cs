@@ -17,10 +17,6 @@ namespace FinanceManager.Application.Features.TransactionCategories.Commands
         public async Task<OperationResult<string>> Handle(DeleteTransactionCategoryCommand request, CancellationToken cancellationToken)
         {
             var transactionCategory = await context.TransactionCategories.FindAsync(request.Id);
-            if (transactionCategory == null)
-            {
-                throw new NotFoundException("Transaction Category doesn't exist");
-            }
             context.TransactionCategories.Remove(transactionCategory);
             await context.SaveChangesAsync(cancellationToken);
             return new OperationResult<string>

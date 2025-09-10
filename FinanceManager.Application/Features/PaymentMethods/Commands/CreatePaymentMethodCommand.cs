@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands
 {
-    public  record CreatePaymentMethodCommand(PaymentMethodCreateDto paymentMethod):IRequest<OperationResult<PaymentMethodResponseDto>>
+    public  record CreatePaymentMethodCommand(PaymentMethodCreateDto PaymentMethod):IRequest<OperationResult<PaymentMethodResponseDto>>
     {
 
     }

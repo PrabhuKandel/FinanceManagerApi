@@ -20,11 +20,7 @@ namespace FinanceManager.Application.Features.TransactionCategories.Commands
         public async Task<OperationResult<TransactionCategoryResponseDto>> Handle(CreateTransactionCategoryCommand request, CancellationToken cancellationToken)
         {
 
-
-            //if (await  context.TransactionCategories.AnyAsync(c => c.Name == request.transactionCategory.Name))
-            //    throw new BusinessValidationException("Transaction category  with this name already exists.");
-
-            var entity = request.transactionCategory.ToEntity();
+            var entity = request.TransactionCategory.ToEntity();
             await context.TransactionCategories.AddAsync(entity);
             await context.SaveChangesAsync(cancellationToken);
 

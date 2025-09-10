@@ -19,7 +19,7 @@ namespace FinanceManager.Application.Features.Auth.Commands
 
         public async Task<OperationResult<string>> Handle(ApplicationUserRegisterCommand request, CancellationToken cancellationToken)
         {
-            var existingUser = await userManager.FindByEmailAsync(request.registerUser.Email);
+            var existingUser = await userManager.FindByEmailAsync(request.RegisterUser.Email);
             if (existingUser != null)
             {
                 throw new BusinessValidationException("Email is already registered.");
@@ -27,29 +27,34 @@ namespace FinanceManager.Application.Features.Auth.Commands
 
             var applicationUser = new ApplicationUser
             {
-                FirstName = request.registerUser.FirstName,
-                LastName = request.registerUser.LastName,
-                UserName = request.registerUser.Email,
-                Email = request.registerUser.Email,
-                Address = request.registerUser.Address,
+                FirstName = request.RegisterUser.FirstName,
+                LastName = request.RegisterUser.LastName,
+                UserName = request.RegisterUser.Email,
+                Email = request.RegisterUser.Email,
+                Address = request.RegisterUser.Address,
 
             };
 
-            var result = await userManager.CreateAsync(applicationUser, request.registerUser.Password);
+            var result = await userManager.CreateAsync(applicationUser, request.RegisterUser.Password);
 
             if (!result.Succeeded)
             {
                 if (result.Errors.Any())
                 {
-                    throw new BusinessValidationException(result.Errors.ToDictionary(e => "Error", e => e.Description));
+                    var errors = new Dictionary<string, string[]>
+                        {
+                            { "Error", result.Errors.Select(e => e.Description).ToArray() }
+                        };
+
+                    throw new BusinessValidationException(errors);
                 }
                 throw new Exception("Registration failed due to server error.");
             }
 
             //assingning role based on user input 
-            if (!string.IsNullOrEmpty(request.registerUser.RoleId))
+            if (!string.IsNullOrEmpty(request.RegisterUser.RoleId))
             {
-                var role = await roleManager.FindByIdAsync(request.registerUser.RoleId);
+                var role = await roleManager.FindByIdAsync(request.RegisterUser.RoleId);
                 if (role == null)
                     throw new BusinessValidationException("Invalid role selected.");
 

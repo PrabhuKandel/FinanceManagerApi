@@ -25,7 +25,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands.CreatePaym
                 throw new NotFoundException("Payment Method doesn't exist");
             }
 
-            paymentMethod.UpdateEntity(request.paymentMethod);
+            paymentMethod.UpdateEntity(request.PaymentMethod);
             return new OperationResult<PaymentMethodResponseDto>
             {
 

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Commands
 {
-    public  record CreateTransactionCategoryCommand(TransactionCategoryCreateDto transactionCategory):IRequest<OperationResult<TransactionCategoryResponseDto>>
+    public  record CreateTransactionCategoryCommand(TransactionCategoryCreateDto TransactionCategory):IRequest<OperationResult<TransactionCategoryResponseDto>>
     {
 
     }

@@ -18,11 +18,6 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
         public async Task<OperationResult<string>> Handle(DeleteTransactionRecordCommand request, CancellationToken cancellationToken)
         {
             var transactionRecord = await context.TransactionRecords.FindAsync(request.Id);
-            if (transactionRecord == null)
-
-            {
-                throw new NotFoundException("Transaction record  doesn't exist");
-            }
             context.TransactionRecords.Remove(transactionRecord);
             await context.SaveChangesAsync();
 

@@ -25,7 +25,7 @@ namespace FinanceManager.Application.Features.TransactionCategories.Commands.Cre
                 throw new NotFoundException("Transaction Category doesn't exist");
             }
 
-            transactionCategory.UpdateEntity(request.transactionCategory);
+            transactionCategory.UpdateEntity(request.TransactionCategory);
             return new OperationResult<TransactionCategoryResponseDto>
             {
 

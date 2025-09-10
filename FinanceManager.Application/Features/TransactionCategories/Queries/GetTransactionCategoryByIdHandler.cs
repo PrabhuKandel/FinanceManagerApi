@@ -19,17 +19,11 @@ namespace FinanceManager.Application.Features.TransactionCategories.Queries
         public async Task<OperationResult<TransactionCategoryResponseDto>> Handle(GetTransactionCategoryByIdQuery request, CancellationToken cancellationToken)
         {
             var transactionCategory = await context.TransactionCategories.FindAsync(request.Id);
-            if (transactionCategory == null)
-            {
-                throw new NotFoundException("Transaction category not found");
-            }
-
-            var transactionCategoryDto = transactionCategory.ToResponseDto();
 
             return new OperationResult<TransactionCategoryResponseDto>
             {
 
-                Data = transactionCategory.ToResponseDto(),
+                Data = transactionCategory?.ToResponseDto(),
                 Message = "Transaction category  retrieved successfully"
 
 

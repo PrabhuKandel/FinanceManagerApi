@@ -26,29 +26,19 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
         {
 
             var transactionRecordFromDb = await context.TransactionRecords.FindAsync(request.Id);
-            if (transactionRecordFromDb == null)
-            {
-                throw new NotFoundException("Transaction record doesn't exist");
-            }
 
             if (!userContext.IsAdmin())
             {
-                if (transactionRecordFromDb.CreatedByApplicationUserId != userContext.UserId)
+                if (transactionRecordFromDb?.CreatedByApplicationUserId != userContext.UserId)
                 {
                     throw new AuthorizationException("You can't access this record.");
                 }
             }
 
-            //if (!await context.TransactionCategories.AnyAsync(c => c.Id == request.transactionRecord.TransactionCategoryId))
-            //    throw new BusinessValidationException("Invalid Transaction Category");
-
-            //if (!await context.PaymentMethods.AnyAsync(c => c.Id == request.transactionRecord.PaymentMethodId))
-            //    throw new BusinessValidationException("Invalid Payment Method");
-
             transactionRecordFromDb.UpdatedByApplicationUserId = userContext.UserId;
 
 
-            transactionRecordFromDb.UpdateEntity(request.transactionRecord);
+            transactionRecordFromDb?.UpdateEntity(request.TransactionRecord);
 
             await context.SaveChangesAsync();
 

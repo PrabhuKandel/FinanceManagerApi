@@ -16,7 +16,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,8 +33,9 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers()
     .AddNewtonsoftJson();
 
-builder.Services.AddValidatorsFromAssemblyContaining<PaymentMethodCreateDtoValidator>();
-builder.Services.AddFluentValidationAutoValidation();
+
+
+//builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 //It makes Swagger aware of JWT authentication and enables you to test secured endpoints directly in Swagger UI.
 builder.Services.AddSwaggerGen(
@@ -132,7 +132,6 @@ builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLo
     });
 
 
-builder.Services.AddValidatorsFromAssembly(typeof(TransactionCategoryCreateDtoValidator).Assembly);
 
 
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();

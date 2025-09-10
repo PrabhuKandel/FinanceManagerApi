@@ -21,12 +21,12 @@ namespace FinanceManager.Application.Features.Auth.Commands
 
         public async Task<OperationResult<ApplicationUserLoginResponseDto>> Handle(ApplicationUserLoginCommand request, CancellationToken cancellationToken)
         {
-             var applicationUser = await userManager.FindByEmailAsync(request.loginUser.Email);
+             var applicationUser = await userManager.FindByEmailAsync(request.LoginUser.Email);
             if (applicationUser == null)
             {
                 throw new AuthenticationException("Invalid email");
             }
-            var result = await userManager.CheckPasswordAsync(applicationUser, request.loginUser.Password);
+            var result = await userManager.CheckPasswordAsync(applicationUser, request.LoginUser.Password);
             if (!result)
             {
                 throw new AuthenticationException("Invalid Credentials");

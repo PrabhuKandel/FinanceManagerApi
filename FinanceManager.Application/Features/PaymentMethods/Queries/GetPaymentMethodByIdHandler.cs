@@ -19,16 +19,10 @@ namespace FinanceManager.Application.Features.PaymentMethods.Queries
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(GetPaymentMethodByIdQuery request, CancellationToken cancellationToken)
         {
             var paymentMethod = await context.PaymentMethods.FindAsync(request.Id);
-            if (paymentMethod == null)
-            {
-                throw new NotFoundException("Payment method not found");
-            }
-
-           
             return new OperationResult<PaymentMethodResponseDto>
             {
 
-                Data = paymentMethod.ToResponseDto(),
+                Data = paymentMethod?.ToResponseDto(),
                 Message = "Payment Method retrieved successfully"
 
 

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public record CreateTransactionRecordCommand(TransactionRecordCreateDto transactionRecord):IRequest<OperationResult<TransactionRecordResponseDto>>
+    public record CreateTransactionRecordCommand(TransactionRecordCreateDto TransactionRecord):IRequest<OperationResult<TransactionRecordResponseDto>>
     {
     }
 }
