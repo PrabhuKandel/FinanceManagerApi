@@ -6,22 +6,13 @@ using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinanceManager.Application.Features.PaymentMethods.Queries
+namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GetPaymentMethodById
 {
-    public record GetPaymentMethodByIdSpQuery(Guid Id) : IRequest<OperationResult<PaymentMethodResponseDto>>
-    {
-
-    }
-
     public class GetPaymentMethodByIdSpHandler(ApplicationDbContext _context) : IRequestHandler<GetPaymentMethodByIdSpQuery, OperationResult<PaymentMethodResponseDto>>
     {
-      
-
-   
-
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(GetPaymentMethodByIdSpQuery request, CancellationToken cancellationToken)
         {
-            var paymentMethod =  _context.PaymentMethods
+            var paymentMethod = _context.PaymentMethods
                             .FromSqlInterpolated($"EXECUTE dbo.usp_GetPaymentMethodById  @Id = {request.Id}")
                             .AsNoTracking()
                             .AsEnumerable()
@@ -32,7 +23,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Queries
                 throw new NotFoundException("Payment method not found");
             }
 
-           
+
             return new OperationResult<PaymentMethodResponseDto>
             {
 

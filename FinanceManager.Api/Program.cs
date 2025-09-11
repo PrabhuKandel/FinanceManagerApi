@@ -4,8 +4,6 @@ using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
-using FinanceManager.Application.Validators.PaymentMethodValidator;
-using FinanceManager.Application.Validators.TransactionCategoryValidator;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using FluentValidation;

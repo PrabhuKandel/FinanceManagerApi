@@ -1,29 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Common;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Mapping;
 using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinanceManager.Application.Features.PaymentMethods.Commands
+namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.UpdatePaymentMethod
 {
-    public record  UpdatePaymentMethodSpCommand (Guid Id, PaymentMethodUpdateDto PaymentMethod): IRequest<OperationResult<PaymentMethodResponseDto>>
-    {
-    }
     public class UpdatePaymentMethodSpHandler(ApplicationDbContext context) : IRequestHandler<UpdatePaymentMethodSpCommand, OperationResult<PaymentMethodResponseDto>>
     {
 
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(UpdatePaymentMethodSpCommand request, CancellationToken cancellationToken)
         {
 
-            var paymentMethod =  context.PaymentMethods
+            var paymentMethod = context.PaymentMethods
             .FromSqlInterpolated(
-                $"EXEC dbo.usp_UpdatePaymentMethod @Id = {request.Id}, @Name = {request.PaymentMethod.Name}, @IsActive = {request.PaymentMethod.IsActive}, @Description = {request.PaymentMethod.Description}"
+                $"EXEC dbo.usp_UpdatePaymentMethod @Id = {request.Id}, @Name = {request.Name}, @IsActive = {request.IsActive}, @Description = {request.Description}"
             )
             .AsNoTracking()
             .AsEnumerable()

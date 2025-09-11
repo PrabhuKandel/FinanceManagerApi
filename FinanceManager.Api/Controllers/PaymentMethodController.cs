@@ -1,12 +1,13 @@
 ﻿using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Features.PaymentMethods.Commands;
 using FinanceManager.Application.Features.PaymentMethods.Queries;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.CreatePaymentMethod;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.DeletePaymentMethod;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.UpdatePaymentMethod;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GellAllPaymentMethod;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GetPaymentMethodById;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 
 namespace FinanceManager.Api.Controllers
@@ -17,12 +18,12 @@ namespace FinanceManager.Api.Controllers
     public class PaymentMethodController: ControllerBase
     {
         private readonly IMediator mediator;
-        private readonly ApplicationDbContext context;
+     
 
-        public PaymentMethodController( IMediator _mediator, ApplicationDbContext _context)
+        public PaymentMethodController( IMediator _mediator)
         {
             mediator = _mediator;
-            context = _context;
+           
         }
 
         [HttpGet]
@@ -51,8 +52,6 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-
-
         [HttpGet("spGetById/{id}")]
         public async Task<IActionResult> SpGetById(Guid id)
         {
@@ -61,9 +60,6 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
 
         }
-
-
-
 
         [HttpPost]
      
@@ -79,16 +75,11 @@ namespace FinanceManager.Api.Controllers
 
         public async Task<IActionResult> SpCreate(PaymentMethodCreateDto paymentMethodCreateDto)
         {
-            var response = await mediator.Send(new CreatePaymentMethodSpCommand(paymentMethodCreateDto));
+            var response = await mediator.Send(new CreatePaymentMethodSpCommand(paymentMethodCreateDto.Name, paymentMethodCreateDto.Description, paymentMethodCreateDto.IsActive));
 
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
-
-
-
-
-
 
         [HttpPut("{id}")]
 
@@ -104,13 +95,10 @@ namespace FinanceManager.Api.Controllers
 
         public  async Task<IActionResult> SpUpdate(Guid id, PaymentMethodUpdateDto paymentMethodUpdateDto)
         {
-            var response = await mediator.Send(new UpdatePaymentMethodSpCommand(id, paymentMethodUpdateDto));
+            var response = await mediator.Send(new UpdatePaymentMethodSpCommand(id, paymentMethodUpdateDto.Name, paymentMethodUpdateDto.Description, paymentMethodUpdateDto.IsActive));
             return Ok(response);
 
         }
-
-
-
 
         [HttpDelete("{id}")]
 

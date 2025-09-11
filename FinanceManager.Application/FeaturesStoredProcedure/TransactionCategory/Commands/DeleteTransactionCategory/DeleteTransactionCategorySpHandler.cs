@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Features.PaymentMethods.Commands;
+using FinanceManager.Infrastructure.Data;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.DeleteTransactionCategory
+{
+    public class DeleteTransactionCategorySpHandler(ApplicationDbContext context) : IRequestHandler<DeleteTransactionCategorySpCommand, OperationResult<string>>
+    {
+
+        public async Task<OperationResult<string>> Handle(DeleteTransactionCategorySpCommand request, CancellationToken cancellationToken)
+        {
+
+            await context.Database.ExecuteSqlInterpolatedAsync(
+              $"EXEC dbo.usp_DeleteTransactionCategory @Id = {request.Id}");
+
+            return new OperationResult<string>
+            {
+
+                Message = "Transaction category deleted",
+
+            };
+
+
+         
+
+
+        }
+    }
+}

@@ -1,13 +1,12 @@
-﻿using FinanceManager.Application.Features.PaymentMethods.Commands;
-using FinanceManager.Infrastructure.Data;
+﻿using FinanceManager.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinanceManager.Application.Validators.PaymentMethodValidator.CommandValidator
+namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GetPaymentMethodById
 {
-    public class DeletePaymentMethodCommandValidator : AbstractValidator<DeletePaymentMethodCommand>
+    public class GetPaymentMethodByIdSpQueryValidator : AbstractValidator<GetPaymentMethodByIdSpQuery>
     {
-        public DeletePaymentMethodCommandValidator(ApplicationDbContext context)
+        public GetPaymentMethodByIdSpQueryValidator(ApplicationDbContext context)
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Id is required.")
@@ -18,5 +17,4 @@ namespace FinanceManager.Application.Validators.PaymentMethodValidator.CommandVa
                 .WithMessage("Payment method not found.");
         }
     }
-
 }

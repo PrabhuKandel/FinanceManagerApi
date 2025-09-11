@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Infrastructure.Data;
+﻿using FinanceManager.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinanceManager.Application.Validators.PaymentMethodValidator
+namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.CreatePaymentMethod
 {
-    public class PaymentMethodBaseDtoValidator<T> : AbstractValidator<T> where T : PaymentMethodBaseDto
+    public class CreatePaymentMethodSpCommandValidator: AbstractValidator<CreatePaymentMethodSpCommand>
     {
-        public PaymentMethodBaseDtoValidator(ApplicationDbContext _context)
-        {
+        public CreatePaymentMethodSpCommandValidator(ApplicationDbContext _context) {
+
             RuleFor(c => c.Name)
              .NotEmpty().WithMessage("Name is required.")
              .MaximumLength(100).WithMessage("Name cannot exceed 100 characters.")
@@ -22,13 +16,13 @@ namespace FinanceManager.Application.Validators.PaymentMethodValidator
                  var exists = await _context.PaymentMethods.AnyAsync(pm => pm.Name == name);
                  return !exists;// true = valid, false = invalid
              })
-           .WithMessage( "Name already exists");
+           .WithMessage(" Name already exists");
 
             RuleFor(c => c.Description)
                 .MaximumLength(200).WithMessage("Description cannot exceed 200 characters.");
 
             RuleFor(c => c.IsActive)
-                .NotNull().WithMessage("IsActive is required.");
+            .NotNull().WithMessage("IsActive is required.");
 
         }
     }
