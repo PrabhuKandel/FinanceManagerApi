@@ -57,35 +57,35 @@ namespace FinanceManager.Api.Controllers
         {
             var response = await mediator.Send(new GetPaymentMethodByIdSpQuery(id));
 
-            return Ok(response);
+            return Ok(response);    
 
         }
 
         [HttpPost]
      
-        public async Task<IActionResult> Create(PaymentMethodCreateDto paymentMethodCreateDto)
+        public async Task<IActionResult> Create(CreatePaymentMethodCommand createCommand)
         {
 
-            var response = await mediator.Send(new CreatePaymentMethodCommand(paymentMethodCreateDto));
+            var response = await mediator.Send(createCommand);
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
         [HttpPost("spCreate")]
 
-        public async Task<IActionResult> SpCreate(PaymentMethodCreateDto paymentMethodCreateDto)
+        public async Task<IActionResult> SpCreate(CreatePaymentMethodSpCommand createCommand)
         {
-            var response = await mediator.Send(new CreatePaymentMethodSpCommand(paymentMethodCreateDto.Name, paymentMethodCreateDto.Description, paymentMethodCreateDto.IsActive));
+            var response = await mediator.Send(createCommand);
 
-            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response );
 
         }
 
         [HttpPut("{id}")]
 
-        public async Task<IActionResult> Update(Guid id, PaymentMethodUpdateDto paymentMethodUpdateDto)
+        public async Task<IActionResult> Update(UpdatePaymentMethodCommand updateCommand)
         {
-            var response = await mediator.Send(new UpdatePaymentMethodCommand(id, paymentMethodUpdateDto));
+            var response = await mediator.Send(updateCommand);
             return Ok(response);
             
         }
@@ -93,9 +93,9 @@ namespace FinanceManager.Api.Controllers
 
         [HttpPut("spUpdate/{id}")]
 
-        public  async Task<IActionResult> SpUpdate(Guid id, PaymentMethodUpdateDto paymentMethodUpdateDto)
+        public  async Task<IActionResult> SpUpdate(UpdatePaymentMethodSpCommand updateCommand)
         {
-            var response = await mediator.Send(new UpdatePaymentMethodSpCommand(id, paymentMethodUpdateDto.Name, paymentMethodUpdateDto.Description, paymentMethodUpdateDto.IsActive));
+            var response = await mediator.Send(updateCommand);
             return Ok(response);
 
         }
@@ -105,7 +105,7 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var response = await mediator.Send(new DeletePaymentMethodCommand(id));
-            return Ok(response);
+            return Ok(response);    
 
 
         }

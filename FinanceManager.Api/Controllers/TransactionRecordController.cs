@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionRecordController : ControllerBase
@@ -40,20 +40,20 @@ namespace FinanceManager.Api.Controllers
 
         }
         [HttpPost]
-        public async Task<IActionResult> Create( TransactionRecordCreateDto transactionRecordCreateDto)
+        public async Task<IActionResult> Create(CreateTransactionRecordCommand createCommand)
         {
             
-            var response = await mediator.Send(new CreateTransactionRecordCommand(transactionRecordCreateDto));
+            var response = await mediator.Send(createCommand);
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
         [HttpPut("{id}")]   
-        public async Task<IActionResult> Update(Guid id,  TransactionRecordUpdateDto transactionRecordUpdateDto)
+        public async Task<IActionResult> Update(UpdateTransactionRecordCommand updateCommand)
         {
 
           
-            var response = await mediator.Send(new UpdateTransactionRecordCommand(id, transactionRecordUpdateDto));
+            var response = await mediator.Send(updateCommand);
             return Ok(response);
             
 
@@ -61,17 +61,17 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(Guid id,TransactionRecordPatchDto transactionRecordPatchDto)
+        public async Task<IActionResult> Patch(PatchTransactionRecordCommand patchCommand)
         {
 
-            var response = await mediator.Send(new PatchTransactionRecordCommand(id, transactionRecordPatchDto));
+            var response = await mediator.Send(patchCommand);
             return Ok(response);
         }
 
 
 
             [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
           

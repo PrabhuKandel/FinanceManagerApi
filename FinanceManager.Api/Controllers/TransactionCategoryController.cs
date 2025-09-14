@@ -41,39 +41,39 @@ namespace FinanceManager.Api.Controllers
 
         }   
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(TransactionCategoryCreateDto transactionCategoryCreateDto)
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create(CreateTransactionCategoryCommand createCommand)
         {
 
-            var response = await mediator.Send(new CreateTransactionCategoryCommand(transactionCategoryCreateDto));
+            var response = await mediator.Send(createCommand);
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
         [HttpPost("spCreate")]
 
-        public async Task<IActionResult> SpCreate(TransactionCategoryCreateDto transactionCategoryCreateDto)
+        public async Task<IActionResult> SpCreate(CreateTransactionCategorySpCommand createCommand)
         {
-            var response = await mediator.Send(new CreateTransactionCategorySpCommand(transactionCategoryCreateDto.Name, transactionCategoryCreateDto.Description, transactionCategoryCreateDto.Type));
+            var response = await mediator.Send(createCommand);
 
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(Guid id,  TransactionCategoryUpdateDto transactionCategoryUpdateDto)
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(UpdateTransactionCategoryCommand updateCommand)
         {
-            var response = await mediator.Send(new UpdateTransactionCategoryCommand(id,transactionCategoryUpdateDto));
+            var response = await mediator.Send(updateCommand);
             return Ok(response);
             
 
         }
 
-        [HttpPost("spUpdate")]
+        [HttpPut("spUpdate/{id}")]
 
-        public async Task<IActionResult> SpUpdate(Guid id, TransactionCategoryUpdateDto transactionCategoryUpdateDto)
+        public async Task<IActionResult> SpUpdate(UpdateTransactionCategorySpCommand updateCommand)
         {
-            var response = await mediator.Send(new UpdateTransactionCategorySpCommand( id, transactionCategoryUpdateDto.Name, transactionCategoryUpdateDto.Description, transactionCategoryUpdateDto.Type));
+            var response = await mediator.Send(updateCommand);
 
             return Ok(response);
 
@@ -82,7 +82,7 @@ namespace FinanceManager.Api.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var response = await mediator.Send(new DeleteTransactionCategoryCommand(id));
@@ -97,7 +97,7 @@ namespace FinanceManager.Api.Controllers
         [HttpDelete("spDelete/{id}")]
         public async Task<IActionResult> SpDelete(Guid id)
         {
-            var response = await mediator.Send(new DeleteTransactionCategorySpCommand(id));
+            var response = await mediator.Send( new DeleteTransactionCategorySpCommand(id));
             return Ok(response);
 
 
