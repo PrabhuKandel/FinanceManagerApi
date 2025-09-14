@@ -1,15 +1,15 @@
 ﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Exceptions;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
+
 using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands
 {
     public class DeletePaymentMethodHandler : IRequestHandler<DeletePaymentMethodCommand, OperationResult<string>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public DeletePaymentMethodHandler(ApplicationDbContext _context)
+        public DeletePaymentMethodHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Features.TransactionRecords.Commands;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +7,7 @@ namespace FinanceManager.Application.Validators.TransactionRecordValidator.Comma
 {
     public class DeleteTransactionRecordCommandValidator : AbstractValidator<DeleteTransactionRecordCommand>
     {
-        public DeleteTransactionRecordCommandValidator(ApplicationDbContext context)
+        public DeleteTransactionRecordCommandValidator(IApplicationDbContext context)
         {
             RuleFor(x => x.Id).NotEmpty().WithMessage("Id is required.")
                 .MustAsync(async (id, cancellation) =>

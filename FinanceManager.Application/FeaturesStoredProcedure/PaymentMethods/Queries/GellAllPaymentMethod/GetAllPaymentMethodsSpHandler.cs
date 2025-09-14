@@ -1,13 +1,13 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GellAllPaymentMethod
 {
-    public class GetAllPaymentMethodsSpHandler(ApplicationDbContext context) : IRequestHandler<GetAllPaymentMethodsSpQuery, OperationResult<IEnumerable<PaymentMethodResponseDto>>>
+    public class GetAllPaymentMethodsSpHandler(IApplicationDbContext context) : IRequestHandler<GetAllPaymentMethodsSpQuery, OperationResult<IEnumerable<PaymentMethodResponseDto>>>
     {
         public async Task<OperationResult<IEnumerable<PaymentMethodResponseDto>>> Handle(GetAllPaymentMethodsSpQuery request, CancellationToken cancellationToken)
         {

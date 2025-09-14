@@ -1,15 +1,14 @@
 ﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Exceptions;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
 using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Commands
 {
     public class DeleteTransactionCategoryHandler : IRequestHandler<DeleteTransactionCategoryCommand, OperationResult<string>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public DeleteTransactionCategoryHandler(ApplicationDbContext _context)
+        public DeleteTransactionCategoryHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

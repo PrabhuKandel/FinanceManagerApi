@@ -1,13 +1,13 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.UpdatePaymentMethod
 {
-    public class UpdatePaymentMethodSpHandler(ApplicationDbContext context) : IRequestHandler<UpdatePaymentMethodSpCommand, OperationResult<PaymentMethodResponseDto>>
+    public class UpdatePaymentMethodSpHandler(IApplicationDbContext context) : IRequestHandler<UpdatePaymentMethodSpCommand, OperationResult<PaymentMethodResponseDto>>
     {
 
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(UpdatePaymentMethodSpCommand request, CancellationToken cancellationToken)

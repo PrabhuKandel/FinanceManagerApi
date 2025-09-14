@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Features.PaymentMethods.Commands;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +7,7 @@ namespace FinanceManager.Application.Validators.PaymentMethodValidator.CommandVa
 {
     public class DeletePaymentMethodCommandValidator : AbstractValidator<DeletePaymentMethodCommand>
     {
-        public DeletePaymentMethodCommandValidator(ApplicationDbContext context)
+        public DeletePaymentMethodCommandValidator(IApplicationDbContext context)
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Id is required.")

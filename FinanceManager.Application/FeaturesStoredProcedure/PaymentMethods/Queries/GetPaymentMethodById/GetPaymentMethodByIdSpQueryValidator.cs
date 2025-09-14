@@ -1,4 +1,4 @@
-﻿using FinanceManager.Infrastructure.Data;
+﻿using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +6,7 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Quer
 {
     public class GetPaymentMethodByIdSpQueryValidator : AbstractValidator<GetPaymentMethodByIdSpQuery>
     {
-        public GetPaymentMethodByIdSpQueryValidator(ApplicationDbContext context)
+        public GetPaymentMethodByIdSpQueryValidator(IApplicationDbContext context)
         {
             RuleFor(x => x.Id)
                 .NotEmpty().WithMessage("Id is required.")

@@ -1,6 +1,5 @@
 ﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Exceptions;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
 using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
@@ -8,9 +7,9 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
     public class DeleteTransactionRecordHandler : IRequestHandler<DeleteTransactionRecordCommand, OperationResult<string>>
 
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public DeleteTransactionRecordHandler(ApplicationDbContext _context)
+        public DeleteTransactionRecordHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

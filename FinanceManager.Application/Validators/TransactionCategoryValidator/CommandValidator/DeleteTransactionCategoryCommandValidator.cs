@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Features.TransactionCategories.Commands;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +7,7 @@ namespace FinanceManager.Application.Validators.TransactionCategoryValidator.Com
 {
     public class DeleteTransactionCategoryCommandValidator : AbstractValidator<DeleteTransactionCategoryCommand>
     {
-        public DeleteTransactionCategoryCommandValidator(ApplicationDbContext context)
+        public DeleteTransactionCategoryCommandValidator(IApplicationDbContext context)
         {
             RuleFor(x => x.Id).NotEmpty().WithMessage("Id is required.")
                 .MustAsync(async (id, cancellation) =>

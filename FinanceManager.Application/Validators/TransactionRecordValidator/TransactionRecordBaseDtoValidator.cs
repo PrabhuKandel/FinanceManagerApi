@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +8,7 @@ namespace FinanceManager.Application.Validators.TransactionRecordValidator
     public class TransactionRecordBaseDtoValidator<T> : AbstractValidator<T> where T :TransactionRecordBaseDto
     {
 
-        public TransactionRecordBaseDtoValidator(ApplicationDbContext _context)
+        public TransactionRecordBaseDtoValidator(IApplicationDbContext _context)
         {
             RuleFor(x => x.TransactionCategoryId)
                 .NotEmpty().WithMessage("Transaction category is required.")

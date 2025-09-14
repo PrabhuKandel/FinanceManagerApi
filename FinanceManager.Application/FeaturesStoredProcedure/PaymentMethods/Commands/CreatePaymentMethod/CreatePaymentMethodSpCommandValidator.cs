@@ -1,4 +1,4 @@
-﻿using FinanceManager.Infrastructure.Data;
+﻿using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +6,7 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Comm
 {
     public class CreatePaymentMethodSpCommandValidator: AbstractValidator<CreatePaymentMethodSpCommand>
     {
-        public CreatePaymentMethodSpCommandValidator(ApplicationDbContext _context) {
+        public CreatePaymentMethodSpCommandValidator(IApplicationDbContext _context) {
 
             RuleFor(c => c.Name)
              .NotEmpty().WithMessage("Name is required.")

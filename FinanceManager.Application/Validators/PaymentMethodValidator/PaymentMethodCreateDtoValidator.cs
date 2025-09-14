@@ -1,6 +1,5 @@
 ﻿using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Infrastructure.Data;
-
+using FinanceManager.Application.Interfaces;
 
 namespace FinanceManager.Application.Validators.PaymentMethodValidator
 {
@@ -8,7 +7,7 @@ namespace FinanceManager.Application.Validators.PaymentMethodValidator
     {
         
     
-        public PaymentMethodCreateDtoValidator(ApplicationDbContext _context)  : base(_context)
+        public PaymentMethodCreateDtoValidator(IApplicationDbContext _context)  : base(_context)
         {
 
 

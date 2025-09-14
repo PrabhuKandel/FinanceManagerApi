@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Infrastructure.Data;
-using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Interfaces;
 
 namespace FinanceManager.Application.Validators.TransactionCategoryValidator
 {
     public class TransactionCategoryUpdateDtoValidator:TransactionCategoryBaseDtoValidator<TransactionCategoryUpdateDto>
     {
-        public TransactionCategoryUpdateDtoValidator(ApplicationDbContext _context): base (_context)
+        public TransactionCategoryUpdateDtoValidator(IApplicationDbContext _context): base (_context)
         {
-
-        
 
           
         }

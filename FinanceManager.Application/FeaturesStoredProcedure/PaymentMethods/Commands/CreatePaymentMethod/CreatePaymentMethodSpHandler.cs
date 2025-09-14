@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using FinanceManager.Application.Common;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.CreatePaymentMethod
 {
-    public class CreatePaymentMethodSpHandler(ApplicationDbContext context) : IRequestHandler<CreatePaymentMethodSpCommand, OperationResult<PaymentMethodResponseDto>>
+    public class CreatePaymentMethodSpHandler(IApplicationDbContext context) : IRequestHandler<CreatePaymentMethodSpCommand, OperationResult<PaymentMethodResponseDto>>
     {
 
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(CreatePaymentMethodSpCommand request, CancellationToken cancellationToken)

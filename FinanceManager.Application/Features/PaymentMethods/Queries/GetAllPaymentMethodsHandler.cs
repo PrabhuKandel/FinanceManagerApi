@@ -1,7 +1,7 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +9,9 @@ namespace FinanceManager.Application.Features.PaymentMethods.Queries
 {
     public class GetAllPaymentMethodsHandler : IRequestHandler<GetAllPaymentMethodsQuery, OperationResult<IEnumerable<PaymentMethodResponseDto>>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public GetAllPaymentMethodsHandler(ApplicationDbContext _context)
+        public GetAllPaymentMethodsHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

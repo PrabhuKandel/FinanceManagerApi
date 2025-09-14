@@ -1,4 +1,4 @@
-﻿using FinanceManager.Infrastructure.Data;
+﻿using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +6,7 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Comm
 {
     public class UpdatePaymentMethodSpCommandValidator : AbstractValidator<UpdatePaymentMethodSpCommand>
     {
-        public UpdatePaymentMethodSpCommandValidator(ApplicationDbContext _context)
+        public UpdatePaymentMethodSpCommandValidator(IApplicationDbContext _context)
         {
 
             RuleFor(c => c.Name)

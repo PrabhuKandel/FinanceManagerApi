@@ -6,7 +6,7 @@ using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
-using FluentValidation;
+using FinanceManager.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -76,19 +76,12 @@ builder.Services.AddSwaggerGen(
 
 
 builder.Services.AddApplicationServices();
-
-//This makes IHttpContextAccessor available for dependency injection.
-builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 
 
 
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
-//using cookies so throwing errors
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -121,20 +114,7 @@ builder.Services.AddAuthentication(options =>
 
 
 
-//Disable automatic model state validation
-builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLoggingFillter>())
-    .ConfigureApiBehaviorOptions(options =>
-    {
-        options.SuppressModelStateInvalidFilter = true;
-    
-    });
-
-
-
-
-builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
-builder.Services.AddScoped<IUserContext, UserContext>();
-
+builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLoggingFillter>());
 
 var app = builder.Build();
 // Apply migrations and seed data

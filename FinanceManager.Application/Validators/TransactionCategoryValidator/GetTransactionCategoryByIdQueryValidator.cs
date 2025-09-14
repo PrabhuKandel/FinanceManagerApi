@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Features.TransactionCategories.Queries;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +7,7 @@ namespace FinanceManager.Application.Validators.TransactionCategoryValidator
 {
     public class GetTransactionCategoryByIdQueryValidator : AbstractValidator<GetTransactionCategoryByIdQuery>
     {
-        public GetTransactionCategoryByIdQueryValidator(ApplicationDbContext context)
+        public GetTransactionCategoryByIdQueryValidator(IApplicationDbContext context)
         {
             RuleFor(x => x.Id).NotEmpty().WithMessage("Id is required.")
                 .MustAsync(async (id, cancellation) =>

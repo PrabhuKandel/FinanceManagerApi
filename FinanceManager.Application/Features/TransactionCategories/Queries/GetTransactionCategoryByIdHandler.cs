@@ -1,17 +1,16 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionCategories.Queries
 {
     public class GetTransactionCategoryByIdHandler : IRequestHandler<GetTransactionCategoryByIdQuery, OperationResult<TransactionCategoryResponseDto>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public GetTransactionCategoryByIdHandler(ApplicationDbContext _context)
+        public GetTransactionCategoryByIdHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

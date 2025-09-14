@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Application.Features.TransactionCategories.Commands;
-using FinanceManager.Infrastructure.Data;
+﻿using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +7,7 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory
     public class CreateTransactionCategorySpCommandValidator : AbstractValidator<CreateTransactionCategorySpCommand>
     {
 
-        public CreateTransactionCategorySpCommandValidator(ApplicationDbContext _context )
+        public CreateTransactionCategorySpCommandValidator(IApplicationDbContext _context )
         {
              RuleFor(c => c.Name)
             .NotEmpty().WithMessage("Name is required.")

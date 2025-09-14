@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Common;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,9 +9,9 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory
 {
     public class UpdateTransactionCategorySpHandler : IRequestHandler<UpdateTransactionCategorySpCommand, OperationResult<TransactionCategoryResponseDto>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public UpdateTransactionCategorySpHandler(ApplicationDbContext _context)
+        public UpdateTransactionCategorySpHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

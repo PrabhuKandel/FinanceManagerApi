@@ -1,9 +1,9 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +11,10 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
     public class GetAllTransactionRecordsHandler : IRequestHandler<GetAllTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
         private readonly IUserContext userContext;
 
-        public GetAllTransactionRecordsHandler(ApplicationDbContext _context,IUserContext _userContext)
+        public GetAllTransactionRecordsHandler(IApplicationDbContext _context,IUserContext _userContext)
         {
             context = _context;
             userContext = _userContext;

@@ -1,12 +1,12 @@
 ﻿using FinanceManager.Application.Common;
-using FinanceManager.Infrastructure.Data;
+using FinanceManager.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.DeletePaymentMethod
 {
 
-    public class DeletePaymentMethodSpHandler(ApplicationDbContext context) : IRequestHandler<DeletePaymentMethodSpCommand, OperationResult<string>>
+    public class DeletePaymentMethodSpHandler(IApplicationDbContext context) : IRequestHandler<DeletePaymentMethodSpCommand, OperationResult<string>>
     {
 
         public async Task<OperationResult<string>> Handle(DeletePaymentMethodSpCommand request, CancellationToken cancellationToken)

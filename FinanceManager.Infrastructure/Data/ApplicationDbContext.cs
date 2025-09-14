@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using FinanceManager.Infrastructure.Data.Configurations;
+using FinanceManager.Application.Interfaces;
+
 
 namespace FinanceManager.Infrastructure.Data
 {
-    public class ApplicationDbContext:IdentityDbContext<ApplicationUser, IdentityRole, string>
+    public class ApplicationDbContext:IdentityDbContext<ApplicationUser, IdentityRole, string>, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options)
         { }

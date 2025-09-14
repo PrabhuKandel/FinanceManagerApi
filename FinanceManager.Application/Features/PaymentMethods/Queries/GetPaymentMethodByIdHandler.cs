@@ -1,17 +1,16 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Queries
 {
     public class GetPaymentMethodByIdHandler : IRequestHandler<GetPaymentMethodByIdQuery, OperationResult<PaymentMethodResponseDto>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public GetPaymentMethodByIdHandler(ApplicationDbContext _context)
+        public GetPaymentMethodByIdHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

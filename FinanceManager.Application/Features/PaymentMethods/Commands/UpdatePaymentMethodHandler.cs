@@ -1,17 +1,17 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Commands.CreatePaymentMethod
 {
     public  class UpdatePaymentMethodHandler : IRequestHandler<UpdatePaymentMethodCommand, OperationResult<PaymentMethodResponseDto>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public UpdatePaymentMethodHandler(ApplicationDbContext _context)
+        public UpdatePaymentMethodHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

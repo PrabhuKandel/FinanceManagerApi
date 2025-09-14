@@ -1,18 +1,18 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace FinanceManager.Application.Features.TransactionCategories.Commands
 {
     public  class CreateTransactionCategoryHandler : IRequestHandler<CreateTransactionCategoryCommand, OperationResult<TransactionCategoryResponseDto>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public CreateTransactionCategoryHandler(ApplicationDbContext _context)
+        public CreateTransactionCategoryHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

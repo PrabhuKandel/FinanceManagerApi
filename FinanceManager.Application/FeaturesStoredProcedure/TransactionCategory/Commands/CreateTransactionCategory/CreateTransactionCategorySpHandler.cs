@@ -1,7 +1,7 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
-using FinanceManager.Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +9,9 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory
 {
     public class CreateTransactionCategorySpHandler : IRequestHandler<CreateTransactionCategorySpCommand, OperationResult<TransactionCategoryResponseDto>>
     {
-        private readonly ApplicationDbContext context;
+        private readonly IApplicationDbContext context;
 
-        public CreateTransactionCategorySpHandler(ApplicationDbContext _context)
+        public CreateTransactionCategorySpHandler(IApplicationDbContext _context)
         {
             context = _context;
         }

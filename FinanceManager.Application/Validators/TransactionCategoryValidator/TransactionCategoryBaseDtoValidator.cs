@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Infrastructure.Data;
+﻿using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +8,7 @@ namespace FinanceManager.Application.Validators.TransactionCategoryValidator
     public class TransactionCategoryBaseDtoValidator<T>:AbstractValidator<T> where T : TransactionCategoryBaseDto
     {
 
-        public TransactionCategoryBaseDtoValidator(ApplicationDbContext _context)
+        public TransactionCategoryBaseDtoValidator(IApplicationDbContext _context)
         {
             RuleFor(c => c.Name)
          .NotEmpty().WithMessage("Name is required.")

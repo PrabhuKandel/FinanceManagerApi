@@ -1,5 +1,4 @@
-﻿using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.CreateTransactionCategory;
-using FinanceManager.Infrastructure.Data;
+﻿using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +7,7 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory
     public class UpdateTransactionCategorySpCommandValidator : AbstractValidator<UpdateTransactionCategorySpCommand>
     {
 
-        public UpdateTransactionCategorySpCommandValidator(ApplicationDbContext _context)
+        public UpdateTransactionCategorySpCommandValidator(IApplicationDbContext _context)
         {
 
             RuleFor(x => x.Id)

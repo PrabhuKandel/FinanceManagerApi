@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FinanceManager.Domain\FinanceManager.Domain.csproj" />
-    <ProjectReference Include="..\FinanceManager.Infrastructure\FinanceManager.Infrastructure.csproj" />
+    <!--<ProjectReference Include="..\FinanceManager.Infrastructure\FinanceManager.Infrastructure.csproj" />-->
   </ItemGroup>
 
   <ItemGroup>
