@@ -1,4 +1,5 @@
-﻿using FinanceManager.Domain.Entities;
+﻿using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -10,6 +11,7 @@ namespace FinanceManager.Application.Interfaces
         DbSet<PaymentMethod> PaymentMethods { get; set; }
         DbSet<TransactionRecord> TransactionRecords { get; set; }
         DbSet<ApplicationUser> ApplicationUsers { get; set; }
+         DbSet<TransactionRecordSpResult> TransactionRecordSpResults { get; set; }
 
         DatabaseFacade Database { get; }
 

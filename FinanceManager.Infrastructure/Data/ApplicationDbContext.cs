@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using FinanceManager.Infrastructure.Data.Configurations;
 using FinanceManager.Application.Interfaces;
+using FinanceManager.Application.Dtos.TransactionRecord;
 
 
 namespace FinanceManager.Infrastructure.Data
@@ -18,13 +19,15 @@ namespace FinanceManager.Infrastructure.Data
         public DbSet<TransactionRecord> TransactionRecords { get; set; }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<TransactionRecordSpResult> TransactionRecordSpResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-          
-          
+            // Mark the SP result DTO as a "keyless entity"
+            modelBuilder.Entity<TransactionRecordSpResult>().HasNoKey();
+
 
             modelBuilder.ApplyConfiguration(new TransactionRecordConfiguration());
             modelBuilder.ApplyConfiguration(new TransactionCategoryConfiguration());
