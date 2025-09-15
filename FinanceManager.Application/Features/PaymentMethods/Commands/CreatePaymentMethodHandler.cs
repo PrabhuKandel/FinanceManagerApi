@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
@@ -19,7 +20,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands
 
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(CreatePaymentMethodCommand request, CancellationToken cancellationToken)
         {
-
+           
             var entity = request.PaymentMethod.ToEntity();
             await context.PaymentMethods.AddAsync(entity);
             await context.SaveChangesAsync(cancellationToken);  

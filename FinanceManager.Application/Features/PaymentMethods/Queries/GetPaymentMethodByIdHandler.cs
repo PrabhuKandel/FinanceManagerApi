@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
@@ -18,6 +19,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Queries
         public async Task<OperationResult<PaymentMethodResponseDto>> Handle(GetPaymentMethodByIdQuery request, CancellationToken cancellationToken)
         {
             var paymentMethod = await context.PaymentMethods.FindAsync(request.Id);
+            Guard.Against.Null(paymentMethod, nameof(paymentMethod), "Payment Method not found");
             return new OperationResult<PaymentMethodResponseDto>
             {
 

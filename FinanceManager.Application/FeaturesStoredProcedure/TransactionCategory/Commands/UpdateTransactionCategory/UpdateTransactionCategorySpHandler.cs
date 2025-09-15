@@ -24,7 +24,6 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory
             .AsEnumerable()
             .FirstOrDefault();
 
-
             return new OperationResult<TransactionCategoryResponseDto>
             {
 

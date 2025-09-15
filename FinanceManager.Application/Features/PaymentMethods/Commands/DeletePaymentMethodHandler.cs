@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Interfaces;
 
 using MediatR;
@@ -17,6 +18,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands
         public async Task<OperationResult<string>> Handle(DeletePaymentMethodCommand request, CancellationToken cancellationToken)
         {
             var paymentMethod = await context.PaymentMethods.FindAsync(request.Id);
+            Guard.Against.Null(paymentMethod, nameof(paymentMethod), "Payment method not found");
             context.PaymentMethods.Remove(paymentMethod);
             await context.SaveChangesAsync(cancellationToken);
             return new OperationResult<string>

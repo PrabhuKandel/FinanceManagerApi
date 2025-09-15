@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
@@ -20,11 +21,7 @@ namespace FinanceManager.Application.Features.TransactionCategories.Commands.Cre
         {
 
             var transactionCategory = await context.TransactionCategories.FindAsync(request.Id);
-            if (transactionCategory == null)
-            {
-                throw new NotFoundException("Transaction Category doesn't exist");
-            }
-
+            Guard.Against.Null(transactionCategory, nameof(transactionCategory), "Transaction category not found");
             transactionCategory.UpdateEntity(request.TransactionCategory);
             return new OperationResult<TransactionCategoryResponseDto>
             {

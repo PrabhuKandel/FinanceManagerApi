@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionCategory;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
@@ -18,6 +19,7 @@ namespace FinanceManager.Application.Features.TransactionCategories.Queries
         public async Task<OperationResult<TransactionCategoryResponseDto>> Handle(GetTransactionCategoryByIdQuery request, CancellationToken cancellationToken)
         {
             var transactionCategory = await context.TransactionCategories.FindAsync(request.Id);
+            Guard.Against.Null(transactionCategory, nameof(transactionCategory), "Transaction category not found");
 
             return new OperationResult<TransactionCategoryResponseDto>
             {

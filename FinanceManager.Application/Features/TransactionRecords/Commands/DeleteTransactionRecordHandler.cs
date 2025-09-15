@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Interfaces;
 using MediatR;
 
@@ -17,6 +18,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
         public async Task<OperationResult<string>> Handle(DeleteTransactionRecordCommand request, CancellationToken cancellationToken)
         {
             var transactionRecord = await context.TransactionRecords.FindAsync(request.Id);
+            Guard.Against.Null(transactionRecord, nameof(transactionRecord), "Transaction record not found");
             context.TransactionRecords.Remove(transactionRecord);
             await context.SaveChangesAsync();
 

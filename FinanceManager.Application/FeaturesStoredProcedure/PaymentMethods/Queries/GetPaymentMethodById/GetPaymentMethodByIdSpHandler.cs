@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
@@ -18,11 +19,7 @@ namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Quer
                             .AsEnumerable()
                             .FirstOrDefault();
 
-            if (paymentMethod == null)
-            {
-                throw new NotFoundException("Payment method not found");
-            }
-
+            Guard.Against.Null(paymentMethod, nameof(paymentMethod), "Payment Method not found");
 
             return new OperationResult<PaymentMethodResponseDto>
             {

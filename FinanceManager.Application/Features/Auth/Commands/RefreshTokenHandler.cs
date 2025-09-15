@@ -1,4 +1,5 @@
 ﻿using System.Security.Authentication;
+using Ardalis.GuardClauses;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Interfaces.Services;
@@ -22,10 +23,11 @@ namespace FinanceManager.Application.Features.Auth.Commands
 
         public async Task<OperationResult<TokenResponseDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            if (string.IsNullOrEmpty(request.RefreshToken))
-            {
-                throw new AuthenticationException("Refresh token is missing ");
-            }
+            //if (string.IsNullOrEmpty(request.RefreshToken))
+            //{
+            //    throw new AuthenticationException("Refresh token is missing ");
+            //}
+            Guard.Against.NullOrEmpty(request.RefreshToken, nameof(request.RefreshToken), "Refresh token is missing");
             var user = await userManager.Users
                 .FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
 

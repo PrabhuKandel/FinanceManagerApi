@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
@@ -24,6 +25,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
         {
 
             var transactionRecordFromDb = await context.TransactionRecords.FindAsync(request.Id);
+            Guard.Against.Null(transactionRecordFromDb, nameof(transactionRecordFromDb), "Transaction record not found");
 
             if (!userContext.IsAdmin())
             {

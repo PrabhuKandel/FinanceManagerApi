@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
@@ -20,11 +21,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands.CreatePaym
         {
 
             var paymentMethod = await context.PaymentMethods.FindAsync(request.Id);
-            if (paymentMethod == null)
-            {
-                throw new NotFoundException("Payment Method doesn't exist");
-            }
-
+           Guard.Against.Null(paymentMethod, nameof(paymentMethod), "Payment method not found");
             paymentMethod.UpdateEntity(request.PaymentMethod);
             return new OperationResult<PaymentMethodResponseDto>
             {

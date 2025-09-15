@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using Ardalis.GuardClauses;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
@@ -23,10 +24,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(PatchTransactionRecordCommand request, CancellationToken cancellationToken)
         {
             var transactionRecordFromDb = await context.TransactionRecords.FindAsync(request.Id,cancellationToken);
-            if (transactionRecordFromDb == null)
-            {
-                throw new NotFoundException("Transaction record doesn't exist");
-            }
+           Guard.Against.Null(transactionRecordFromDb, nameof(transactionRecordFromDb), "Transaction record not found");
 
             // Authorization check
             if (!userContext.IsAdmin() && transactionRecordFromDb.CreatedByApplicationUserId != userContext.UserId)
