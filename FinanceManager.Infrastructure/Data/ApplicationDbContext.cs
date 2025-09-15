@@ -25,8 +25,13 @@ namespace FinanceManager.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Mark the SP result DTO as a "keyless entity"
-            modelBuilder.Entity<TransactionRecordSpResult>().HasNoKey();
+            // Mark the SP result DTO as a "keyless entity
+            modelBuilder.Entity<TransactionRecordSpResult>(entity =>
+            {
+                entity.HasNoKey();  // keyless entity
+                entity.Property(e => e.Amount)
+                      .HasPrecision(18, 2);  // matches your database column
+            });
 
 
             modelBuilder.ApplyConfiguration(new TransactionRecordConfiguration());
