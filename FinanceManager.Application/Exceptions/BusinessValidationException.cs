@@ -1,6 +1,4 @@
 ﻿
-
-using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
 namespace FinanceManager.Application.Exceptions

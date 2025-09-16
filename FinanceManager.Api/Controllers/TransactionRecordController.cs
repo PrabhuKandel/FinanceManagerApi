@@ -1,5 +1,6 @@
 ﻿using FinanceManager.Application.Features.TransactionRecords.Commands;
 using FinanceManager.Application.Features.TransactionRecords.Queries;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetAllTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetTransactionRecordById;
 using MediatR;
@@ -64,6 +65,15 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> Create(CreateTransactionRecordCommand createCommand)
         {
             
+            var response = await mediator.Send(createCommand);
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
+
+        }
+
+        [HttpPost("dapperCreate")]
+        public async Task<IActionResult> dapperCreate(CreateTransactionRecordDapperCommand createCommand)
+        {
+
             var response = await mediator.Send(createCommand);
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
