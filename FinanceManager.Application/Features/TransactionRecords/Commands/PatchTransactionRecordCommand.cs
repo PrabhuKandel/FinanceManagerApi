@@ -4,7 +4,15 @@ using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {
-    public  record PatchTransactionRecordCommand(Guid Id, TransactionRecordPatchDto TransactionRecord) : IRequest<OperationResult<TransactionRecordResponseDto>>
+    public  record PatchTransactionRecordCommand(
+        Guid Id,
+        Guid? TransactionCategoryId,
+        Guid? PaymentMethodId,
+        decimal? Amount,
+        string? Description,
+        DateTime? TransactionDate
+
+        ) : IRequest<OperationResult<TransactionRecordResponseDto>>
     {
     }
 }
