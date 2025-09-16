@@ -11,7 +11,6 @@ namespace FinanceManager.Application.Interfaces
         DbSet<PaymentMethod> PaymentMethods { get; set; }
         DbSet<TransactionRecord> TransactionRecords { get; set; }
         DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        DbSet<TransactionRecordSpResult> TransactionRecordSpResults { get; set; }
 
         DatabaseFacade Database { get; }
 

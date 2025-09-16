@@ -1,5 +1,7 @@
 ﻿using FinanceManager.Application.Features.TransactionRecords.Commands;
 using FinanceManager.Application.Features.TransactionRecords.Queries;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetAllTransactionRecord;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetTransactionRecordById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,6 +28,15 @@ namespace FinanceManager.Api.Controllers
         }
 
 
+        [HttpGet("dapperGetAll")]
+        public async Task<IActionResult> DapperGetAll()
+        {
+
+            var response = await mediator.Send(new GetAllTransactionRecordsDapperQuery());
+            return Ok(response);
+        }
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -36,6 +47,19 @@ namespace FinanceManager.Api.Controllers
 
 
         }
+
+
+        [HttpGet("dapperGetById/{id}")]
+        public async Task<IActionResult> DapperGetById(Guid id)
+        {
+
+            var response = await mediator.Send(new GetTransactionRecordByIdDapperQuery(id));
+
+            return Ok(response);
+
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateTransactionRecordCommand createCommand)
         {

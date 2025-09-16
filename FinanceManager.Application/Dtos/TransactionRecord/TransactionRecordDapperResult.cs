@@ -1,7 +1,7 @@
 ﻿
 namespace FinanceManager.Application.Dtos.TransactionRecord
 {
-    public class TransactionRecordSpResult
+    public class TransactionRecordDapperResult
     {
         public Guid TransactionRecordId { get; set; }
         public Guid TransactionCategoryId { get; set; }

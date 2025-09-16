@@ -6,7 +6,8 @@ using MediatR;
 
 namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetAllTransactionRecord
 {
-    public record GetAllTransactionRecordsDapperQuery():IRequest<OperationResult<TransactionRecordResponseDto>>
+    public record GetAllTransactionRecordsDapperQuery():IRequest<OperationResult<IEnumerable<TransactionRecordResponseDto>>>
     {
+
     }
 }
