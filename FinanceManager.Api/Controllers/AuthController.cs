@@ -1,10 +1,7 @@
-﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.ApplicationUser;
-using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Domain.Models;
+﻿    using FinanceManager.Application.Dtos.ApplicationUser;
+using FinanceManager.Application.Features.Auth.Commands;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
@@ -14,23 +11,18 @@ namespace FinanceManager.Api.Controllers
    
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IConfiguration _config;
-        private readonly IAuthService _authService;
+        private readonly IMediator mediator;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IConfiguration config, IAuthService authService)
+        public AuthController(IMediator _mediator )
         {
-            _userManager = userManager;
-            _config = config;
-            _authService = authService;
+            mediator = _mediator;
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(ApplicationUserRegisterDto registerUser)
         {
-            var response = await _authService.RegisterAsync(registerUser);
-            
+            var response  =  await mediator.Send(new ApplicationUserRegisterCommand(registerUser));
                 return Ok(response);
            
           
@@ -41,10 +33,7 @@ namespace FinanceManager.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(ApplicationUserLoginDto loginUser)
         {
-
-
-            var response = await _authService.LoginAsync(loginUser);
-
+            var response = await mediator.Send(new ApplicationUserLoginCommand(loginUser));
             return Ok(response);
 
         }
@@ -54,24 +43,10 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> RefreshToken(string refreshToken)
         {
 
-            var response = await _authService.RefreshTokenAsync(refreshToken);
+            var response  = await mediator.Send(new RefreshTokenCommand(refreshToken));
             return Ok(response);
         }
 
-        [HttpPost("logout")]
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);  // should use new Claim(JwtRegisteredClaimNames.Sub, user.Id),  as claim while sending token
-
-            var userId = User?.FindFirst("userId")?.Value;
-            if (string.IsNullOrEmpty(userId))
-                return BadRequest(new ServiceResponse<string> { Data = null, Message = "User not found" });
-
-            var response = await _authService.LogoutAsync(userId);
-
-            return Ok(response);
-        }
-
+       
     }
 }

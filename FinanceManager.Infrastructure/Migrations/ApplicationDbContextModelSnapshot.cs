@@ -17,12 +17,12 @@ namespace FinanceManager.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FinanceManager.Domain.Models.ApplicationUser", b =>
+            modelBuilder.Entity("FinanceManager.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -106,7 +106,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("FinanceManager.Domain.Models.PaymentMethod", b =>
+            modelBuilder.Entity("FinanceManager.Domain.Entities.PaymentMethod", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,7 +116,7 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -132,7 +132,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.ToTable("PaymentMethods");
                 });
 
-            modelBuilder.Entity("FinanceManager.Domain.Models.TransactionCategory", b =>
+            modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionCategory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -158,7 +158,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.ToTable("TransactionCategories");
                 });
 
-            modelBuilder.Entity("FinanceManager.Domain.Models.TransactionRecord", b =>
+            modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -340,27 +340,27 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FinanceManager.Domain.Models.TransactionRecord", b =>
+            modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
                 {
-                    b.HasOne("FinanceManager.Domain.Models.ApplicationUser", "CreatedByApplicationUser")
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "CreatedByApplicationUser")
                         .WithMany("CreatedTransactionsRecords")
                         .HasForeignKey("CreatedByApplicationUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FinanceManager.Domain.Models.PaymentMethod", "PaymentMethod")
+                    b.HasOne("FinanceManager.Domain.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FinanceManager.Domain.Models.TransactionCategory", "TransactionCategory")
+                    b.HasOne("FinanceManager.Domain.Entities.TransactionCategory", "TransactionCategory")
                         .WithMany()
                         .HasForeignKey("TransactionCategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FinanceManager.Domain.Models.ApplicationUser", "UpdatedByApplicationUser")
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "UpdatedByApplicationUser")
                         .WithMany("UpdatedTransactionsRecords")
                         .HasForeignKey("UpdatedByApplicationUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -386,7 +386,7 @@ namespace FinanceManager.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("FinanceManager.Domain.Models.ApplicationUser", null)
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -395,7 +395,7 @@ namespace FinanceManager.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("FinanceManager.Domain.Models.ApplicationUser", null)
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -410,7 +410,7 @@ namespace FinanceManager.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FinanceManager.Domain.Models.ApplicationUser", null)
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -419,14 +419,14 @@ namespace FinanceManager.Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("FinanceManager.Domain.Models.ApplicationUser", null)
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FinanceManager.Domain.Models.ApplicationUser", b =>
+            modelBuilder.Entity("FinanceManager.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Navigation("CreatedTransactionsRecords");
 

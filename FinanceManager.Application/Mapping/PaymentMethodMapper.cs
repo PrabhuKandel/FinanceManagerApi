@@ -4,28 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Mapping
 {
     public  static class PaymentMethodMapper
     {
-        public static PaymentMethodResponseDto ToResponseDto(this PaymentMethod entity)
+        public static PaymentMethodResponseDto? ToResponseDto(this PaymentMethod entity)
         {
-            if (entity == null) return null;
-
+           
+            if(entity == null) return null;
             return new PaymentMethodResponseDto
             {
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
-                IsActive = entity.IsActive??true,
+                IsActive = entity.IsActive,
             };
         }
         public static List<PaymentMethodResponseDto> ToResponseDtoList(this IEnumerable<PaymentMethod> entities)
         {
-            return entities?.Select(e => e.ToResponseDto()).ToList();
+            return entities?.Select(e => e.ToResponseDto())
+                 .OfType<PaymentMethodResponseDto>() // filters nulls and makes non-nullable
+                .ToList()
+                ?? new List<PaymentMethodResponseDto>();
         }
+        
 
         public static PaymentMethod ToEntity(this PaymentMethodCreateDto dto)
         {

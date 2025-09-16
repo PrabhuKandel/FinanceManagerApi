@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Dtos.TransactionCategory;
+﻿using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Mapping
 {
     public  static class TransactionRecordMapper
     {
-        public static TransactionRecordResponseDto ToResponseDto(this TransactionRecord entity, bool isAdmin = false)
+        public static TransactionRecordResponseDto? ToResponseDto(this TransactionRecord entity, bool isAdmin = false)
         {
             if (entity == null) return null;
 
@@ -62,7 +56,9 @@ namespace FinanceManager.Application.Mapping
         }
         public static List<TransactionRecordResponseDto> ToResponseDtoList(this IEnumerable<TransactionRecord> entities, bool isAdmin =false)
         {
-            return entities?.Select(e => e.ToResponseDto(isAdmin)).ToList();
+            return entities?.Select(e => e.ToResponseDto(isAdmin))
+                .OfType<TransactionRecordResponseDto>()// filters nulls and makes non-nullable
+                .ToList()?? new List<TransactionRecordResponseDto>();
         }
 
         public static TransactionRecord ToEntity(this TransactionRecordCreateDto dto)

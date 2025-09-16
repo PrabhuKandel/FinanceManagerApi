@@ -1,36 +1,39 @@
-using System.Net;
-using System.Reflection.PortableExecutable;
-using System.Security.Claims;
 using System.Text;
+using FinanceManager.Api.Filters;
 using FinanceManager.Api.Middlewares;
-using FinanceManager.Application.Dtos.ApplicationUser;
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Application.Interfaces.Repositories;
+using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
-using FinanceManager.Application.Validators.AuthValidator;
-using FinanceManager.Application.Validators.PaymentMethodValidator;
-using FinanceManager.Application.Validators.TransactionCategoryValidator;
-using FinanceManager.Application.Validators.TransactionRecordValidator;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
-using FinanceManager.Infrastructure.Repositories;
-using FluentValidation;
+using FinanceManager.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using static System.Net.WebRequestMethods;
+using Serilog;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Serilog
+// Add Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+
 // Add services to the container.
 
-builder.Services.AddControllers().AddNewtonsoftJson(); ;
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 
+
+
+//builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 //It makes Swagger aware of JWT authentication and enables you to test secured endpoints directly in Swagger UI.
 builder.Services.AddSwaggerGen(
@@ -72,10 +75,16 @@ builder.Services.AddSwaggerGen(
     );
 
 
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
-//This makes IHttpContextAccessor available for dependency injection.
-builder.Services.AddHttpContextAccessor(); 
 
+
+
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -99,57 +108,30 @@ builder.Services.AddAuthentication(options =>
         new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
         ClockSkew = TimeSpan.Zero,
-        
+
     };
 });
 
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-//Disable automatic model state validation
-builder.Services.AddControllers()
-    .ConfigureApiBehaviorOptions(options =>
-    {
-        options.SuppressModelStateInvalidFilter = true;
-    });
 
-
-builder.Services.AddValidatorsFromAssembly(typeof(TransactionCategoryCreateDtoValidator).Assembly);
-
-
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddScoped<ITransactionCategoryService, TransactionCategoryService>();
-builder.Services.AddScoped<ITransactionCategoryRepository, TransactionCategoryRepository>();
-
-builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
-builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
-
-builder.Services.AddScoped<ITransactionRecordService, TransactionRecordService>();
-builder.Services.AddScoped<ITransactionRecordRepository, TransactionRecordRepository>();
-
-builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
-builder.Services.AddScoped<IUserContext, UserContext>();
-
+builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLoggingFillter>());
 
 var app = builder.Build();
 // Apply migrations and seed data
-using (var scope = app.Services.CreateScope())
+//using (var scope = app.Services.CreateScope())
 
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate(); // apply any pending migrations
-    DbSeeder.Seed(context);     // run your manual seeding
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+//{
+//    var services = scope.ServiceProvider;
+//    var context = services.GetRequiredService<ApplicationDbContext>();
+//    context.Database.Migrate(); // apply any pending migrations
+//    DbSeeder.Seed(context);     // run your manual seeding
+//    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+//    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-    await RoleSeeder.SeedRolesAsync(roleManager);
-    await RoleSeeder.SeedAdminUserAsync(userManager);
+//    await RoleSeeder.SeedRolesAsync(roleManager);
+//    await RoleSeeder.SeedAdminUserAsync(userManager);
 
-}
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -159,13 +141,13 @@ if (app.Environment.IsDevelopment())
 }
 // This middleware catches any exceptions thrown by downstream middleware or controllers
 // because it wraps the call to _next(context) in a try-catch block.
+//  
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+//app.UseMiddleware<LoggingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-//app.MapGroup("/api")
-//    .MapIdentityApi<IdentityUser>();
 app.Run();

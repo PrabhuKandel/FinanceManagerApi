@@ -1,32 +1,38 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
-using Azure;
-using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Application.Exceptions;
-using FinanceManager.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using FinanceManager.Application.Features.TransactionRecords.Commands;
+using FinanceManager.Application.Features.TransactionRecords.Queries;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetAllTransactionRecord;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetTransactionRecordById;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionRecordController : ControllerBase
     {
-        private readonly ITransactionRecordService _transactionRecordService;
-        public TransactionRecordController(ITransactionRecordService transactionRecordService)
-        {
-            _transactionRecordService = transactionRecordService;
+        private readonly IMediator mediator;
 
+        public TransactionRecordController(IMediator _mediator)
+        {
+            mediator = _mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             
-            var response = await _transactionRecordService.GetAllTransactionRecordsAsync();
+            var response = await mediator.Send(new GetAllTransactionRecordsQuery());
+            return Ok(response);
+        }
 
+
+        [HttpGet("dapperGetAll")]
+        public async Task<IActionResult> DapperGetAll()
+        {
+
+            var response = await mediator.Send(new GetAllTransactionRecordsDapperQuery());
             return Ok(response);
         }
 
@@ -35,41 +41,63 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
            
-            var response = await _transactionRecordService.GetTransactionRecordByIdAsync(id);
+            var response = await mediator.Send(new GetTransactionRecordByIdQuery(id));
 
             return Ok(response);
 
 
         }
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TransactionRecordCreateDto transactionRecordCreateDto)
+
+
+        [HttpGet("dapperGetById/{id}")]
+        public async Task<IActionResult> DapperGetById(Guid id)
         {
-            
-            var response = await _transactionRecordService.AddTransactionRecordAsync(transactionRecordCreateDto);
-            return CreatedAtAction(nameof(GetById), new { id = response.Data.Id }, response);
+
+            var response = await mediator.Send(new GetTransactionRecordByIdDapperQuery(id));
+
+            return Ok(response);
+
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateTransactionRecordCommand createCommand)
+        {
+            
+            var response = await mediator.Send(createCommand);
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
+
+        }
+
+
         [HttpPut("{id}")]   
-        public async Task<IActionResult> Update(Guid id, [FromBody] TransactionRecordUpdateDto transactionRecordUpdateDto)
+        public async Task<IActionResult> Update(UpdateTransactionRecordCommand updateCommand)
         {
 
           
-            var response = await _transactionRecordService.UpdateTransactionRecordAsync(id, transactionRecordUpdateDto );
+            var response = await mediator.Send(updateCommand);
             return Ok(response);
             
 
 
         }
 
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(PatchTransactionRecordCommand patchCommand)
+        {
+
+            var response = await mediator.Send(patchCommand);
+            return Ok(response);
+        }
 
 
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+
+            [HttpDelete("{id}")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
           
-            var response = await _transactionRecordService.DeleteTransactionRecordAsync(id);
+            var response = await mediator.Send(new DeleteTransactionRecordCommand(id));
             return Ok(response);
          
 
@@ -85,8 +113,8 @@ namespace FinanceManager.Api.Controllers
              [FromQuery] DateTime transactionDate
             )
         {
-            var userId = User?.FindFirst("userId")?.Value;
-            var response = await _transactionRecordService.FilterTransactionRecordsAsync(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate);
+
+            var response = await mediator.Send( new FilterTransactionRecordsQuery(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate));
             return Ok(response);
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace FinanceManager.Infrastructure.Data

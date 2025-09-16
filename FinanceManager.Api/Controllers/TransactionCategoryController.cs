@@ -1,29 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Azure;
-using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Application.Exceptions;
-using FinanceManager.Application.Interfaces.Services;
+﻿using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Features.TransactionCategories.Commands;
+using FinanceManager.Application.Features.TransactionCategories.Queries;
+using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.CreateTransactionCategory;
+using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.DeleteTransactionCategory;
+using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.UpdateTransactionCategory;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
 {
-    [Authorize]
+    
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionCategoryController : ControllerBase
     {
-        private readonly ITransactionCategoryService _transactionCategoryService;
-        public TransactionCategoryController(ITransactionCategoryService transactionCategoryService)
-        {
-            _transactionCategoryService = transactionCategoryService;
+        private readonly IMediator mediator;
 
+        public TransactionCategoryController(IMediator _mediator)
+        {
+            mediator = _mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _transactionCategoryService.GetAllTransactionCategoriesAsync();
+            var response = await mediator.Send(new GetAllTransactionCategoriesQuery());
 
             return Ok(response);
         }
@@ -32,44 +34,72 @@ namespace FinanceManager.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var response = await _transactionCategoryService.GetTransactionCategoryByIdAsync(id);
+            var response = await mediator.Send(new GetTransactionCategoryByIdQuery(id));
 
             return Ok(response);
 
 
-        }
+        }   
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] TransactionCategoryCreateDto transactionCategoryCreateDto)
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create(CreateTransactionCategoryCommand createCommand)
         {
 
-            var response = await _transactionCategoryService.AddTransactionCategoryAsync(transactionCategoryCreateDto);
-            return CreatedAtAction(nameof(GetById), new { id = response.Data.Id }, response);
+            var response = await mediator.Send(createCommand);
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
+
+        }
+        [HttpPost("spCreate")]
+
+        public async Task<IActionResult> SpCreate(CreateTransactionCategorySpCommand createCommand)
+        {
+            var response = await mediator.Send(createCommand);
+
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] TransactionCategoryUpdateDto transactionCategoryUpdateDto)
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(UpdateTransactionCategoryCommand updateCommand)
         {
-           
-            var response = await _transactionCategoryService.UpdateTransactionCategoryAsync(id, transactionCategoryUpdateDto);
+            var response = await mediator.Send(updateCommand);
             return Ok(response);
             
 
+        }
+
+        [HttpPut("spUpdate/{id}")]
+
+        public async Task<IActionResult> SpUpdate(UpdateTransactionCategorySpCommand updateCommand)
+        {
+            var response = await mediator.Send(updateCommand);
+
+            return Ok(response);
 
         }
 
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
-
-            var response = await _transactionCategoryService.DeleteTransactionCategoryAsync(id);
+            var response = await mediator.Send(new DeleteTransactionCategoryCommand(id));
             return Ok(response);
          
+
+
+
+        }
+
+
+        [HttpDelete("spDelete/{id}")]
+        public async Task<IActionResult> SpDelete(Guid id)
+        {
+            var response = await mediator.Send( new DeleteTransactionCategorySpCommand(id));
+            return Ok(response);
+
 
 
 

@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+
+namespace FinanceManager.Domain.Entities
+{
+    public class ApplicationUser :IdentityUser
+    {
+       
+        public required string FirstName { get; set; }
+
+        public required string LastName { get; set; }
+
+       
+        public required string Address { get; set; }
+
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiresAtUtc { get; set; }
+
+        // Transactions created by this user
+        public ICollection<TransactionRecord>? CreatedTransactionsRecords { get; set; }
+
+        // Transactions updated by this user
+        public ICollection<TransactionRecord>? UpdatedTransactionsRecords { get; set; }
+    }
+}

@@ -1,79 +1,184 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Azure;
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Exceptions;
-using FinanceManager.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using FinanceManager.Application.Features.PaymentMethods.Commands;
+using FinanceManager.Application.Features.PaymentMethods.Queries;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.CreatePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.DeletePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.UpdatePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Queries.GellAllPaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Queries.GetPaymentMethodById;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.CreatePaymentMethod;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.DeletePaymentMethod;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.UpdatePaymentMethod;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GellAllPaymentMethod;
+using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GetPaymentMethodById;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace FinanceManager.Api.Controllers
 {
-    [Authorize]
+
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentMethodController : ControllerBase
+    public class PaymentMethodController: ControllerBase
     {
-        private readonly IPaymentMethodService _paymentMethodService;
-        public PaymentMethodController(IPaymentMethodService paymentMethodService)
-        {
-            _paymentMethodService = paymentMethodService;
+        private readonly IMediator mediator;
+     
 
+        public PaymentMethodController( IMediator _mediator)
+        {
+            mediator = _mediator;
+           
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var response = await _paymentMethodService.GetAllPaymentMethodsAsync();
+            var response = await mediator.Send(new GetAllPaymentMethodsQuery());
 
             return Ok(response);
         }
+
+        [HttpGet("spGetAll")]
+        public async Task<IActionResult> SpGetAll()
+        {
+            var response = await mediator.Send(new GetAllPaymentMethodsSpQuery());
+            return Ok(response);
+        }
+
+
+        [HttpGet("dapperGetAll")]
+        public async Task<IActionResult> DapperGetAll()
+        {
+            var response = await mediator.Send(new GetAllPaymentMethodsDapperQuery());
+            return Ok(response);
+        }
+
 
 
         [HttpGet("{id}")]
-
-        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        public async Task<IActionResult> GetById( Guid id)
         {
-            var response = await _paymentMethodService.GetPaymentMethodByIdAsync(id);
+            var response = await mediator.Send(new GetPaymentMethodByIdQuery(id));
 
             return Ok(response);
 
 
         }
+
+        [HttpGet("spGetById/{id}")]
+        public async Task<IActionResult> SpGetById(Guid id)
+        {
+            var response = await mediator.Send(new GetPaymentMethodByIdSpQuery(id));
+
+            return Ok(response);    
+
+        }
+
+        [HttpGet("dapperGetById/{id}")]
+        public async Task<IActionResult> DapperGetById(Guid id)
+        {
+            var response = await mediator.Send(new GetPaymentMethodByIdDapperQuery(id));
+
+            return Ok(response);
+
+        }
+
+
+
         [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] PaymentMethodCreateDto paymentMethodCreateDto)
+        public async Task<IActionResult> Create(CreatePaymentMethodCommand createCommand)
         {
 
-            var response = await _paymentMethodService.AddPaymentMethodAsync(paymentMethodCreateDto);
-            return CreatedAtAction(nameof(GetById), new { id = response.Data.Id }, response);
+            var response = await mediator.Send(createCommand);
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
+
+        }
+
+        [HttpPost("spCreate")]
+
+        public async Task<IActionResult> SpCreate(CreatePaymentMethodSpCommand createCommand)
+        {
+            var response = await mediator.Send(createCommand);
+
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response );
+
+        }
+
+        [HttpPost("dapperCreate")]
+
+        public async Task<IActionResult> DapperCreate(CreatePaymentMethodDapperCommand createCommand)
+        {
+            var response = await mediator.Send(createCommand);
+
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] PaymentMethodUpdateDto paymentMethodUpdateDto)
+
+        public async Task<IActionResult> Update(UpdatePaymentMethodCommand updateCommand)
         {
-           
-            var response = await _paymentMethodService.UpdatePaymentMethodAsync(id, paymentMethodUpdateDto);
+            var response = await mediator.Send(updateCommand);
             return Ok(response);
             
-
-
         }
 
 
+        [HttpPut("spUpdate/{id}")]
+
+        public  async Task<IActionResult> SpUpdate(UpdatePaymentMethodSpCommand updateCommand)
+        {
+            var response = await mediator.Send(updateCommand);
+            return Ok(response);
+
+        }
+
+        [HttpPut("dapperUpdate/{id}")]
+
+        public async Task<IActionResult> DapperUpdate(UpdatePaymentMethodDapperCommand updateCommand)
+        {
+            var response = await mediator.Send(updateCommand);
+            return Ok(response);
+
+        }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Delete(Guid id)
         {
-
-            var response = await _paymentMethodService.DeletePaymentMethodAsync(id);
-            return Ok(response);
-         
-
+            var response = await mediator.Send(new DeletePaymentMethodCommand(id));
+            return Ok(response);    
 
 
         }
+
+
+        [HttpDelete("spDelete/{id}")]
+
+
+        public async Task<IActionResult> SpDelete(Guid id)
+        {
+            var response = await mediator.Send(new DeletePaymentMethodSpCommand(id));
+            return Ok(response);
+
+
+        }
+
+
+
+
+        [HttpDelete("dapperDelete/{id}")]
+
+
+        public async Task<IActionResult> DapperDelete(Guid id)
+        {
+            var response = await mediator.Send(new DeletePaymentMethodDapperCommand(id));
+            return Ok(response);
+
+
+        }
+
+
+
     }
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Domain.Models;
+using FinanceManager.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -31,7 +27,7 @@ namespace FinanceManager.Application.Services
 
             var claims = new List<Claim>
             {
-                new Claim("email",user.Email),
+                new Claim("email",user.Email??""),
                 new Claim("userId", user.Id),
             
 

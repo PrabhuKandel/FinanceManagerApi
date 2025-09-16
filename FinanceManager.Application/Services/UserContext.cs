@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using FinanceManager.Application.Common;
+using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 
@@ -13,11 +10,19 @@ namespace FinanceManager.Application.Services
     {
         
         public string UserId { get; private set; }
+        public string Role { get; private set; }
         public UserContext(IHttpContextAccessor httpContextAccessor)
         {
-            UserId = httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
-            ?? throw new UnauthorizedAccessException();
+            var user = httpContextAccessor.HttpContext?.User
+                  ?? throw new UnauthorizedAccessException();
+
+            UserId = user.FindFirst("userId")?.Value
+            ?? throw new AuthorizationException();
+
+             Role = user.FindFirst(ClaimTypes.Role)?.Value 
+               ?? throw new UnauthorizedAccessException();
         }
+        public bool IsAdmin() => Role == RoleConstants.Admin;
     }
  
 }
