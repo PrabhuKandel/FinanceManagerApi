@@ -33,44 +33,18 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
                    throw new AuthorizationException();
                 
             }
-
-            var patchDto = request.TransactionRecord;
-
-            // Update only provided properties
-            if (patchDto.TransactionCategoryId.HasValue)
-            {
-                if (!await context.TransactionCategories
-                    .AnyAsync(c => c.Id == patchDto.TransactionCategoryId.Value, cancellationToken))
-                    throw new BusinessValidationException("Invalid Transaction Category");
-
-                transactionRecordFromDb.TransactionCategoryId = patchDto.TransactionCategoryId.Value;
-            }
-
-            if (patchDto.PaymentMethodId.HasValue)
-            {
-                if (!await context.PaymentMethods
-                    .AnyAsync(p => p.Id == patchDto.PaymentMethodId.Value, cancellationToken))
-                    throw new BusinessValidationException("Invalid Payment Method");
-
-                transactionRecordFromDb.PaymentMethodId = patchDto.PaymentMethodId.Value;
-            }
-
-            if (patchDto.Amount.HasValue)
-                transactionRecordFromDb.Amount = patchDto.Amount.Value;
-
-            if (!string.IsNullOrWhiteSpace(patchDto.Description))
-                transactionRecordFromDb.Description = patchDto.Description;
-
-            if (patchDto.TransactionDate.HasValue)
-                transactionRecordFromDb.TransactionDate = patchDto.TransactionDate.Value;
-
-           
+             
+            transactionRecordFromDb.TransactionCategoryId = request.TransactionCategoryId ?? transactionRecordFromDb.TransactionCategoryId;
+            transactionRecordFromDb.PaymentMethodId = request.PaymentMethodId ?? transactionRecordFromDb.PaymentMethodId;
+            transactionRecordFromDb.Amount = request.Amount ?? transactionRecordFromDb.Amount;
+            transactionRecordFromDb.Description = request.Description ?? transactionRecordFromDb.Description;
+            transactionRecordFromDb.TransactionDate = request.TransactionDate ?? transactionRecordFromDb.TransactionDate;
             transactionRecordFromDb.UpdatedByApplicationUserId = userContext.UserId;
 
-              await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
 
 
-               var transactionRecord = await context.TransactionRecords
+              var transactionRecord = await context.TransactionRecords
              .Include(t => t.TransactionCategory)
              .Include(t => t.PaymentMethod)
              .Include(t => t.CreatedByApplicationUser)

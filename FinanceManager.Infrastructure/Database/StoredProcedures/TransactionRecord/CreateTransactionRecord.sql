@@ -40,6 +40,6 @@ begin
   join AspNetUsers as cb
   on tr.CreatedByApplicationUserId = cb.Id
   join AspNetUsers as ub
-  on tr.CreatedByApplicationUserId = ub.Id
+  on tr.UpdatedByApplicationUserId = ub.Id
   where tr.Id = @Id
 end
