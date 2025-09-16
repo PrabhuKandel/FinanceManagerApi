@@ -1,6 +1,10 @@
-﻿using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Features.PaymentMethods.Commands;
+﻿using FinanceManager.Application.Features.PaymentMethods.Commands;
 using FinanceManager.Application.Features.PaymentMethods.Queries;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.CreatePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.DeletePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.UpdatePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Queries.GellAllPaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Queries.GetPaymentMethodById;
 using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.CreatePaymentMethod;
 using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.DeletePaymentMethod;
 using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.UpdatePaymentMethod;
@@ -42,6 +46,15 @@ namespace FinanceManager.Api.Controllers
         }
 
 
+        [HttpGet("dapperGetAll")]
+        public async Task<IActionResult> DapperGetAll()
+        {
+            var response = await mediator.Send(new GetAllPaymentMethodsDapperQuery());
+            return Ok(response);
+        }
+
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById( Guid id)
         {
@@ -61,8 +74,18 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [HttpGet("dapperGetById/{id}")]
+        public async Task<IActionResult> DapperGetById(Guid id)
+        {
+            var response = await mediator.Send(new GetPaymentMethodByIdDapperQuery(id));
+
+            return Ok(response);
+
+        }
+
+
+
         [HttpPost]
-     
         public async Task<IActionResult> Create(CreatePaymentMethodCommand createCommand)
         {
 
@@ -81,6 +104,16 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [HttpPost("dapperCreate")]
+
+        public async Task<IActionResult> DapperCreate(CreatePaymentMethodDapperCommand createCommand)
+        {
+            var response = await mediator.Send(createCommand);
+
+            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
+
+        }
+
         [HttpPut("{id}")]
 
         public async Task<IActionResult> Update(UpdatePaymentMethodCommand updateCommand)
@@ -94,6 +127,15 @@ namespace FinanceManager.Api.Controllers
         [HttpPut("spUpdate/{id}")]
 
         public  async Task<IActionResult> SpUpdate(UpdatePaymentMethodSpCommand updateCommand)
+        {
+            var response = await mediator.Send(updateCommand);
+            return Ok(response);
+
+        }
+
+        [HttpPut("dapperUpdate/{id}")]
+
+        public async Task<IActionResult> DapperUpdate(UpdatePaymentMethodDapperCommand updateCommand)
         {
             var response = await mediator.Send(updateCommand);
             return Ok(response);
@@ -122,6 +164,19 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+
+
+
+        [HttpDelete("dapperDelete/{id}")]
+
+
+        public async Task<IActionResult> DapperDelete(Guid id)
+        {
+            var response = await mediator.Send(new DeletePaymentMethodDapperCommand(id));
+            return Ok(response);
+
+
+        }
 
 
 

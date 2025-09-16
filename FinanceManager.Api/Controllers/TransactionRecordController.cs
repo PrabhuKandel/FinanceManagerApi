@@ -1,9 +1,6 @@
-﻿using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Application.Features.TransactionRecords.Commands;
+﻿using FinanceManager.Application.Features.TransactionRecords.Commands;
 using FinanceManager.Application.Features.TransactionRecords.Queries;
-using FinanceManager.Application.FeaturesStoredProcedure.TransactionRecords.Commands.CreateTransactionRecord;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
@@ -47,14 +44,7 @@ namespace FinanceManager.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
-        [HttpPost("spCreate")]
-        public async Task<IActionResult> SpCreate(CreateTransactionRecordSpCommand createCommand)
-        {
 
-            var response = await mediator.Send(createCommand);
-            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
-
-        }
 
         [HttpPut("{id}")]   
         public async Task<IActionResult> Update(UpdateTransactionRecordCommand updateCommand)

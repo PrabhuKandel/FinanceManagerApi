@@ -129,7 +129,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("PaymentMethods");
+                    b.ToTable("PaymentMethods", (string)null);
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionCategory", b =>
@@ -155,7 +155,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("TransactionCategories");
+                    b.ToTable("TransactionCategories", (string)null);
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
@@ -204,7 +204,7 @@ namespace FinanceManager.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedByApplicationUserId");
 
-                    b.ToTable("TransactionRecords");
+                    b.ToTable("TransactionRecords", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
