@@ -48,9 +48,9 @@ namespace FinanceManager.IntegrationTest
                     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                    // Optional: clean DB before each test run
-                    //db.Database.EnsureDeleted();
-                    //db.Database.Migrate();
+                //Optional: clean DB before each test run
+                    db.Database.EnsureDeleted();
+                    db.Database.Migrate();
                 });
 
             

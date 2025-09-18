@@ -2,6 +2,10 @@
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Features.PaymentMethods.Commands;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.CreatePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.DeletePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.UpdatePaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Queries.GellAllPaymentMethod;
+using FinanceManager.Application.FeaturesDapper.PaymentMethods.Queries.GetPaymentMethodById;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -141,6 +145,198 @@ namespace FinanceManager.IntegrationTest
             _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(createdPaymentMethod, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
 
         }
+
+
+        [Fact]
+        public async Task UpdatePaymentMethod_WithDapper_ReturnsUpdatedPaymentMethod()
+        {
+            // Arrange: create an initial payment method
+            var createCommand = new CreatePaymentMethodDapperCommand(
+                "IntegrationTestName",
+                "IntegrationTestDescription",
+                true
+            );
+
+            var createdResult = await _mediator.Send(createCommand);
+            createdResult.Should().NotBeNull();
+            createdResult.Data.Should().NotBeNull();
+
+            var existingPaymentMethodId = createdResult.Data.Id;
+
+            // Act: update the payment method with new values
+            var updateCommand = new UpdatePaymentMethodDapperCommand(
+                existingPaymentMethodId,
+                "UpdatedIntegrationName",
+                "UpdatedIntegrationDescription",
+                false
+            );
+
+            var updatedResult = await _mediator.Send(updateCommand);
+
+            // Assert: verify result
+            updatedResult.Should().NotBeNull();
+            updatedResult.Data.Should().NotBeNull();
+            updatedResult.Data.Id.Should().Be(existingPaymentMethodId); // same entity
+            updatedResult.Data.Name.Should().Be(updateCommand.Name);
+            updatedResult.Data.Description.Should().Be(updateCommand.Description);
+            updatedResult.Data.IsActive.Should().Be(updateCommand.IsActive);
+            updatedResult.Message.Should().Be("Payment method updated");
+
+            // Output for debugging
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(
+                updatedResult,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            ));
+
+    
+        }
+
+        [Theory]
+        [InlineData("Card", "Card payment", true)]
+        [InlineData("Cash", "Cash payment", true)]
+        [InlineData("Voucher", "Voucher payment", false)]
+        public async Task GetAllPaymentMethods_WithDapper_ReturnsInsertedPaymentMethods(
+        string name,
+        string description,
+        bool isActive)
+        {
+            // Arrange: create a payment method with data from InlineData
+            var createCommand = new CreatePaymentMethodDapperCommand(
+                name,
+                description,
+                isActive
+            );
+
+            await _mediator.Send(createCommand);
+  
+            // Act: get all payment methods
+ 
+            var paymentMethods = await _mediator.Send(new GetAllPaymentMethodsDapperQuery());
+
+            // Assert
+            paymentMethods.Should().NotBeNull();
+            paymentMethods.Data.Should().NotBeNull();
+            paymentMethods.Data.Should().NotBeEmpty();
+            paymentMethods.Message.Should().Be("Payment methods retrieved successfully");
+
+            // Output JSON for debug
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(
+                paymentMethods,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            ));
+        }
+
+        [Fact]
+        public async Task GetAllPaymentMethods_WithDapper_WhenNoData_ShouldReturnEmpty()
+        {
+            // Act:  query without inserting any data
+
+            var paymentMethods = await _mediator.Send(new GetAllPaymentMethodsDapperQuery());
+
+            // Assert
+            paymentMethods.Should().NotBeNull();
+            paymentMethods.Data.Should().NotBeNull();
+            paymentMethods.Data.Should().BeEmpty(); // no rows in DB
+            paymentMethods.Message.Should().Be("Payment methods retrieved successfully");
+
+            // Output JSON for debug
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(
+                paymentMethods,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            ));
+        }
+
+        [Fact]
+        public async Task GetPaymentMethodById_WithDapper_ReturnsPaymentMethod()
+        {
+            // Arrange: create a new payment method
+            var createCommand = new CreatePaymentMethodDapperCommand(
+                "Card",
+                "Card Payment",
+                true
+            );
+
+            var createdPaymentMethod = await _mediator.Send(createCommand);
+
+
+            var createdId = createdPaymentMethod.Data!.Id;
+
+            // Act: get by id
+            var getByIdQuery = new GetPaymentMethodByIdDapperQuery(createdId);
+            var paymentMethod = await _mediator.Send(getByIdQuery);
+
+            // Assert
+            paymentMethod.Should().NotBeNull();
+            paymentMethod.Data.Should().NotBeNull();
+            paymentMethod.Data!.Id.Should().Be(createdId);
+            paymentMethod.Data.Name.Should().Be(createCommand.Name);
+            paymentMethod.Data.Description.Should().Be(createCommand.Description);
+            paymentMethod.Data.IsActive.Should().Be(createCommand.IsActive);
+
+            paymentMethod.Message.Should().Be("Payment Method retrieved successfully");
+
+            // Output JSON
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(
+                paymentMethod,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            ));
+        }
+
+
+        //[Fact]
+        //public async Task GetPaymentMethodById_WithDapper_WhenNotFound_ShouldReturnException()
+        //{
+        //    // Arrange: use a random Guid that doesn’t exist
+        //    var nonExistentId = Guid.NewGuid();
+
+        //    // Act
+        //    var getByIdQuery = new GetPaymentMethodByIdDapperQuery(nonExistentId);
+
+        //    var ex = await Assert.ThrowsAsync<BusinessValidationException>(
+        //    () => _mediator.Send(getByIdQuery));
+
+        //    // Assert the exception message
+
+        //    //sending server error due to unhandled exception
+        //    // will use result pattern to throw error later
+
+
+        //}
+
+        [Fact]
+        public async Task DeletePaymentMethod_WithDapper_DeletesSuccessfully()
+        {
+            // Arrange: create a payment method to delete
+            var createCommand = new CreatePaymentMethodDapperCommand(
+                "Card",
+                "Card Payment",
+                true
+            );
+
+            var createdPaymentMethod = await _mediator.Send(createCommand);
+
+
+            var paymentMethodId = createdPaymentMethod.Data!.Id;
+
+            // Act: delete the payment method
+            var deleteCommand = new DeletePaymentMethodDapperCommand(paymentMethodId);
+            var deletePaymentMethod = await _mediator.Send(deleteCommand);
+
+            // Assert
+            deletePaymentMethod.Should().NotBeNull();
+            deletePaymentMethod.Message.Should().Be("Payment method deleted");
+            deletePaymentMethod.Data.Should().BeNull();
+
+
+            // Output JSON
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(
+                deletePaymentMethod,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }
+            ));
+        }
+
+
+
 
 
     }
