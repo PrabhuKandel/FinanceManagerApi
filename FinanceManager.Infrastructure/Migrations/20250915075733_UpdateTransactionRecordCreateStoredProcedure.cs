@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using FinanceManager.Infrastructure.Helpers;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,7 +11,12 @@ namespace FinanceManager.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(File.ReadAllText(@"..\FinanceManager.Infrastructure\Database\StoredProcedures\TransactionRecord\CreateTransactionRecord.sql"));
+            // Execute Create SP
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.TransactionRecord.CreateTransactionRecord.sql"
+            );
+
         }
 
         /// <inheritdoc />

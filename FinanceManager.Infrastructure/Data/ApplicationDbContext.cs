@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using FinanceManager.Infrastructure.Data.Configurations;
 using FinanceManager.Application.Interfaces;
-using FinanceManager.Application.Dtos.TransactionRecord;
+
 
 
 namespace FinanceManager.Infrastructure.Data

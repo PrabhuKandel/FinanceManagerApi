@@ -6,15 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 	<!-- Include SQL files in the project and ensure EF Core can find them at runtime -->
-	<ItemGroup>
-		<None Update="Database\StoredProcedures\TransactionCategory\*.sql">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<!-- PaymentMethod scripts -->
-		<None Update="Database\StoredProcedures\PaymentMethod\*.sql">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
+
+		<ItemGroup>
+			<EmbeddedResource Include="Database\StoredProcedures\**\*.sql" />
+		</ItemGroup>
+
 
 	<ItemGroup>
 
