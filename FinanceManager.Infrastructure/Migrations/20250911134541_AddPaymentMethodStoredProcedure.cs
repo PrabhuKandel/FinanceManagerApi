@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using FinanceManager.Infrastructure.Helpers;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,21 +11,36 @@ namespace FinanceManager.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var basePath = Path.Combine(AppContext.BaseDirectory, "Database", "StoredProcedures", "PaymentMethod");
-            //Execute GetAll Sp
-            migrationBuilder.Sql(File.ReadAllText(Path.Combine(basePath, "GetAllPaymentMethods.sql")));
+            // Execute GetAll SP
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.PaymentMethod.GetAllPaymentMethods.sql"
+            );
 
-            //Execute GetById Sp
-            migrationBuilder.Sql(File.ReadAllText(Path.Combine(basePath, "GetPaymentMethodById.sql")));
+            // Execute GetById SP
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.PaymentMethod.GetPaymentMethodById.sql"
+            );
 
             // Execute Create SP
-            migrationBuilder.Sql(File.ReadAllText(Path.Combine(basePath, "CreatePaymentMethod.sql")));
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.PaymentMethod.CreatePaymentMethod.sql"
+            );
 
             // Execute Update SP
-            migrationBuilder.Sql(File.ReadAllText(Path.Combine(basePath, "UpdatePaymentMethod.sql")));
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.PaymentMethod.UpdatePaymentMethod.sql"
+            );
 
             // Execute Delete SP
-            migrationBuilder.Sql(File.ReadAllText(Path.Combine(basePath, "DeletePaymentMethod.sql")));
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.PaymentMethod.DeletePaymentMethod.sql"
+            );
+
         }
 
         /// <inheritdoc />

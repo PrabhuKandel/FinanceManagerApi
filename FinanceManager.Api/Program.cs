@@ -2,14 +2,11 @@ using System.Text;
 using FinanceManager.Api.Filters;
 using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.DependencyInjection;
-using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Services;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -151,3 +148,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.Run();
+public partial class Program { }

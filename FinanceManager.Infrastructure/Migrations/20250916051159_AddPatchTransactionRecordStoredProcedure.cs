@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using FinanceManager.Infrastructure.Helpers;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,8 +12,11 @@ namespace FinanceManager.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
 
-            migrationBuilder.Sql(File.ReadAllText(@"..\FinanceManager.Infrastructure\Database\StoredProcedures\TransactionRecord\PatchTransactionRecord.sql"));
-
+            // Execute GetById SP from embedded resource
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.TransactionRecord.PatchTransactionRecord.sql"
+            );
 
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using FinanceManager.Infrastructure.Helpers;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -9,8 +10,15 @@ namespace FinanceManager.Infrastructure.Migrations
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.Sql(File.ReadAllText(@"..\FinanceManager.Infrastructure\Database\StoredProcedures\TransactionRecord\GetAllTransactionRecords.sql"));
+        {   
+            // Execute GetAll SP from embedded resource
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.TransactionRecord.GetAllTransactionRecords.sql"
+            );
+
+        
+
         }
 
         /// <inheritdoc />

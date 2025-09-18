@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using FinanceManager.Infrastructure.Helpers;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,15 +11,23 @@ namespace FinanceManager.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            var basePath = Path.Combine(AppContext.BaseDirectory, "Database", "StoredProcedures", "TransactionCategory");
             // Execute Create SP
-            migrationBuilder.Sql(File.ReadAllText(Path.Combine(basePath, "CreateTransactionCategory.sql")));
-
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.TransactionCategory.CreateTransactionCategory.sql"
+            );
             // Execute Update SP
-            migrationBuilder.Sql(File.ReadAllText(Path.Combine(basePath, "UpdateTransactionCategory.sql")));
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.TransactionCategory.UpdateTransactionCategory.sql"
+            );
 
             // Execute Delete SP
-            migrationBuilder.Sql(File.ReadAllText(Path.Combine(basePath, "DeleteTransactionCategory.sql")));
+            MigrationHelper.RunSqlScript(
+                migrationBuilder,
+                "FinanceManager.Infrastructure.Database.StoredProcedures.TransactionCategory.DeleteTransactionCategory.sql"
+            );
+
         }
 
         /// <inheritdoc />
