@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Data.SqlClient;
 
 
-namespace FinanceManager.IntegrationTest
+namespace FinanceManager.IntegrationTest.Shared
 {
     public class FinanceManagerWebApplicationFactory :WebApplicationFactory<Program> 
     {

@@ -6,27 +6,29 @@ using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.DeletePa
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.UpdatePaymentMethod;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Queries.GellAllPaymentMethod;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Queries.GetPaymentMethodById;
+using FinanceManager.IntegrationTest.Shared;
 using FluentAssertions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 
 
-namespace FinanceManager.IntegrationTest
+namespace FinanceManager.IntegrationTest.Tests.PaymentMethod
 {
-    public class PaymentMethodControllerIntegrationTests: IClassFixture<FinanceManagerWebApplicationFactory>
+    public class PaymentMethodIntegrationTests: IClassFixture<FinanceManagerWebApplicationFactory>, IDisposable
     {
-        private readonly HttpClient _client;
+
         private readonly IMediator _mediator;
         private readonly ITestOutputHelper _output;
+        private readonly IServiceScope _scope;
 
-        public PaymentMethodControllerIntegrationTests(FinanceManagerWebApplicationFactory factory, ITestOutputHelper output)
+        public PaymentMethodIntegrationTests(FinanceManagerWebApplicationFactory factory, ITestOutputHelper output)
         {
-            _client = factory.CreateClient();
+         
             _output = output;
             // Resolve IMediator from the factory's services
-            var scope = factory.Services.CreateScope();
-            _mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            _scope = factory.Services.CreateScope();
+            _mediator = _scope.ServiceProvider.GetRequiredService<IMediator>();
 
 
 
@@ -335,9 +337,9 @@ namespace FinanceManager.IntegrationTest
             ));
         }
 
-
-
-
-
+        public void Dispose()
+        {
+            _scope.Dispose();
+        }
     }
 }
