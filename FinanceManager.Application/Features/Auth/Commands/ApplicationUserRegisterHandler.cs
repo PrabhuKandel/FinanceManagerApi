@@ -61,7 +61,7 @@ namespace FinanceManager.Application.Features.Auth.Commands
                 if (role == null)
                     throw new BusinessValidationException("Invalid role selected.");
 
-                await userManager.AddToRoleAsync(applicationUser, role.Name);
+                await userManager.AddToRoleAsync(applicationUser, role.Name!);
             }
             else
             {
