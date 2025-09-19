@@ -19,20 +19,13 @@ namespace FinanceManager.Infrastructure.Data
         public DbSet<TransactionRecord> TransactionRecords { get; set; }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        //public DbSet<TransactionRecordSpResult> TransactionRecordSpResults { get; set; }
+
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            //// Mark the SP result DTO as a "keyless entity
-            //modelBuilder.Entity<TransactionRecordSpResult>(entity =>
-            //{
-            //    entity.HasNoKey();  // keyless entity
-            //    entity.Property(e => e.Amount)
-            //          .HasPrecision(18, 2);  // matches your database column
-            //});
-
 
             modelBuilder.ApplyConfiguration(new TransactionRecordConfiguration());
             modelBuilder.ApplyConfiguration(new TransactionCategoryConfiguration());

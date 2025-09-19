@@ -21,6 +21,9 @@ namespace FinanceManager.Domain.Entities
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiresAtUtc { get; set; }
 
+
+        public ICollection<RefreshToken>? RefreshTokens { get; set; }
+
         // Transactions created by this user
         public ICollection<TransactionRecord>? CreatedTransactionsRecords { get; set; }
 
