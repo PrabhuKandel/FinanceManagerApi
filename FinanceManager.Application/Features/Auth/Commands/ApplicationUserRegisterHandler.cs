@@ -1,5 +1,6 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Notifications.RegisterNotification;
 using FinanceManager.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -10,11 +11,13 @@ namespace FinanceManager.Application.Features.Auth.Commands
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IMediator _mediator;
 
-        public ApplicationUserRegisterHandler(UserManager<ApplicationUser> _userManager, RoleManager<IdentityRole> _roleManager )
+        public ApplicationUserRegisterHandler(UserManager<ApplicationUser> _userManager, RoleManager<IdentityRole> _roleManager, IMediator mediator)
         {
             userManager = _userManager;
             roleManager = _roleManager;
+            _mediator = mediator;
         }
 
         public async Task<OperationResult<string>> Handle(ApplicationUserRegisterCommand request, CancellationToken cancellationToken)
@@ -64,6 +67,10 @@ namespace FinanceManager.Application.Features.Auth.Commands
             {
                 await userManager.AddToRoleAsync(applicationUser, RoleConstants.User);
             }
+
+            // Publish notification instead of sending email directly
+            await _mediator.Publish(new UserRegisterNotification( applicationUser.Email,applicationUser.FirstName, request.RegisterUser.Password));
+
             return new OperationResult<String>
             {
 

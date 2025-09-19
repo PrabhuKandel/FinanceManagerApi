@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using FinanceManager.Application.Behaviors;
-using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Services;
 using FluentValidation;
@@ -20,6 +19,8 @@ namespace FinanceManager.Application.DependencyInjection
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddScoped<IUserContext, UserContext>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+          
+
             return services;    
         }
     }
