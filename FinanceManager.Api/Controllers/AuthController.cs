@@ -38,6 +38,14 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [Authorize]
+        [HttpPatch("change-password")]
+        public async Task<IActionResult> ChangePassword( ChangePasswordCommand command)
+        {
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+
         [HttpPost("refresh-token")]
 
         public async Task<IActionResult> RefreshToken(string refreshToken)

@@ -5,6 +5,7 @@ using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.DependencyInjection;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -75,6 +76,13 @@ builder.Services.AddSwaggerGen(
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
+// Add Hangfire client.
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("HangfireConnection")));
+
 
 
 
@@ -112,6 +120,7 @@ builder.Services.AddAuthentication(options =>
 
 
 builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLoggingFillter>());
+builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 // Apply migrations and seed data
@@ -145,7 +154,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseHangfireDashboard();
 app.MapControllers();
 app.Run();
 public partial class Program { }
