@@ -1,6 +1,8 @@
 ﻿using System.Data;
 using FinanceManager.Application.Interfaces;
+using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Infrastructure.Data;
+using FinanceManager.Infrastructure.Services;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +26,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
 
             services.AddScoped<IApplicationDbContext>(provider =>
                 provider.GetRequiredService<ApplicationDbContext>());
+            services.AddTransient<IEmailService, MailKitEmailService>();
 
             return services;
         }

@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FinanceManager.Application.Services;
+using Hangfire;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Api.Controllers
 {
@@ -43,11 +43,32 @@ namespace FinanceManager.Api.Controllers
         [HttpPost]
         public IActionResult Create(User user)
         {
+
+            //BackgroundJob.Enqueue(() => Console.WriteLine("Hello, world!"));
+            //BackgroundJob.Schedule(() => Console.WriteLine("Scheduled Job"), TimeSpan.FromSeconds(20));
+            //RecurringJob.AddOrUpdate("write-log-job",() => TestJob.WriteLog(), Cron.Minutely);
             // Auto-generate Id
             user.Id = _users.Count > 0 ? _users.Max(u => u.Id) + 1 : 1;
             _users.Add(user);
             return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
         }
+
+        [HttpPost("send-email")]
+        public IActionResult SendEmail()
+        {
+            //BackgroundJob.Enqueue<MailKitEmailService>(x => x.SendEmailAsync("This is test email"));
+            return Ok("Email job enqueued");
+        }
+
+        public static class TestJob
+        {
+            public static void WriteLog()
+            {
+                Console.WriteLine("Recurring job");
+            }
+        }
+
+     
 
 
 
