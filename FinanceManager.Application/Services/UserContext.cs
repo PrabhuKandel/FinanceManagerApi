@@ -11,6 +11,7 @@ namespace FinanceManager.Application.Services
         
         public string UserId { get; private set; }
         public string Role { get; private set; }
+     
         public UserContext(IHttpContextAccessor httpContextAccessor)
         {
             var user = httpContextAccessor.HttpContext?.User
@@ -21,6 +22,8 @@ namespace FinanceManager.Application.Services
 
              Role = user.FindFirst(ClaimTypes.Role)?.Value 
                ?? throw new UnauthorizedAccessException();
+
+           
         }
         public bool IsAdmin() => Role == RoleConstants.Admin;
     }
