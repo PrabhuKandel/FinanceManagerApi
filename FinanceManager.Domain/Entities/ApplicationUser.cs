@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 namespace FinanceManager.Domain.Entities
@@ -17,10 +13,6 @@ namespace FinanceManager.Domain.Entities
 
        
         public required string Address { get; set; }
-
-        public string? RefreshToken { get; set; }
-        public DateTime? RefreshTokenExpiresAtUtc { get; set; }
-
 
         public ICollection<RefreshToken>? RefreshTokens { get; set; }
 

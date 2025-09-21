@@ -2,6 +2,7 @@
 using Ardalis.GuardClauses;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.ApplicationUser;
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Entities;
 using MediatR;
@@ -14,35 +15,52 @@ namespace FinanceManager.Application.Features.Auth.Commands
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly ITokenGenerator tokenGenerator;
-
-        public RefreshTokenHandler(UserManager<ApplicationUser> _userManager, ITokenGenerator _tokenGenerator)
+        private readonly IApplicationDbContext context;
+        private readonly IUserContext userContext;
+        public RefreshTokenHandler(UserManager<ApplicationUser> _userManager, ITokenGenerator _tokenGenerator, IApplicationDbContext _context, IUserContext _userContext)
         {
             userManager = _userManager;
             tokenGenerator = _tokenGenerator;
+            context = _context;
+            userContext = _userContext;
+
         }
 
         public async Task<OperationResult<TokenResponseDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
         {
-            //if (string.IsNullOrEmpty(request.RefreshToken))
-            //{
-            //    throw new AuthenticationException("Refresh token is missing ");
-            //}
+ 
             Guard.Against.NullOrEmpty(request.RefreshToken, nameof(request.RefreshToken), "Refresh token is missing");
-            var user = await userManager.Users
-                .FirstOrDefaultAsync(u => u.RefreshToken == request.RefreshToken);
 
-            if (user == null || user.RefreshTokenExpiresAtUtc < DateTime.UtcNow)
+            var tokenFromDb = await context.RefreshTokens.Include(t=>t.ApplicationUser)
+                            .FirstOrDefaultAsync(t => t.Token == request.RefreshToken && t.RevokedAt == null, cancellationToken);
+
+                if (tokenFromDb == null || tokenFromDb.ExpiresAt < DateTime.UtcNow)
             {
-                throw new AuthenticationException("Invalid or expired refresh token ");
-
+                throw new AuthenticationException("Invalid or expired refresh token");
             }
+            var user = tokenFromDb.ApplicationUser;
 
-            var accessToken = await tokenGenerator.GenerateAccessToken(user);
+            //if token is present 
+            tokenFromDb.RevokedAt = DateTime.UtcNow;
+            tokenFromDb.RevocationReason = "Token rotation";
+
+            var accessToken = await tokenGenerator.GenerateAccessToken(user!);
             var newRefreshToken = tokenGenerator.GenerateRefreshToken();
 
-            user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
-            await userManager.UpdateAsync(user);
+            var newTokenEntity = new RefreshToken
+            {
+                Token = newRefreshToken,
+                ApplicationUserId = user!.Id,
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+                DeviceInfo = tokenFromDb.DeviceInfo // keep same device info
+            };
+
+            await context.RefreshTokens.AddAsync(newTokenEntity, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+
+
+
 
             return new OperationResult<TokenResponseDto>
             {
