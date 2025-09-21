@@ -23,9 +23,10 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
 
         public async Task<OperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(FilterTransactionRecordsQuery request, CancellationToken cancellationToken)
         {
-             IQueryable<TransactionRecord> query =  context.TransactionRecords
-                  .Include(tr => tr.TransactionCategory)
-                  .Include(tr => tr.PaymentMethod);
+            IQueryable<TransactionRecord> query = context.TransactionRecords
+                 .Include(tr => tr.TransactionCategory)
+                    .Include(tr => tr.TransactionPayments).ThenInclude(tp => tp.PaymentMethod);
+        
 
             if (request.minAmount.HasValue && request.minAmount.Value > 0)
                 query = query.Where(t => t.Amount >= request.minAmount.Value);
@@ -33,11 +34,14 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
             if (request.maxAmount.HasValue && request.maxAmount.Value > 0)
                 query = query.Where(t => t.Amount <= request.maxAmount.Value);
 
-            if (request.transactionCategory.HasValue)
-                query = query.Where(t => t.TransactionCategoryId == request.transactionCategory.Value);
+            if (request.transactionCategoryId.HasValue)
+                query = query.Where(t => t.TransactionCategoryId == request.transactionCategoryId.Value);
 
-            if (request.paymentMethod.HasValue)
-                query = query.Where(t => t.PaymentMethodId == request.paymentMethod.Value);
+            // Filter by payments
+            if (request.paymentMethodId.HasValue)
+                query = query.Where(tr => tr.TransactionPayments
+                    .Any(tp => tp.PaymentMethodId == request.paymentMethodId.Value));
+
 
             if (request.transactionDate.HasValue && request.transactionDate.Value != DateTime.MinValue)
                 query = query.Where(t => t.TransactionDate.Date == request.transactionDate.Value.Date);

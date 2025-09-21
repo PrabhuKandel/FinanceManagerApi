@@ -21,21 +21,24 @@ namespace FinanceManager.Application.Validators.TransactionRecordValidator.Comma
            .WithMessage("Invalid transaction category")
             .When(x => x.TransactionCategoryId.HasValue); // only validate if supplied
 
-
-            RuleFor(x => x.Amount)
-                .GreaterThan(0m).WithMessage("Amount must be greater than 0");
-
-
-            RuleFor(x => x.PaymentMethodId)
-            .MustAsync(async (paymentMethodId, cancellation) =>
+            // Payments validation
+            RuleFor(x => x.Payments)
+                .MustAsync(async (payments, cancellation) =>
                 {
-                    var exists = await _context.PaymentMethods.AnyAsync(c => c.Id == paymentMethodId);
-                    return exists;// true = valid, false = invalid //valid only if category exists
-             })
-             .WithMessage("Invalid payment  method")
-             .When(x => x.PaymentMethodId.HasValue); // only validate if supplied
+                    if (payments == null || !payments.Any()) return true; // skip if null or empty
 
+                    foreach (var p in payments)
+                    {
+                        var exists = await _context.PaymentMethods.AnyAsync(pm => pm.Id == p.PaymentMethodId, cancellation);
+                        if (!exists) return false;
+                    }
 
+                    return true;
+                })
+                .WithMessage("One or more payment methods are invalid");
+
+            RuleFor(p => p.Amount)
+                .GreaterThan(0m).WithMessage("Payment amount must be greater than 0");
 
             RuleFor(x => x.Description)
                 .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");

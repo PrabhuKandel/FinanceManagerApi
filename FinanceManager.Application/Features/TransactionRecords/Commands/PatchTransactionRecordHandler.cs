@@ -5,6 +5,7 @@ using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
+using FinanceManager.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,8 +24,10 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
 
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(PatchTransactionRecordCommand request, CancellationToken cancellationToken)
         {
-            var transactionRecordFromDb = await context.TransactionRecords.FindAsync(request.Id,cancellationToken);
-           Guard.Against.Null(transactionRecordFromDb, nameof(transactionRecordFromDb), "Transaction record not found");
+            var transactionRecordFromDb = await context.TransactionRecords
+                    .Include(tr => tr.TransactionPayments)
+                    .FirstOrDefaultAsync(tr => tr.Id == request.Id, cancellationToken);
+            Guard.Against.Null(transactionRecordFromDb, nameof(transactionRecordFromDb), "Transaction record not found");
 
             // Authorization check
             if (!userContext.IsAdmin() && transactionRecordFromDb.CreatedByApplicationUserId != userContext.UserId)
@@ -33,20 +36,50 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
                    throw new AuthorizationException();
                 
             }
-             
+            //validating amount
+            decimal totalAmount = request.Amount ?? transactionRecordFromDb.Amount;
+
+            var updatedPayments = request.Payments != null && request.Payments.Any()
+                ? request.Payments.Select(p => p.Amount).Sum()
+                : transactionRecordFromDb.TransactionPayments.Sum(p => p.Amount);
+
+            if (totalAmount != updatedPayments)
+            {
+                throw new BusinessValidationException("Total transaction amount must equal sum of payments");
+            }
+
+
+
+
             transactionRecordFromDb.TransactionCategoryId = request.TransactionCategoryId ?? transactionRecordFromDb.TransactionCategoryId;
-            transactionRecordFromDb.PaymentMethodId = request.PaymentMethodId ?? transactionRecordFromDb.PaymentMethodId;
             transactionRecordFromDb.Amount = request.Amount ?? transactionRecordFromDb.Amount;
             transactionRecordFromDb.Description = request.Description ?? transactionRecordFromDb.Description;
             transactionRecordFromDb.TransactionDate = request.TransactionDate ?? transactionRecordFromDb.TransactionDate;
             transactionRecordFromDb.UpdatedByApplicationUserId = userContext.UserId;
+            // Handle transaction payments (replace all if provided)
+            if (request.Payments != null && request.Payments.Any())
+            {
+                // Remove existing payments
+                context.TransactionPayments.RemoveRange(transactionRecordFromDb.TransactionPayments);
+
+                // Add new payments
+                transactionRecordFromDb.TransactionPayments = request.Payments
+                    .Select(p => new TransactionPayment
+                    {
+                        PaymentMethodId = p.PaymentMethodId,
+                        Amount = p.Amount
+                    })
+                    .ToList();
+            }
+
 
             await context.SaveChangesAsync(cancellationToken);
 
 
               var transactionRecord = await context.TransactionRecords
              .Include(t => t.TransactionCategory)
-             .Include(t => t.PaymentMethod)
+             .Include(t => t.TransactionPayments)
+                 .ThenInclude(tp => tp.PaymentMethod)
              .Include(t => t.CreatedByApplicationUser)
              .Include(t => t.UpdatedByApplicationUser)
              .FirstAsync(t => t.Id == request.Id, cancellationToken);

@@ -22,14 +22,15 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
 
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(GetTransactionRecordByIdQuery request, CancellationToken cancellationToken)
         {
+            var isAdmin = userContext.IsAdmin();
             
             var transactionRecord = await context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
-                .Include(tr => tr.PaymentMethod)
+                .Include(tr => tr.TransactionPayments)
+                .ThenInclude(tp => tp.PaymentMethod)
                 .Include(t => t.CreatedByApplicationUser)
                 .Include(t => t.UpdatedByApplicationUser).FirstOrDefaultAsync(tr => tr.Id == request.Id);
 
-            var isAdmin = userContext.IsAdmin();
             // Filter for non-admin users
             if (!isAdmin)
             {

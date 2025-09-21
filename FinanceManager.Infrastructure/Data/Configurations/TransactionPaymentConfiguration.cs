@@ -26,6 +26,7 @@ namespace FinanceManager.Infrastructure.Data.Configurations
             builder.HasOne(tp => tp.PaymentMethod)
                 .WithMany(pm => pm.TransactionPayments)
                 .HasForeignKey(tp => tp.PaymentMethodId)
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

@@ -1,26 +1,16 @@
 ﻿using Newtonsoft.Json;
+using static FinanceManager.Application.Dtos.Shared.SummaryDtos;
 
 namespace FinanceManager.Application.Dtos.TransactionRecord
 {
 
-        public class EntitySummaryDto
-        {
-            public Guid Id { get; set; }
-            public required string Name { get; set; }
-        }
 
-        public class ApplicationUserSummaryDto
-        {
-            public required string Id { get; set; }
-            public required string FirstName { get; set; }
-
-        }
         public class TransactionRecordResponseDto
         {
 
             public Guid Id { get; set; }
-            public EntitySummaryDto? TransactionCategory { get; set; }
-            public EntitySummaryDto? PaymentMethod { get; set; }
+            public TransactionCategorySummaryDto? TransactionCategory { get; set; }
+            public List<TransactionPaymentSummaryDto>? TransactionPayments { get; set; }
             public decimal Amount { get; set; }
             public string? Description { get; set; }
             public DateTime TransactionDate { get; set; }
@@ -35,9 +25,4 @@ namespace FinanceManager.Application.Dtos.TransactionRecord
 
         }
 
-    //public class AdminTransactionRecordResponseDto
-    //{
-    //    public string CreatedBy { get; set; }
-    //    public string UpdatedBy { get; set; }
-    //}
 }
