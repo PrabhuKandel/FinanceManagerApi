@@ -27,11 +27,7 @@ namespace FinanceManager.Infrastructure.Data.Configurations
                    .IsRequired()
                    .HasMaxLength(100);
 
-            builder.Property(u => u.RefreshToken)
-                   .IsRequired(false);
 
-            builder.Property(u => u.RefreshTokenExpiresAtUtc)
-                   .IsRequired(false);
 
         }
         }

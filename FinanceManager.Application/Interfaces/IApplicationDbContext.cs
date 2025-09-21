@@ -1,5 +1,4 @@
-﻿using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Domain.Entities;
+﻿using FinanceManager.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -12,7 +11,8 @@ namespace FinanceManager.Application.Interfaces
         DbSet<TransactionRecord> TransactionRecords { get; set; }
         DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
-        DatabaseFacade Database { get; }
+        DatabaseFacade Database { get; }    
+        DbSet<RefreshToken> RefreshTokens { get; set; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
