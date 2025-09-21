@@ -14,6 +14,8 @@ namespace FinanceManager.Application.Interfaces
         DatabaseFacade Database { get; }    
         DbSet<RefreshToken> RefreshTokens { get; set; }
 
+        DbSet<TransactionPayment> TransactionPayments { get; set; }
+
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
