@@ -26,32 +26,41 @@ namespace FinanceManager.Application.Features.Report.Commands.TransactionRecordS
                 query = query.Where(tr => tr.TransactionDate <= request.To.Value);
 
 
+            // Single database query for optimal performance
+            var summaryData = await query
+                .GroupBy(tr => tr.TransactionCategory!.Type)
+                .Select(g => new
+                {
+                    CategoryType = g.Key,
+                    TotalAmount = g.Sum(tr => tr.Amount)
+                })
+                .ToListAsync(cancellationToken);
+
             var response = new TransactionRecordSummaryByCategoryTypeDto();
 
+            // Process results in memory (much faster)
             if (request.CategoryType == CategoryType.Income)
             {
-                // Only income requested
-                response.TotalIncome = await query
-                    .Where(tr => tr.TransactionCategory!.Type == CategoryType.Income)
-                    .SumAsync(tr => (decimal?)tr.Amount, cancellationToken) ?? 0m;
+                response.TotalIncome = summaryData
+                    .Where(x => x.CategoryType == CategoryType.Income)
+                    .Sum(x => x.TotalAmount);
             }
             else if (request.CategoryType == CategoryType.Expense)
             {
-                // Only expense requested
-                 response.TotalExpense = await query
-                    .Where(tr => tr.TransactionCategory!.Type == CategoryType.Expense)
-                    .SumAsync(tr => (decimal?)tr.Amount, cancellationToken) ?? 0m;
+                response.TotalExpense = summaryData
+                    .Where(x => x.CategoryType == CategoryType.Expense)
+                    .Sum(x => x.TotalAmount);
             }
             else
             {
-                // No category filter → calculate both
-                response.TotalIncome = await query
-                    .Where(tr => tr.TransactionCategory!.Type == CategoryType.Income)
-                    .SumAsync(tr => (decimal?)tr.Amount, cancellationToken) ?? 0m;
+                // No filter - get both
+                response.TotalIncome = summaryData
+                    .Where(x => x.CategoryType == CategoryType.Income)
+                    .Sum(x => x.TotalAmount);
 
-                response.TotalExpense = await query
-                    .Where(tr => tr.TransactionCategory!.Type == CategoryType.Expense)
-                    .SumAsync(tr => (decimal?)tr.Amount, cancellationToken) ?? 0m;
+                response.TotalExpense = summaryData
+                    .Where(x => x.CategoryType == CategoryType.Expense)
+                    .Sum(x => x.TotalAmount);
             }
 
             return new OperationResult<TransactionRecordSummaryByCategoryTypeDto>
