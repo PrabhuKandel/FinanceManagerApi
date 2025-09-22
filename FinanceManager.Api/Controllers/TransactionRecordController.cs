@@ -151,13 +151,13 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> FilterTransactionRecords(
             [FromQuery] decimal? minAmount,
             [FromQuery] decimal? maxAmount,
-            [FromQuery] Guid? transacionCategory,
-            [FromQuery] Guid? paymentMethod,
+            [FromQuery] Guid? transacionCategoryId,
+            [FromQuery] Guid? paymentMethodId,
              [FromQuery] DateTime transactionDate
             )
         {
 
-            var response = await mediator.Send( new FilterTransactionRecordsQuery(minAmount, maxAmount, transacionCategory, paymentMethod, transactionDate));
+            var response = await mediator.Send( new FilterTransactionRecordsQuery(minAmount, maxAmount, transacionCategoryId, paymentMethodId, transactionDate));
             return Ok(response);
         }
 

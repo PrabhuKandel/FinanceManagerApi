@@ -14,16 +14,17 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.G
 
       public async  Task<OperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsDapperQuery request, CancellationToken cancellationToken)
         {
-            var transactionRecords = await connection.QueryAsync<TransactionRecordDapperResult>("usp_GetAllTransactionRecords", commandType: CommandType.StoredProcedure);
+            var rows = await connection.QueryAsync("usp_GetAllTransactionRecords", commandType: CommandType.StoredProcedure);
 
+            var result = TransactionRecordDapperMapper.MapTransactionRecordResults(rows);
 
             return new OperationResult<IEnumerable<TransactionRecordResponseDto>>
             {
 
-                Data = transactionRecords.ToResponseDtoListFromDapper(),
+                Data = result,
                 Message = "Transaction records retrieved successfully"
 
-            };
+            }; 
         }
 
        

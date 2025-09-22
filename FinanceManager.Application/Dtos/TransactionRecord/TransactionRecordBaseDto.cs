@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
+using FinanceManager.Application.Dtos.TransactionPayment;
 
 namespace FinanceManager.Application.Dtos.TransactionRecord
 {
@@ -13,10 +11,14 @@ namespace FinanceManager.Application.Dtos.TransactionRecord
 
         public decimal Amount { get; set; }
 
-        public Guid PaymentMethodId { get; set; }
 
         public string? Description { get; set; }
 
         public DateTime TransactionDate { get; set; }
+
+
+        public List<TransactionPaymentDto> Payments { get; set; } = new List<TransactionPaymentDto>();
     }
+
+
 }

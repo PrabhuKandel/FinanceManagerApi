@@ -21,6 +21,7 @@ namespace FinanceManager.Infrastructure.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<TransactionPayment> TransactionPayments { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,6 +32,8 @@ namespace FinanceManager.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new TransactionCategoryConfiguration());
             modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
             modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
+            modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+            modelBuilder.ApplyConfiguration(new TransactionPaymentConfiguration());
 
 
         }

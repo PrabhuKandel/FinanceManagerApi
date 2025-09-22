@@ -22,26 +22,28 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
 
         public async Task<OperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsQuery request, CancellationToken cancellationToken)
         {
-            var transactionRecordsFromDb =  await  context.TransactionRecords
+            var query =    context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
-                .Include(tr => tr.PaymentMethod)
+                 .Include(tr => tr.TransactionPayments)
+                        .ThenInclude(tp => tp.PaymentMethod)
                 .Include(t => t.CreatedByApplicationUser)
-                 .Include(t => t.UpdatedByApplicationUser).ToListAsync();
-            if (!transactionRecordsFromDb.Any())
-            {
-                throw new NotFoundException("Transaction record doesn't exist");
-            }
+                 .Include(t => t.UpdatedByApplicationUser)
+                 .AsQueryable();
+
             // Check admin status once
             var isAdmin = userContext.IsAdmin();
             // Filter for non-admin users
             if (!isAdmin)
             {
-                transactionRecordsFromDb = transactionRecordsFromDb
-                    .Where(t => t.CreatedByApplicationUserId == userContext.UserId)
-                    .ToList();
+                query = query
+                    .Where(t => t.CreatedByApplicationUserId == userContext.UserId);
+          
             }
 
-           var  transactionRecordsDtos =  transactionRecordsFromDb.ToResponseDtoList(isAdmin);
+            // Execute query
+            var transactionRecordsFromDb = await query.ToListAsync(cancellationToken);
+
+            var  transactionRecordsDtos =  transactionRecordsFromDb.ToResponseDtoList(isAdmin);
             return new OperationResult<IEnumerable<TransactionRecordResponseDto>>
             {
 

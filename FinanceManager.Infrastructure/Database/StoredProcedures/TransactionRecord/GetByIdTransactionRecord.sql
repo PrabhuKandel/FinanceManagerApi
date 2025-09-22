@@ -4,29 +4,31 @@ as
 begin
 
   SET NOCOUNT ON;
-	SELECT	
-	tr.Id as TransactionRecordId,
-	tr.Amount,
-	tr.Description,
-	tr.TransactionDate,
-	tc.Id as TransactionCategoryId,
-	tc.Name as TransactionCategoryName,
-	pm.Id as PaymentMethodId,
-	pm.Name as PaymentMethodName,
-	cb.Id as CreatedByUserId,
-	cb.FirstName as CreatedByFirstName,
-	ub.Id as UpdatedByUserId,
-	ub.FirstName as UpdatedByFirstName,
-	tr.CreatedAt,
-	tr.UpdatedAt
-  from TransactionRecords as tr
-  join TransactionCategories as tc
-  on tr.TransactionCategoryId = tc.Id
-  join PaymentMethods as pm
-  on tr.PaymentMethodId = pm.Id
-  join AspNetUsers as cb
-  on tr.CreatedByApplicationUserId = cb.Id
-  join AspNetUsers as ub
-  on tr.UpdatedByApplicationUserId = ub.Id
+  SELECT
+        tr.Id AS TransactionRecordId,
+        tr.Amount AS TransactionAmount,
+        tr.Description,
+        tr.TransactionDate,
+        tr.CreatedAt,
+        tr.UpdatedAt,
+
+        tc.Id AS TransactionCategoryId,
+        tc.Name AS TransactionCategoryName,
+
+        tp.PaymentMethodId,
+        pm.Name AS PaymentMethodName,
+        tp.Amount AS PaymentAmount,
+
+        cb.Id AS CreatedByUserId,
+        cb.Email AS CreatedByEmail,
+
+        ub.Id AS UpdatedByUserId,
+        ub.Email AS UpdatedByEmail
+    FROM TransactionRecords tr
+    JOIN TransactionCategories tc ON tr.TransactionCategoryId = tc.Id
+     JOIN TransactionPayments tp ON tr.Id = tp.TransactionRecordId
+     JOIN PaymentMethods pm ON tp.PaymentMethodId = pm.Id
+     JOIN AspNetUsers cb ON tr.CreatedByApplicationUserId = cb.Id
+    LEFT JOIN AspNetUsers ub ON tr.UpdatedByApplicationUserId = ub.Id
    where tr.Id = @Id;
 end

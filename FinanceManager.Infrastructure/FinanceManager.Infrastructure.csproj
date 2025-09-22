@@ -33,4 +33,8 @@
 
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Database\StoredProcedures\Reports\" />
+	</ItemGroup>
+
 </Project>

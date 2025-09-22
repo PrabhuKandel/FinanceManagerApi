@@ -3,6 +3,7 @@ using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
+using FinanceManager.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,16 +22,41 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
 
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
-            var entity = request.TransactionRecord.ToEntity();
-            entity.CreatedByApplicationUserId = userContext.UserId;
-            entity.UpdatedByApplicationUserId = userContext.UserId;
+            // Start a transaction
+             await using var transaction = await context.Database.BeginTransactionAsync();
+
+
+            var entity = request.TransactionRecord.ToEntity(userContext.UserId);
+        
+         
 
             await context.TransactionRecords.AddAsync(entity);
+
             await context.SaveChangesAsync();
 
+            //throw new Exception("Testing rollback!");
+
+            // Add transaction payments
+            if (request.TransactionRecord.Payments != null && request.TransactionRecord.Payments.Any())
+            {
+                var payments = request.TransactionRecord.Payments
+                    .Select(p => new TransactionPayment
+                    {
+                        TransactionRecordId = entity.Id,
+                        PaymentMethodId = p.PaymentMethodId,
+                        Amount = p.Amount
+                    }).ToList();
+
+                await context.TransactionPayments.AddRangeAsync(payments);
+                await context.SaveChangesAsync();
+            }
+
+            //Commit transaction
+            await transaction.CommitAsync();
             var savedEntity =  await context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
-                .Include(tr => tr.PaymentMethod)
+                .Include(tr => tr.TransactionPayments)
+                .ThenInclude(tp => tp.PaymentMethod)
                 .Include(tr=>tr.CreatedByApplicationUser)
                 .Include(tr=>tr.UpdatedByApplicationUser)
                  .FirstOrDefaultAsync(tr => tr.Id == entity.Id);
@@ -44,7 +70,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
                 Data = savedEntity?.ToResponseDto(userContext.IsAdmin())
             };
 
-            ;
+            
         }
     }
 }
