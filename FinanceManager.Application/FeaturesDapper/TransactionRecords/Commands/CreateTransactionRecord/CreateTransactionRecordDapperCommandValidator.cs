@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Application.Interfaces;
+using FinanceManager.Application.Validators.TransactionPaymentValidator;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,17 +23,13 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.
             RuleFor(x => x.Amount)
                 .GreaterThan(0m).WithMessage("Amount must be greater than 0");
 
+            RuleForEach(x => x.Payments)
+                .NotEmpty().WithMessage("At least one payment is required.")
+               .SetValidator(new TransactionPaymentDtoValidator(_context));
 
-            RuleFor(x => x.PaymentMethodId)
-                .NotEmpty().WithMessage("Payment method is required.")
-                .MustAsync(async (paymentMethodId, cancellation) =>
-                {
-                    var exists = await _context.PaymentMethods.AnyAsync(c => c.Id == paymentMethodId);
-                    return exists;// true = valid, false = invalid //valid only if category exists
-                })
-                .WithMessage("Invalid payment  method");
-
-
+            RuleFor(x => x)
+                 .Must(x => x.Amount == x.Payments.Sum(p => p.Amount))
+                 .WithMessage("Total transaction amount must equal sum of payments");
 
             RuleFor(x => x.Description)
                 .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");

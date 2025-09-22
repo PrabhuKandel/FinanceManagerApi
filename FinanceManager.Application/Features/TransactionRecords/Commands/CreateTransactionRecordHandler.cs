@@ -23,7 +23,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
             // Start a transaction
-             var transaction = await context.Database.BeginTransactionAsync();
+             await using var transaction = await context.Database.BeginTransactionAsync();
 
 
             var entity = request.TransactionRecord.ToEntity(userContext.UserId);

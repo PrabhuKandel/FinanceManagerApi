@@ -1,45 +1,60 @@
-﻿using Ardalis.GuardClauses;
-using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Domain.Entities;
+﻿using FinanceManager.Application.Dtos.TransactionRecord;
 using static FinanceManager.Application.Dtos.Shared.SummaryDtos;
 
 namespace FinanceManager.Application.Mapping
 {
     public static class TransactionRecordDapperMapper
     {
-        public static TransactionRecordResponseDto ToResponseDtoFromDapper(this TransactionRecordDapperResult dapperResult, bool isAdmin = false)
+        public static List<TransactionRecordResponseDto> MapTransactionRecordResults(IEnumerable<dynamic> rows)
         {
-            Guard.Against.Null(dapperResult, nameof(dapperResult));
-            return new TransactionRecordResponseDto
+            var lookup = new Dictionary<Guid, TransactionRecordResponseDto>();
+
+            foreach (var row in rows)
             {
-                Id = dapperResult.TransactionRecordId,
-                Amount = dapperResult.Amount,
-                Description = dapperResult.Description,
-                TransactionDate = dapperResult.TransactionDate,
-                CreatedAt = dapperResult.CreatedAt,
-                UpdatedAt = dapperResult.UpdatedAt,
-                TransactionCategory = new TransactionCategorySummaryDto
+                if (!lookup.TryGetValue(row.TransactionRecordId, out TransactionRecordResponseDto tr))
                 {
-                    Id = dapperResult.TransactionCategoryId,
-                    Name = dapperResult.TransactionCategoryName
-                },
-                CreatedBy = new ApplicationUserSummaryDto
-                {
-                    Id = dapperResult.CreatedByUserId,
-                    Email = dapperResult.CreatedByFirstName
-                },
-                UpdatedBy = new ApplicationUserSummaryDto
-                {
-                    Id = dapperResult.UpdatedByUserId,
-                    Email = dapperResult.UpdatedByFirstName
+                    tr = new TransactionRecordResponseDto
+                    {
+                        Id = row.TransactionRecordId,
+                        Amount = row.TransactionAmount,
+                        Description = row.Description,
+                        TransactionDate = row.TransactionDate,
+                        CreatedAt = row.CreatedAt,
+                        UpdatedAt = row.UpdatedAt,
+                        TransactionCategory = row.TransactionCategoryId == null ? null : new TransactionCategorySummaryDto
+                        {
+                            Id = row.TransactionCategoryId,
+                            Name = row.TransactionCategoryName
+                        },
+                        CreatedBy = row.CreatedByUserId == null ? null : new ApplicationUserSummaryDto
+                        {
+                            Id = row.CreatedByUserId,
+                            Email = row.CreatedByEmail
+                        },
+                        UpdatedBy = row.UpdatedByUserId == null ? null : new ApplicationUserSummaryDto
+                        {
+                            Id = row.UpdatedByUserId,
+                            Email = row.UpdatedByEmail
+                        },
+                        TransactionPayments = new List<TransactionPaymentSummaryDto>()
+                    };
+
+                    lookup.Add(tr.Id, tr);
                 }
-            };
-        }
-        public static List<TransactionRecordResponseDto> ToResponseDtoListFromDapper(this IEnumerable<TransactionRecordDapperResult> dapperResult, bool isAdmin = false)
-        {
-            return dapperResult?.Select(e => e.ToResponseDtoFromDapper(isAdmin))
-                .OfType<TransactionRecordResponseDto>()// filters nulls and makes non-nullable
-                .ToList() ?? new List<TransactionRecordResponseDto>();
+
+                // Add payment if exists
+                if (row.PaymentMethodId != null)
+                {
+                    tr.TransactionPayments.Add(new TransactionPaymentSummaryDto
+                    {
+                        PaymentMethodId = row.PaymentMethodId,
+                        Name = row.PaymentMethodName,
+                        Amount = row.PaymentAmount
+                    });
+                }
+            }
+
+            return lookup.Values.ToList();
         }
 
     }
