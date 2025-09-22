@@ -1,10 +1,12 @@
 ﻿using Ardalis.GuardClauses;
 using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.TransactionPayment;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
+using FinanceManager.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,27 +26,44 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(UpdateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
 
-            var transactionRecordFromDb = await context.TransactionRecords.FindAsync(request.Id);
-            Guard.Against.Null(transactionRecordFromDb, nameof(transactionRecordFromDb), "Transaction record not found");
+            // Load TransactionRecord with related payments
+            var transactionRecord = await context.TransactionRecords
+                .Include(tr => tr.TransactionPayments)
+                .FirstOrDefaultAsync(tr => tr.Id == request.Id, cancellationToken);
 
-            if (!userContext.IsAdmin())
-            {
-                if (transactionRecordFromDb?.CreatedByApplicationUserId != userContext.UserId)
-                {
-                    throw new AuthorizationException("You can't access this record.");
-                }
-            }
-
-            transactionRecordFromDb.UpdatedByApplicationUserId = userContext.UserId;
+            Guard.Against.Null(transactionRecord, nameof(transactionRecord), "Transaction record not found");
 
 
-            transactionRecordFromDb?.UpdateEntity(request.TransactionRecord);
+            if (!userContext.IsAdmin()&& transactionRecord?.CreatedByApplicationUserId != userContext.UserId)
+                       throw new AuthorizationException("You can't access this record.");
+           
+
+            transactionRecord.UpdatedByApplicationUserId = userContext.UserId;
+            transactionRecord.UpdatedAt = DateTime.UtcNow;
+
+            //update transaction record 
+            transactionRecord.UpdateEntity(request.TransactionRecord);
+
+
+            //remove existing payments
+            context.TransactionPayments.RemoveRange(transactionRecord.TransactionPayments);
+
+              transactionRecord.TransactionPayments = request.TransactionRecord.Payments
+                        .Select(p => new TransactionPayment
+                        {
+                            PaymentMethodId = p.PaymentMethodId,
+                            Amount = p.Amount
+                        })
+                        .ToList();
+
 
             await context.SaveChangesAsync();
 
-            var transactionRecord = await context.TransactionRecords
+
+            var savedEntity = await context.TransactionRecords
            .Include(t => t.TransactionCategory)
-           .Include(t => t.PaymentMethod)
+           .Include(t => t.TransactionPayments)
+                .ThenInclude(tp => tp.PaymentMethod)
            .Include(t => t.CreatedByApplicationUser)
            .Include(t => t.UpdatedByApplicationUser)
            .FirstAsync(t => t.Id == request.Id, cancellationToken);
@@ -53,7 +72,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             {
 
                 Message = "Transaction category updated",
-                Data = transactionRecord.ToResponseDto(userContext.IsAdmin())
+                Data = savedEntity.ToResponseDto(userContext.IsAdmin())
             };
 
         }

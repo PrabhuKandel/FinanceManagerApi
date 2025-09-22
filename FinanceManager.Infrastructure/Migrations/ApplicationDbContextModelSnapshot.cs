@@ -140,13 +140,15 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DeviceInfo")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("RevocationReason")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<DateTime?>("RevokedAt")
                         .HasColumnType("datetime2");
@@ -188,6 +190,30 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.ToTable("TransactionCategories");
                 });
 
+            modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("PaymentMethodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TransactionRecordId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentMethodId");
+
+                    b.HasIndex("TransactionRecordId");
+
+                    b.ToTable("TransactionPayments");
+                });
+
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
                 {
                     b.Property<Guid>("Id")
@@ -208,9 +234,6 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<Guid>("PaymentMethodId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("TransactionCategoryId")
                         .HasColumnType("uniqueidentifier");
 
@@ -221,14 +244,11 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedByApplicationUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedByApplicationUserId");
-
-                    b.HasIndex("PaymentMethodId");
 
                     b.HasIndex("TransactionCategoryId");
 
@@ -381,17 +401,30 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionPayment", b =>
+                {
+                    b.HasOne("FinanceManager.Domain.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany("TransactionPayments")
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FinanceManager.Domain.Entities.TransactionRecord", "TransactionRecord")
+                        .WithMany("TransactionPayments")
+                        .HasForeignKey("TransactionRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentMethod");
+
+                    b.Navigation("TransactionRecord");
+                });
+
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
                 {
                     b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "CreatedByApplicationUser")
                         .WithMany("CreatedTransactionsRecords")
                         .HasForeignKey("CreatedByApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FinanceManager.Domain.Entities.PaymentMethod", "PaymentMethod")
-                        .WithMany()
-                        .HasForeignKey("PaymentMethodId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -404,12 +437,9 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "UpdatedByApplicationUser")
                         .WithMany("UpdatedTransactionsRecords")
                         .HasForeignKey("UpdatedByApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("CreatedByApplicationUser");
-
-                    b.Navigation("PaymentMethod");
 
                     b.Navigation("TransactionCategory");
 
@@ -474,6 +504,16 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("UpdatedTransactionsRecords");
+                });
+
+            modelBuilder.Entity("FinanceManager.Domain.Entities.PaymentMethod", b =>
+                {
+                    b.Navigation("TransactionPayments");
+                });
+
+            modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
+                {
+                    b.Navigation("TransactionPayments");
                 });
 #pragma warning restore 612, 618
         }

@@ -55,6 +55,13 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-       
+        [HttpPost("revoke-token")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> RevokeToken(RevokeTokenCommand command)
+        {
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+
     }
 }

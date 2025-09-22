@@ -12,14 +12,15 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.G
     {
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(GetTransactionRecordByIdDapperQuery request, CancellationToken cancellationToken)
         {
-            var transactionRecord = await connection.QuerySingleOrDefaultAsync<TransactionRecordDapperResult>("usp_GetByIdTransactionRecord", new { request.Id }, commandType: CommandType.StoredProcedure);
+            var rows = await connection.QueryAsync("usp_GetByIdTransactionRecord", new { request.Id }, commandType: CommandType.StoredProcedure);
 
-            Guard.Against.Null(transactionRecord, nameof(transactionRecord), "Transaction record not found");
+            Guard.Against.Null(rows, nameof(rows), "Transaction record not found");
 
+            var result = TransactionRecordDapperMapper.MapTransactionRecordResults(rows);
             return new OperationResult<TransactionRecordResponseDto>
             {
 
-                Data = transactionRecord.ToResponseDtoFromDapper(),
+                Data =result.FirstOrDefault(),
                 Message = "Transaction record retrieved successfully"
 
 

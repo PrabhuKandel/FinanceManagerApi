@@ -1,0 +1,15 @@
+﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Dtos.Report;
+using MediatR;
+
+namespace FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory
+{
+    public record TransactionRecordSummaryByTransactionCategoryQuery
+        (
+           Guid? TransactionCategoryId
+        , DateTime? FromDate
+        , DateTime? ToDate
+        ):IRequest<OperationResult<IEnumerable<TransactionRecordSummaryByCategoryDto>>>
+    {
+    }
+}

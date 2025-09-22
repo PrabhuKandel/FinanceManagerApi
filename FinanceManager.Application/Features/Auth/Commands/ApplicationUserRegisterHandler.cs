@@ -75,7 +75,7 @@ namespace FinanceManager.Application.Features.Auth.Commands
             {
 
                 Data = null,
-                Message = "Registration Successfulll!!"
+                Message = "Registration Successfulll!!" 
 
 
             };

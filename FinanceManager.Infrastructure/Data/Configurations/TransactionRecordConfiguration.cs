@@ -20,8 +20,7 @@ namespace FinanceManager.Infrastructure.Data.Configurations
             builder.Property(e => e.TransactionCategoryId)
                    .IsRequired();
 
-            builder.Property(e => e.PaymentMethodId)
-                   .IsRequired();
+
 
             //"decimal(18,2)" means:18 → total number of digits(precision) 2 → number of digits after the decimal point(scale)
             builder.Property(e => e.Amount)
@@ -44,18 +43,11 @@ namespace FinanceManager.Infrastructure.Data.Configurations
                    .IsRequired();
 
 
-            builder.Property(e => e.UpdatedByApplicationUserId)
-                   .IsRequired();
-
             builder.HasOne(e => e.TransactionCategory)
                    .WithMany()
                    .HasForeignKey(e => e.TransactionCategoryId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(e => e.PaymentMethod)
-                   .WithMany()
-                   .HasForeignKey(e => e.PaymentMethodId)   
-                   .OnDelete(DeleteBehavior.Restrict);
 
              builder.HasOne(tr => tr.CreatedByApplicationUser)             // Each TransactionRecord has one User
                      .WithMany(u => u.CreatedTransactionsRecords)          // Each User has many TransactionRecords
@@ -66,7 +58,6 @@ namespace FinanceManager.Infrastructure.Data.Configurations
             builder.HasOne(tr => tr.UpdatedByApplicationUser)            
                .WithMany(u => u.UpdatedTransactionsRecords)         
               .HasForeignKey(tr => tr.UpdatedByApplicationUserId)
-               .IsRequired()
               .OnDelete(DeleteBehavior.Restrict);
 
 
