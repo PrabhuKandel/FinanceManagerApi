@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.Auth.Commands
 {
-    public class RevokeTokenHandler(IApplicationDbContext context, IUserContext ) : IRequestHandler<RevokeTokenCommand, OperationResult<string>>
+    public class RevokeTokenHandler(IApplicationDbContext context) : IRequestHandler<RevokeTokenCommand, OperationResult<string>>
     {
         public async Task<OperationResult<string>> Handle(RevokeTokenCommand request, CancellationToken cancellationToken)
         {
