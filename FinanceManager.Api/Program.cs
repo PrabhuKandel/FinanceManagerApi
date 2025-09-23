@@ -5,7 +5,6 @@ using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.DependencyInjection;
-using FinanceManager.Infrastructure.Jobs.Recurring;
 using FinanceManager.Infrastructure.Jobs.Registration;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -124,6 +123,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLoggingFillter>());
 builder.Services.AddHangfireServer();
 
+
 var app = builder.Build();
 // Apply migrations and seed data
 //using (var scope = app.Services.CreateScope())
@@ -141,6 +141,7 @@ var app = builder.Build();
 
 //}
 
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -152,12 +153,21 @@ if (app.Environment.IsDevelopment())
 //  
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 //app.UseMiddleware<LoggingMiddleware>();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+
+// Hangfire Dashboard
+// Use Hangfire Dashboard with anonymous method for authorization
+app.UseHangfireDashboard("/hangfire");
+
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHangfireDashboard();
+
+
 HangfireJobSchedular.RegisterJobs(app.Services);
 app.MapControllers();
 app.Run();
 public partial class Program { }
+
+

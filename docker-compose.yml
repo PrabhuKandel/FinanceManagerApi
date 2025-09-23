@@ -1,0 +1,20 @@
+
+services:
+  financemanager.api:
+    build:
+          context: .
+          dockerfile: FinanceManager.Api/Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "http://+:80;https://+:443"
+      ConnectionStrings__DefaultConnection: "Server=host.docker.internal,1433;Database=FinanceManagerDb;User Id=Admin123;Password=Admin@123;TrustServerCertificate=True;"
+      ConnectionStrings__HangfireConnection: "Server=host.docker.internal,1433;Database=FinanceManagerJobsDb;User Id=Admin123;Password=Admin@123;TrustServerCertificate=True;"
+    networks:
+      - my_network
+networks:
+  my_network:
+    driver: bridge  
+
