@@ -4,7 +4,7 @@ using MediatR;
 
 namespace FinanceManager.Application.Notifications.RegisterNotification
 {
-    public class UserRegisterNotificationHandler() : INotificationHandler<UserRegisterNotification>
+    public class UserRegisterNotificationHandler(IEmailJobScheduler emailJobScheduler) : INotificationHandler<UserRegisterNotification>
     {
         public  Task Handle(UserRegisterNotification notification, CancellationToken cancellationToken)
         {
@@ -22,10 +22,10 @@ namespace FinanceManager.Application.Notifications.RegisterNotification
             <p>We recommend changing your password after your first login.</p>
             <p>Best regards,<br/>FinanceManager Team</p>";
 
+            
             // Enqueue email sending with Hangfire
-            BackgroundJob.Enqueue<IEmailService>(x =>
-                x.SendEmailAsync(to, subject, body));
-
+            emailJobScheduler.EnqueuePasswordResetEmail(to, subject, body);
+   
             return Task.CompletedTask;
         }
     }

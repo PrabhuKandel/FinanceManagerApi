@@ -1,20 +1,31 @@
-﻿using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
+﻿using FinanceManager.Application.Features.Report.Commands.TransactionRecordSummaryByIncomeExpense;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FinanceManager.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/reports/transaction-record")]
     [ApiController]
     public class ReportController(ISender sender) : ControllerBase
     {
 
-    [HttpPost("transaction-record/summary-by-category")]
-    public async Task<IActionResult> GetTransactionRecordSummaryByCategory(TransactionRecordSummaryByTransactionCategoryQuery query)
+        [HttpPost("summary/transaction-category")]
+        public async Task<IActionResult> GetTransactionRecordSummaryByCategory(TransactionRecordSummaryByTransactionCategoryQuery query)
+            {
+                var response = await sender.Send(query);
+                return Ok(response);
+            }
+
+    
+        [HttpPost("summary/category-type")]
+        public async Task<IActionResult> GetIncomeExpenseSummary( TransactionRecordSummaryByCategoryTypeCommand command)
         {
-            var response = await sender.Send(query);
+            var response = await sender.Send(command);
             return Ok(response);
+
         }
+
     }
 }
