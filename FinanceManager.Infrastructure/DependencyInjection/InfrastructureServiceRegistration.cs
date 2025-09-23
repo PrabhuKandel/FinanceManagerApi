@@ -2,7 +2,10 @@
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Infrastructure.Data;
+using FinanceManager.Infrastructure.Jobs.FireAndForget;
+using FinanceManager.Infrastructure.Jobs.Recurring;
 using FinanceManager.Infrastructure.Services;
+using Hangfire;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +30,10 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddScoped<IApplicationDbContext>(provider =>
                 provider.GetRequiredService<ApplicationDbContext>());
             services.AddTransient<IEmailService, MailKitEmailService>();
+            services.AddScoped<IEmailJobScheduler, EmailJobScheduler>();
+            services.AddScoped<ITokenCleanupService, TokenCleanupService>();
+            services.AddScoped<TokenCleanupJob>();
+
 
             return services;
         }

@@ -5,6 +5,8 @@ using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.DependencyInjection;
+using FinanceManager.Infrastructure.Jobs.Recurring;
+using FinanceManager.Infrastructure.Jobs.Registration;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -155,6 +157,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireDashboard();
+HangfireJobSchedular.RegisterJobs(app.Services);
 app.MapControllers();
 app.Run();
 public partial class Program { }
