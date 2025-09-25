@@ -11,7 +11,9 @@
               Add Transaction
             </router-link>
           </div>
-
+          <div v-if="flash.message" class="alert" :class="alertClass">
+            {{ flash.message }}
+          </div>
           <!-- Loading & Error states -->
           <div v-if="loading" class="alert alert-info">Loading...</div>
           <div v-if="error" class="alert alert-danger">{{ error }}</div>
@@ -58,10 +60,10 @@
                   <td class="align-middle">
                     <div class="d-flex gap-1">
 
-                        <router-link :to="`/transaction-records/edit/${txn.id}`" class="btn btn-sm btn-warning">
-                          Edit
-                        </router-link>
-                      
+                      <router-link :to="`/transaction-records/edit/${txn.id}`" class="btn btn-sm btn-warning">
+                        Edit
+                      </router-link>
+
                       <button class="btn btn-sm btn-danger" @click="deleteTransaction(txn)">Delete</button>
                     </div>
                   </td>
@@ -84,6 +86,7 @@
 
 <script setup>
   import { ref, onMounted, computed } from 'vue';
+  import { useFlashStore } from '../stores/flashStore'
   import Layout from '../components/Layout.vue';
   import { getTransactionRecords,deleteTransactionRecord } from '../api/transactionRecordApi'; // your separate API module
 
@@ -92,6 +95,9 @@
   const loading = ref(false);
   const error = ref(null);
 
+  // create flash store instance
+  const flash = useFlashStore()
+
   // Computed property to safely expose the transactions array
   const transactionsData = computed(() => {
     return Array.isArray(transactionRecords.value?.data)
@@ -99,6 +105,16 @@
       : [];
   });
 
+  const alertClass = computed(() =>
+    flash.type === 'success' ? 'alert-success' : 'alert-danger'
+  )
+
+  // Auto-clear after a few seconds
+  onMounted(() => {
+    if (flash.message) {
+      setTimeout(() => flash.clear(), 3000)
+    }
+  })
   // Fetch transaction records from API
   const fetchTransactionRecords = async () => {
     loading.value = true;

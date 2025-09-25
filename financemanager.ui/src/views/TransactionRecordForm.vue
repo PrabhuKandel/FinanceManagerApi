@@ -7,8 +7,6 @@
             {{ formMode === 'create' ? 'Create Transaction' : 'Edit Transaction' }}
           </h3>
 
-          <!-- Global error message -->
-          <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
           <form @submit.prevent="submitForm">
             <!-- Category -->
@@ -117,12 +115,16 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import Layout from '../components/Layout.vue'
+  import { useRouter } from 'vue-router'
   import { getPaymentMethods } from '../api/paymentMethodApi'
   import { getTransactionCategories } from '../api/transactionCategoryApi'
   import { addTransactionRecord ,getTransactionRecordById,updateTransactionRecord} from '../api/transactionRecordApi'
   import { useRoute } from 'vue-router';
+  import { useFlashStore } from '../stores/flashStore'
 
   const route = useRoute();
+  const router = useRouter() 
+  const flashStore = useFlashStore()
   const transactionRecordId = route.params.id || null;  // will be null for create
   console.log(transactionRecordId)
   const formMode = ref(transactionRecordId ? 'edit' : 'create');
@@ -131,18 +133,19 @@
   const form = ref({
     description: '',
     transactionCategoryId: '',
-    amount: 0,
+    amount: '',
     transactionDate: '',
-    payments: []
+    payments: transactionRecordId ? [] : [{ paymentMethodId: '', amount: '' }]
   })
 
   const categories = ref([])
   const paymentMethods = ref([])
-  const errorMessage = ref('')
+
   const validationErrors = ref({})
+  
 
   // Add/Remove payments
-  const addPayment = () => form.value.payments.push({ paymentMethodId: '', amount: 0 })
+  const addPayment = () => form.value.payments.push({ paymentMethodId: '', amount: '' })
   const removePayment = (index) => form.value.payments.splice(index, 1)
 
   // Filter methods to prevent duplicates
@@ -186,28 +189,35 @@
 
   // Submit form
   const submitForm = async () => {
-    errorMessage.value = ''
+
     validationErrors.value = {}
     if (!validateForm()) return 
 
     try {
-      const payload = { transactionRecord: form.value }
+      const payload = { transactionRecord: {... form.value } }
       if (formMode.value === 'create') {
         await addTransactionRecord(payload);
+        flashStore.setMessage(' Transaction created successfully!', 'success')
  
       } else {
+        payload.id = transactionRecordId;
+        console.log(payload);
         await updateTransactionRecord(transactionRecordId, payload);
+        flashStore.setMessage(' Transaction updated successfully!', 'success')
 
       }
+
+       router.push('/dashboard')
       // optionally reset form
     } catch (err) {
       // Backend validation errors
       if (err.errors) {
         validationErrors.value = err.errors
       } else if (err.message) {
-        errorMessage.value = err.message
+
       } else {
-        errorMessage.value = 'Server error. Please try again.'
+ 
+        flashStore.setMessage(' Failed to save transaction', 'error')
       }
       console.error(err)
     }
@@ -226,7 +236,6 @@
       // If editing, fetch the transaction
       if (transactionRecordId) {
         const response = await getTransactionRecordById(transactionRecordId);
-        console.log("getBYId:", response.data)
         const txn = response.data;
 
         form.value = {
@@ -238,7 +247,7 @@
             paymentMethodId: p.paymentMethodId,
             amount: p.amount
           }))
-        };
+        }
       }
     } catch (err) {
       console.error('Failed to load data:', err);
