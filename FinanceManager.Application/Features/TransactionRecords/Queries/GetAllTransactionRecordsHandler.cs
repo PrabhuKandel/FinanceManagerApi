@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public class GetAllTransactionRecordsHandler : IRequestHandler<GetAllTransactionRecordsQuery, OperationResult<IEnumerable<TransactionRecordResponseDto>>>
+    public class GetAllTransactionRecordsHandler : IRequestHandler<GetAllTransactionRecordsQuery, PaginatedOperationResult<IEnumerable<TransactionRecordResponseDto>>>
     {
         private readonly IApplicationDbContext context;
         private readonly IUserContext userContext;
@@ -20,7 +20,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
             userContext = _userContext;
         }
 
-        public async Task<OperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedOperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsQuery request, CancellationToken cancellationToken)
         {
             var query =    context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
@@ -40,16 +40,25 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
           
             }
 
-            // Execute query
-            var transactionRecordsFromDb = await query.ToListAsync(cancellationToken);
+
+            //for pagination
+            var totalCount = await query.CountAsync(cancellationToken);
+            var skip = (request.PageNumber - 1) * request.PageSize;
+            var transactionRecordsFromDb = await query
+                .Skip(skip)
+                .Take(request.PageSize)
+                .ToListAsync(cancellationToken);
 
             var  transactionRecordsDtos =  transactionRecordsFromDb.ToResponseDtoList(isAdmin);
-            return new OperationResult<IEnumerable<TransactionRecordResponseDto>>
+            return new PaginatedOperationResult<IEnumerable<TransactionRecordResponseDto>>
             {
 
 
                 Data = transactionRecordsDtos,
-                Message = "Transaction records retrieved successfully"
+                Message = "Transaction records retrieved successfully",
+                TotalCount = totalCount,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize
 
             };
 

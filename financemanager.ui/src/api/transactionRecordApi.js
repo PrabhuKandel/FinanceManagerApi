@@ -1,7 +1,9 @@
 import axiosInstance from './axiosInstance';
-export const getTransactionRecords = async () => {
+export const getTransactionRecords = async (page=1,size=10) => {
   try {
-    const response = await axiosInstance.get('/TransactionRecord'); // adjust endpoint
+    const response = await axiosInstance.get('/TransactionRecord', {
+      params: { pageNumber: page, pageSize: size }
+    }); // adjust endpoint
     return response.data;
   } catch (error) {
     console.error('Error fetching transactions:', error.response.data);

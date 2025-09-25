@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar">
+  <nav class="navbar bg-primary">
     <div class="navbar-left">
       <span class="greeting">Hello, {{ userName }}</span>
     </div>
@@ -11,7 +11,7 @@
 
 <script setup>
 
-import { ref, computed } from 'vue';
+import { ref, computed,watch,onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { logout } from '../api/authApi';
 
@@ -24,9 +24,23 @@ const userName = computed(() => user.firstName || 'Guest');
 
 // Logout function
  function handleLogout() {
-   logout();
+   logout()
+   router.push('/login')
 
-}
+ }
+
+  //  watch localStorage for automatic redirect on token removal
+  watch(
+    () => localStorage.getItem('accessToken'),
+    (token) => {
+      if (!token) router.push('/login');
+    }
+  );
+
+    // Initial check on page load
+onMounted(() => {
+  if (!localStorage.getItem('accessToken')) router.push('/login');
+});
 </script>
 
 <style scoped>
@@ -35,7 +49,7 @@ const userName = computed(() => user.firstName || 'Guest');
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    background-color: #0477f9;
+/*    background-color: #0477f9;*/
     color: white;
     /*    box-shadow: 0 2px 4px rgba(0,0,0,0.1);*/
   }

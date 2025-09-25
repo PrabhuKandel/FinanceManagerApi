@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Application.Common;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
 {
-    public record GetAllTransactionRecordsQuery:IRequest<OperationResult<IEnumerable<TransactionRecordResponseDto>>>
+    public record GetAllTransactionRecordsQuery(int PageNumber = 1, int PageSize = 10) :IRequest<PaginatedOperationResult<IEnumerable<TransactionRecordResponseDto>>>
     {
     }
 }
