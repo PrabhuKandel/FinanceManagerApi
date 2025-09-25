@@ -7,16 +7,15 @@
         <div class="container mt-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Transaction Record List</h3>
-            <router-link to="/transaction-records/create" class="btn btn-primary">
+            <button class="btn btn-primary" @click="openCreateModal">
               Add Transaction
-            </router-link>
+            </button>
           </div>
           <div v-if="flash.message" class="alert" :class="alertClass">
             {{ flash.message }}
           </div>
-          <!-- Loading & Error states -->
-          <div v-if="loading" class="alert alert-info">Loading...</div>
-          <div v-if="error" class="alert alert-danger">{{ error }}</div>
+
+
 
           <!-- API message -->
           <!--<div v-if="transactionRecords.message" class="alert alert-success">
@@ -24,8 +23,7 @@
   </div>-->
           <!-- Table -->
           <div class="table-responsive">
-            <table v-if="!loading && !error && transactionsData.length"
-                   class="table  atable-sm align-items-center  table-striped table-bordered">
+            <table class="table  atable-sm align-items-center  table-striped table-bordered">
               <thead class="">
                 <tr>
                   <th>SN</th>
@@ -39,7 +37,7 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody v-if="!loading && !error && transactionsData.length">
                 <tr v-for="(txn, index) in transactionsData" :key="txn.id">
                   <td>{{ index+1}}</td>
                   <td>{{ txn.description }}</td>
@@ -60,9 +58,7 @@
                   <td class="align-middle">
                     <div class="d-flex gap-1">
 
-                      <router-link :to="`/transaction-records/edit/${txn.id}`" class="btn btn-sm btn-warning">
-                        Edit
-                      </router-link>
+                      <button class="btn btn-sm btn-warning" @click="openEditModal(txn.id)">Edit</button>
 
                       <button class="btn btn-sm btn-danger" @click="deleteTransaction(txn)">Delete</button>
                     </div>
@@ -72,12 +68,22 @@
               </tbody>
             </table>
           </div>
-
+          <!-- Loading & Error states -->
+          <div v-if="loading" class="alert alert-info">Loading...</div>
           <!-- No transactions -->
           <div v-if="!loading && !error && !transactionsData.length"
                class="alert alert-warning">
             No transactions found.
           </div>
+
+
+          <!-- Modal -->
+          <TransactionRecordForm v-if="isModalOpen"
+                                 :formMode="modalMode"
+                                 :transactionRecordId="selectedTransactionId"
+                                 @submit-success="handleSuccess"
+                                 @close="closeModal" />
+
         </div>
       </main>
     </div>
@@ -85,8 +91,9 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, computed } from 'vue';
+  import { ref, onMounted, computed ,watch} from 'vue';
   import { useFlashStore } from '../stores/flashStore'
+  import TransactionRecordForm from './TransactionRecordForm.vue'
   import Layout from '../components/Layout.vue';
   import { getTransactionRecords,deleteTransactionRecord } from '../api/transactionRecordApi'; // your separate API module
 
@@ -109,12 +116,40 @@
     flash.type === 'success' ? 'alert-success' : 'alert-danger'
   )
 
-  // Auto-clear after a few seconds
-  onMounted(() => {
-    if (flash.message) {
-      setTimeout(() => flash.clear(), 3000)
+  //Modal State
+  const isModalOpen = ref(false)
+  const modalMode = ref('create')
+  const selectedTransactionId = ref(null)
+
+  const openCreateModal = () => {
+    modalMode.value = 'create'
+    selectedTransactionId.value = null
+    isModalOpen.value = true
+  }
+
+  const openEditModal = (id) => {
+    modalMode.value = 'edit'
+    selectedTransactionId.value = id
+    isModalOpen.value = true
+  }
+
+  const closeModal = () => {
+    isModalOpen.value = false
+  }
+
+
+  // Watch flash.message to auto-clear
+  watch(
+    () => flash.message,
+    (newMessage) => {
+      if (newMessage) {
+        setTimeout(() => {
+          flash.clear(); // assumes your flash store has a `clear()` method
+        }, 3000);
+      }
     }
-  })
+  );
+
   // Fetch transaction records from API
   const fetchTransactionRecords = async () => {
     loading.value = true;
@@ -145,7 +180,10 @@
 
     }
   };
-
+  const handleSuccess = () => {
+    isModalOpen.value = false
+    fetchTransactionRecords()
+  }
 
   // Fetch when component mounts
   onMounted(fetchTransactionRecords);

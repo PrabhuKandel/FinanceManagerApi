@@ -1,15 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginForm from '../components/LoginForm.vue';
 import DashboardView from '../views/DashboardView.vue';
-import TransactionRecordForm from "../views/TransactionRecordForm.vue";
+
 
 
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: LoginForm },
   { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
-  { path: '/transaction-records/create', component: TransactionRecordForm, meta: { requiresAuth: true } },
-  { path: '/transaction-records/edit/:id', component: TransactionRecordForm, meta: { requiresAuth: true } }
+
 
 ];
 

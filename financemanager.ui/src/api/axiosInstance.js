@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { logout } from './authApi';
 const axiosInstance = axios.create({
   baseURL: 'https://localhost:7027/api', // Your .NET API base URL
   //timeout: 5000,
@@ -15,6 +15,16 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axiosInstance.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      logout(); 
+    }
     return Promise.reject(error);
   }
 );

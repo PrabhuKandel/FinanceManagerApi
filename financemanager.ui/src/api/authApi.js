@@ -1,4 +1,12 @@
 import axiosInstance from './axiosInstance';
+import { useRouter } from 'vue-router';
+
+
+
+const router = useRouter();
+
+
+
 
 export async  function login(email, password) {
   const { data: payload } = await axiosInstance.post('/Auth/login', { email, password });
@@ -14,4 +22,5 @@ export async  function login(email, password) {
 export function logout() {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('user');
+  router.push('/login');
 }

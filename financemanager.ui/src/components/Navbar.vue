@@ -13,6 +13,8 @@
 
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { logout } from '../api/authApi';
+
 
 const router = useRouter();
 
@@ -21,10 +23,9 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
 const userName = computed(() => user.firstName || 'Guest');
 
 // Logout function
-function handleLogout() {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('user');
-  router.push('/login');
+ function handleLogout() {
+   logout();
+
 }
 </script>
 
