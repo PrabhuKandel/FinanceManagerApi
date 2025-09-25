@@ -24,7 +24,7 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllTransactionRecordsQuery query)
+        public async Task<IActionResult> GetAll([FromQuery]GetAllTransactionRecordsQuery query)
         {
             
             var response = await mediator.Send(query);

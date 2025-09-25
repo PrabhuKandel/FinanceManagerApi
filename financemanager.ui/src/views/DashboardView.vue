@@ -7,9 +7,7 @@
         <div class="container mt-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Transaction Record List</h3>
-            <button class="btn btn-primary" @click="openCreateModal">
-              Add Transaction
-            </button>
+
           </div>
           <div v-if="flash.message" class="alert" :class="alertClass">
             {{ flash.message }}
@@ -17,23 +15,60 @@
 
 
 
+
+
+
+
           <!-- API message -->
           <!--<div v-if="transactionRecords.message" class="alert alert-success">
     {{ transactionRecords.message }}
   </div>-->
-          <div>
-            <select v-model="pageSize" @change="fetchTransactionRecords(1,pageSize)">
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="20">20</option>
-            </select>
-            <span class="p-1">entries per page</span>
+          <div class="d-flex align-items-center g-2 mb-3">
+
+            <div class="d-flex align-items-center me-2">
+              <label class="form-label small mb-0 me-1">From:</label>
+              <input v-model="filters.fromDate" type="date"
+                     class="form-control form-control-sm"
+                     style="width: 200px; font-size: 0.9rem; padding: 0.25rem 0.35rem;" />
+            </div>
+
+            <div class="d-flex align-items-center me-2">
+              <label class="form-label small mb-0 me-1">To:</label>
+              <input v-model="filters.toDate" type="date"
+                     class="form-control form-control-sm"
+                     style="width: 200px; font-size: 0.9rem; padding: 0.25rem 0.35rem;" />
+            </div>
+
+            <button class="btn btn-secondary btn-sm"  @click="fetchTransactionRecords(1, pageSize.value)">Apply Filters</button>
+
           </div>
 
 
-          <!-- Table -->
-          <!-- Table -->
-          <div class="table-responsive shadow-sm rounded mt-3">
+          <!-- Flex container wrapping both left and right -->
+          <div class="d-flex justify-content-between align-items-center mb-1">
+
+            <!-- Left: Page Size + Text -->
+            <div class="d-flex align-items-center m-2">
+              <select v-model="pageSize" @change="fetchTransactionRecords(1, pageSize)"
+                      class="form-select form-select-sm me-2" style="flex-shrink: 0; width: auto;">
+                <option :value="5">5</option>
+                <option :value="10">10</option>
+                <option :value="20">20</option>
+              </select>
+              <span class="flex-grow-1 text-truncate">Entries per page</span>
+            </div>
+
+
+            <!-- Right: Add Transaction Button -->
+            <div>
+              <button class="btn btn-primary btn-sm" @click="openCreateModal">
+                Add Transaction
+              </button>
+            </div>
+
+          </div>
+
+          <div class="table-responsive shadow-sm rounded mt-1">
             <table class="table table-hover table-sm custom-table">
               <thead class="table-primary text-center align-middle">
                 <tr>
@@ -103,7 +138,7 @@
           <!-- Pagination Info + Controls -->
           <div class="d-flex justify-content-between align-items-center mt-3 " v-if="!loading && !error && transactionsData.length>0">
             <!-- Left: Showing info -->
-            <div >
+            <div>
               Showing
               {{ ((currentPage || 1) - 1) * (pageSize || 0) + 1 }}
               to
@@ -155,6 +190,11 @@
   const pageSize = ref(10);// number of records per page
   const totalCount = ref(0);
   const totalPages = ref(0);      // total pages from backend
+
+  const filters = ref({
+    fromDate: '',
+    toDate: ''
+  });
 
   // create flash store instance
   const flash = useFlashStore()
@@ -209,7 +249,7 @@
     loading.value = true;
     error.value = null;
     try {
-      const response = await getTransactionRecords(page,size); // must return { message, data }
+      const response = await getTransactionRecords(page, size, filters.value); // must return { message, data }
       transactionRecords.value = response;
       // Update pagination info
       currentPage.value = response.pageNumber;

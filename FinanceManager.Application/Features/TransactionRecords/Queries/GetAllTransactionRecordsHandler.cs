@@ -39,7 +39,11 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                     .Where(t => t.CreatedByApplicationUserId == userContext.UserId);
           
             }
+            if (request.FromDate.HasValue)
+                query = query.Where(t => t.TransactionDate >= request.FromDate.Value);
 
+            if (request.ToDate.HasValue)
+                query = query.Where(t => t.TransactionDate <= request.ToDate.Value);
 
             //for pagination
             var totalCount = await query.CountAsync(cancellationToken);

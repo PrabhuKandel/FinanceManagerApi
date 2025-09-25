@@ -1,8 +1,10 @@
 import axiosInstance from './axiosInstance';
-export const getTransactionRecords = async (page=1,size=10) => {
+export const getTransactionRecords = async (page = 1, size = 10, filters = {}) => {
   try {
     const response = await axiosInstance.get('/TransactionRecord', {
-      params: { pageNumber: page, pageSize: size }
+      params: {
+        pageNumber: page, pageSize: size, fromDate: filters.fromDate || '',
+        toDate: filters.toDate || '', }
     }); // adjust endpoint
     return response.data;
   } catch (error) {

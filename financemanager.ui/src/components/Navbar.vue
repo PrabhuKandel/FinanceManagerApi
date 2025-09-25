@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar bg-primary">
+  <nav class="navbar shadow-sm   px-3 py-2" style="background: #007bff">
     <div class="navbar-left">
       <span class="greeting">Hello, {{ userName }}</span>
     </div>
@@ -22,7 +22,7 @@ const router = useRouter();
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 const userName = computed(() => user.firstName || 'Guest');
 
-// Logout function
+// Logout function  
  function handleLogout() {
    logout()
    router.push('/login')
