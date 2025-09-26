@@ -45,6 +45,24 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
             if (request.ToDate.HasValue)
                 query = query.Where(t => t.TransactionDate <= request.ToDate.Value);
 
+            if (!string.IsNullOrEmpty(request.CreatedBy))
+                query = query.Where(x => x.CreatedByApplicationUserId == request.CreatedBy);
+
+            if (!string.IsNullOrEmpty(request.UpdatedBy))
+                query = query.Where(x => x.UpdatedByApplicationUserId == request.UpdatedBy);
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                var search = request.Search.Trim().ToLower();
+                query = query.Where(t =>
+                    (t.Description ?? string.Empty).ToLower().Contains(search) ||
+                    t.TransactionCategory!.Name.ToLower().Contains(search) ||
+                    t.CreatedByApplicationUser!.Email!.ToLower().Contains(search) ||
+                    (t.UpdatedByApplicationUser != null?(t.UpdatedByApplicationUser.Email??string.Empty):string.Empty).ToLower().Contains(search)
+                );
+            }
+
+
             //for pagination
             var totalCount = await query.CountAsync(cancellationToken);
             var skip = (request.PageNumber - 1) * request.PageSize;

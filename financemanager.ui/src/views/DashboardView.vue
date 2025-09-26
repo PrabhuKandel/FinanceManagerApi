@@ -12,63 +12,79 @@
           <div v-if="flash.message" class="alert" :class="alertClass">
             {{ flash.message }}
           </div>
-
-
-
-
-
-
-
           <!-- API message -->
           <!--<div v-if="transactionRecords.message" class="alert alert-success">
     {{ transactionRecords.message }}
   </div>-->
-          <div class="d-flex align-items-center g-2 mb-3">
+   
+          <div class="container">
+            <!-- 🔹 Filters Card -->
+            <div class="row g-3 mb-3 text-nowrap">
+              <!-- From Date -->
+              <div class="col-12 col-md-3 d-flex gap-2 align-items-center">
+                <label class="form-label small mb-0">From:</label>
+                <input v-model="filters.fromDate" type="date" class="form-control form-control-sm" />
+              </div>
 
-            <div class="d-flex align-items-center me-2">
-              <label class="form-label small mb-0 me-1">From:</label>
-              <input v-model="filters.fromDate" type="date"
-                     class="form-control form-control-sm"
-                     style="width: 200px; font-size: 0.9rem; padding: 0.25rem 0.35rem;" />
+              <!-- To Date -->
+              <div class="col-12 col-md-3  d-flex gap-2 align-items-center">
+                <label class="form-label small mb-0">To:</label>
+                <input v-model="filters.toDate" type="date" class="form-control form-control-sm" />
+              </div>
+
+              <!-- Created By -->
+              <div class="col-12 col-md-3  d-flex gap-2 align-items-center">
+                <label class="form-label small mb-0">Created By:</label>
+                <select v-model="filters.createdBy" class="form-select form-select-sm">
+                  <option value="">All</option>
+                  <option v-for="user in users" :key="user.id" :value="user.id">
+                    {{ user.firstName }} {{ user.lastName }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Updated By -->
+              <div class="col-12 col-md-3  d-flex  gap-2 align-items-center ">
+                <label class="form-label small mb-0">Updated By:</label>
+                <select v-model="filters.updatedBy" class="form-select form-select-sm">
+                  <option value="">All</option>
+                  <option v-for="user in users" :key="user.id" :value="user.id">
+                    {{ user.firstName }} {{ user.lastName }}
+                  </option>
+                </select>
+              </div>
             </div>
-
-            <div class="d-flex align-items-center me-2">
-              <label class="form-label small mb-0 me-1">To:</label>
-              <input v-model="filters.toDate" type="date"
-                     class="form-control form-control-sm"
-                     style="width: 200px; font-size: 0.9rem; padding: 0.25rem 0.35rem;" />
-            </div>
-
-            <button class="btn btn-secondary btn-sm"  @click="fetchTransactionRecords(1, pageSize.value)">Apply Filters</button>
-
           </div>
 
 
-          <!-- Flex container wrapping both left and right -->
-          <div class="d-flex justify-content-between align-items-center mb-1">
-
-            <!-- Left: Page Size + Text -->
-            <div class="d-flex align-items-center m-2">
+          <!-- 🔹 Table Actions Row -->
+          <div class="d-flex justify-content-between align-items-center ">
+            <!-- Page Size on Left -->
+            <div class="d-flex align-items-center">
               <select v-model="pageSize" @change="fetchTransactionRecords(1, pageSize)"
-                      class="form-select form-select-sm me-2" style="flex-shrink: 0; width: auto;">
+                      class="form-select form-select-sm me-2" style="width:auto;">
                 <option :value="5">5</option>
                 <option :value="10">10</option>
                 <option :value="20">20</option>
               </select>
-              <span class="flex-grow-1 text-truncate">Entries per page</span>
+              <span class="small">Entries per page</span>
             </div>
 
-
-            <!-- Right: Add Transaction Button -->
-            <div>
-              <button class="btn btn-primary btn-sm" @click="openCreateModal">
-                Add Transaction
+            <!-- Search on Right -->
+            <div class="d-flex gap-3 mb-2">
+              <div style="width:250px;">
+                <input v-model="filters.search"
+                       type="search"
+                       placeholder="Search....…"
+                       class="form-control form-control-sm p-2" />
+              </div>
+              <button class="btn btn-primary " @click="openCreateModal">
+                + Add new 
               </button>
             </div>
-
           </div>
 
-          <div class="table-responsive shadow-sm rounded mt-1">
+          <div class="table-responsive shadow-sm rounded ">
             <table class="table table-hover table-sm custom-table">
               <thead class="table-primary text-center align-middle">
                 <tr>
@@ -181,6 +197,7 @@
   import TransactionRecordForm from './TransactionRecordForm.vue'
   import Layout from '../components/Layout.vue';
   import { getTransactionRecords, deleteTransactionRecord } from '../api/transactionRecordApi'; // your separate API module
+  import { getApplicationUsers } from '../api/applicationUserApi';
 
   // Reactive state
   const transactionRecords = ref({ message: '', data: [] });
@@ -190,10 +207,14 @@
   const pageSize = ref(10);// number of records per page
   const totalCount = ref(0);
   const totalPages = ref(0);      // total pages from backend
+  const users = ref([]);
 
   const filters = ref({
     fromDate: '',
-    toDate: ''
+    toDate: '',
+    createdBy: '',
+    updatedBy: '',
+    search:'',
   });
 
   // create flash store instance
@@ -243,9 +264,12 @@
       }
     }
   );
+  // Watch filters for auto-fetch
+  watch(filters, () => fetchTransactionRecords(), { deep: true });
+
 
   // Fetch transaction records from API
-  const fetchTransactionRecords = async (page=1,size=10) => {
+  const fetchTransactionRecords = async (page = 1, size = 10) => {
     loading.value = true;
     error.value = null;
     try {
@@ -263,6 +287,20 @@
       loading.value = false;
     }
   };
+
+  // Fetch Application users fro Api
+
+  const fetchApplicationUsers = async () => {
+
+    try {
+      const response = await getApplicationUsers();
+      users.value = response?.data
+      console.log(response);
+    } catch (err) {
+      console.error('Failed to fetch users for dropdown', err);
+    }
+
+  }
 
   const deleteTransaction = async (txn) => {
     if (!confirm(`Are you sure you want to delete "${txn.description}"?`)) return;
@@ -285,7 +323,10 @@
   }
 
   // Fetch when component mounts
-  onMounted(fetchTransactionRecords);
+  onMounted(() => {
+    fetchTransactionRecords();
+    fetchApplicationUsers();
+  });
 
   // Helper to format date
   const formatDate = (dateStr) => new Date(dateStr).toLocaleString();
@@ -306,8 +347,8 @@
   .list-unstyled {
     padding-left: 0;
     margin: 0;
-
   }
+
   .custom-table {
     font-size: 0.9rem; /* slightly smaller text */
     background-color: #ffffff; /* clean white background */
@@ -339,5 +380,4 @@
   .table-hover tbody tr:hover {
     background-color: #f9fcff !important; /* soft hover effect */
   }
-
 </style>

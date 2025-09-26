@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -15,6 +16,12 @@ namespace FinanceManager.Application.Interfaces
         DbSet<RefreshToken> RefreshTokens { get; set; }
 
         DbSet<TransactionPayment> TransactionPayments { get; set; }
+
+        DbSet<IdentityUserRole<string>> UserRoles { get; set; }
+
+        DbSet<IdentityRole> Roles { get; set; }
+
+
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

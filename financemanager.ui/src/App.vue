@@ -12,6 +12,8 @@
   /* optional global styles */
   body {
     margin: 0;
+/*    background: #efefefff;*/
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
   }
 </style>

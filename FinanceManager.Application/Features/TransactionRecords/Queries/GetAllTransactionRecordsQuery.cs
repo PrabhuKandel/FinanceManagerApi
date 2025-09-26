@@ -10,5 +10,13 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
         public int PageSize { get; set; } = 10;
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
+
+        public string? CreatedBy { get; set; }
+
+        public string? UpdatedBy { get; set; }
+
+        public string? Search { get; set; }
+
+
     }
 }
