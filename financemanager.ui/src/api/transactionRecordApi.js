@@ -1,7 +1,15 @@
 import axiosInstance from './axiosInstance';
 export const getTransactionRecords = async (page = 1, size = 10, filters = {}) => {
   try {
-    const { fromDate = '', toDate = '', createdBy = '', updatedBy = '' , search=''} = filters;
+    const {
+      fromDate = '',
+      toDate = '',
+      createdBy = '',
+      updatedBy = '',
+      search = '',
+      sortBy = '',
+      sortDescending=false
+    } = filters;
     console.log(filters);
     const response = await axiosInstance.get('/TransactionRecord', {
       params: {
@@ -11,7 +19,9 @@ export const getTransactionRecords = async (page = 1, size = 10, filters = {}) =
         toDate,
         createdBy,
         updatedBy,
-        search
+        search,
+        sortBy,
+        sortDescending
       }
     }); // adjust endpoint
     return response.data;

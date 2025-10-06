@@ -90,12 +90,47 @@
                 <tr>
                   <th>SN</th>
                   <th>Description</th>
-                  <th>Category</th>
-                  <th>Amount</th>
+                  <th @click="sort('category')" style="cursor: pointer;">
+                    Category
+                    <i :class="sortBy === 'category'
+            ? (sortDescending ? 'bi bi-caret-down-fill ms-1 text-primary' : 'bi bi-caret-up-fill ms-1 text-primary')
+            : 'bi bi-caret-up ms-1 text-muted'">
+                    </i>
+
+                  </th>
+                  <th @click="sort('amount')" style="cursor: pointer;">
+                    Amount
+                    <i :class="sortBy === 'amount'
+            ? (sortDescending ? 'bi bi-caret-down-fill ms-1 text-primary' : 'bi bi-caret-up-fill ms-1 text-primary')
+            : 'bi bi-caret-up ms-1 text-muted'">
+                    </i>
+                  </th>
                   <th>Payments</th>
-                  <th>Transaction Date</th>
-                  <th>Created By</th>
-                  <th>Updated By</th>
+                  <th @click="sort('transactionDate')" style="cursor: pointer;">
+                    Transaction Date
+                    <i :class="sortBy === 'transactionDate'
+            ? (sortDescending ? 'bi bi-caret-down-fill ms-1 text-primary' : 'bi bi-caret-up-fill ms-1 text-primary')
+            : 'bi bi-caret-up ms-1 text-muted'">
+                    </i>
+
+                  </th>
+                  <th @click="sort('createdBy')" style="cursor: pointer;">
+                    Created By
+                    <i :class="sortBy === 'createdBy'
+            ? (sortDescending ? 'bi bi-caret-down-fill ms-1 text-primary' : 'bi bi-caret-up-fill ms-1 text-primary')
+            : 'bi bi-caret-up ms-1 text-muted'">
+                    </i>
+
+                  </th>
+
+                  <th @click="sort('updatedBy')" style="cursor: pointer;">
+                    Updated By
+                    <i :class="sortBy === 'updatedBy'
+            ? (sortDescending ? 'bi bi-caret-down-fill ms-1 text-primary' : 'bi bi-caret-up-fill ms-1 text-primary')
+            : 'bi bi-caret-up ms-1 text-muted'">
+                    </i>
+
+                  </th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -124,14 +159,14 @@
                   <td>{{ txn.createdBy?.email || 'N/A' }}</td>
                   <td>{{ txn.updatedBy?.email || 'N/A' }}</td>
                   <td class="text-center">
-                    <button class="btn btn-sm btn-warning me-1"
-                            @click="openEditModal(txn.id)">
-                      Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger"
-                            @click="deleteTransaction(txn)">
-                      Delete
-                    </button>
+                    <div class="d-flex justify-content-center gap-1 flex-nowrap">
+                      <button class="btn btn-sm btn-warning" @click="openEditModal(txn.id)">
+                        Edit
+                      </button>
+                      <button class="btn btn-sm btn-danger" @click="deleteTransaction(txn)">
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -208,6 +243,9 @@
   const totalCount = ref(0);
   const totalPages = ref(0);      // total pages from backend
   const users = ref([]);
+  const sortBy = ref('transactionDate');  // default sort column
+  const sortDescending = ref(true);       // default sort order
+
 
   const filters = ref({
     fromDate: '',
@@ -273,7 +311,12 @@
     loading.value = true;
     error.value = null;
     try {
-      const response = await getTransactionRecords(page, size, filters.value); // must return { message, data }
+      const response = await getTransactionRecords(page, size, {
+        ...filters.value,          
+        sortBy: sortBy.value,      
+        sortDescending: sortDescending.value 
+      });
+
       transactionRecords.value = response;
       // Update pagination info
       currentPage.value = response.pageNumber;
@@ -287,6 +330,20 @@
       loading.value = false;
     }
   };
+
+  //sorting
+  const sort = (column) => {
+    if (sortBy.value === column) {
+      // Toggle sort direction if same column clicked
+      sortDescending.value = !sortDescending.value;
+    } else {
+      // New column clicked → sort ascending by default
+      sortBy.value = column;
+      sortDescending.value = true;
+    }
+    fetchTransactionRecords(currentPage.value, pageSize.value); // refresh data
+  };
+
 
   // Fetch Application users fro Api
 

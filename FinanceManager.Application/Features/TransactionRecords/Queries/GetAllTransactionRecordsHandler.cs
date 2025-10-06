@@ -1,6 +1,6 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Application.Exceptions;
+using System.Linq.Dynamic.Core;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
@@ -14,6 +14,15 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
         private readonly IApplicationDbContext context;
         private readonly IUserContext userContext;
 
+        // Mapping frontend sort keys to backend properties
+        private static readonly Dictionary<string, string> SortColumnMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "transactionDate", "TransactionDate" },
+        { "amount", "Amount" },
+        { "category", "TransactionCategory.Name" },
+        { "createdBy", "CreatedByApplicationUser.Email" },
+        { "updatedBy", "UpdatedByApplicationUser.Email" }
+    };
         public GetAllTransactionRecordsHandler(IApplicationDbContext _context,IUserContext _userContext)
         {
             context = _context;
@@ -61,6 +70,14 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                     (t.UpdatedByApplicationUser != null?(t.UpdatedByApplicationUser.Email??string.Empty):string.Empty).ToLower().Contains(search)
                 );
             }
+
+            // Apply sorting safely
+            var sortColumn = SortColumnMap.ContainsKey(request.SortBy ?? "")
+                ? SortColumnMap[request.SortBy!]
+                : "TransactionDate"; // default sort
+
+            var sortDirection = request.SortDescending ? "descending" : "ascending";
+            query = query.OrderBy($"{sortColumn} {sortDirection}");
 
 
             //for pagination
