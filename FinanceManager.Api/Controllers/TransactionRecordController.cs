@@ -9,10 +9,11 @@ using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetTr
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
+
 namespace FinanceManager.Api.Controllers
 {
     //[Authorize]
-    [Route("api/[controller]")]
+    [Route("api/transaction-records")]
     [ApiController]
     public class TransactionRecordController : ControllerBase
     {
@@ -23,8 +24,8 @@ namespace FinanceManager.Api.Controllers
             mediator = _mediator;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery]GetAllTransactionRecordsQuery query)
+        [HttpPost("get-all")]
+        public async Task<IActionResult> GetAll(GetAllTransactionRecordsQuery query)
         {
             
             var response = await mediator.Send(query);

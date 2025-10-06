@@ -10,20 +10,20 @@ export const getTransactionRecords = async (page = 1, size = 10, filters = {}) =
       sortBy = '',
       sortDescending=false
     } = filters;
-    console.log(filters);
-    const response = await axiosInstance.get('/TransactionRecord', {
-      params: {
-        pageNumber: page,
-        pageSize: size,
-        fromDate,
-        toDate,
-        createdBy,
-        updatedBy,
-        search,
-        sortBy,
-        sortDescending
-      }
-    }); // adjust endpoint
+
+    const payload = {
+      pageNumber: page,
+      pageSize: size,
+      fromDate,
+      toDate,
+      createdBy,
+      updatedBy,
+      search,
+      sortBy,
+      sortDescending
+    };
+
+    const response = await axiosInstance.post('/transaction-records/get-all', payload) 
     return response.data;
     
   } catch (error) {
@@ -35,7 +35,7 @@ export const getTransactionRecords = async (page = 1, size = 10, filters = {}) =
 
 export const getTransactionRecordById = async (id) => {
   try {
-    const response = await axiosInstance.get(`/TransactionRecord/${id}`); 
+    const response = await axiosInstance.get(`/transaction-records/${id}`); 
     return response.data;
   } catch (error) {
     console.error('Error fetching transaction:', error.response.data);
@@ -47,7 +47,7 @@ export const getTransactionRecordById = async (id) => {
 export const updateTransactionRecord = async (id,data) => {
   try {
     console.log(id);
-    const response = await axiosInstance.put(`/TransactionRecord/${id}`, data);
+    const response = await axiosInstance.put(`/transaction-records/${id}`, data);
     return response.data;
   } catch (error) {
     return Promise.reject(error.response.data);
@@ -58,7 +58,7 @@ export const updateTransactionRecord = async (id,data) => {
 
 export const addTransactionRecord = async (data) => {
   try {
-    const response = await axiosInstance.post('/TransactionRecord', data); 
+    const response = await axiosInstance.post('/transaction-records', data); 
     console.log("mock:", response)
     return response.data;
   } catch (error) {
@@ -68,5 +68,5 @@ export const addTransactionRecord = async (data) => {
 };
 
 export const deleteTransactionRecord = async (id) => {
-  await axiosInstance.delete(`/TransactionRecord/${id}`);
+  await axiosInstance.delete(`/transaction-records/${id}`);
 };
