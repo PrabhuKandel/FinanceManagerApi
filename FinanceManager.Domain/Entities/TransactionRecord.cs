@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using FinanceManager.Domain.Enums;
 
 namespace FinanceManager.Domain.Entities
 {
@@ -22,6 +23,8 @@ namespace FinanceManager.Domain.Entities
         public ApplicationUser? UpdatedByApplicationUser { get; set; }
 
         public ICollection<TransactionPayment> TransactionPayments { get; set; } = new List<TransactionPayment>();
+
+        public TransactionRecordApprovalStatus ApprovalStatus { get; set; } = TransactionRecordApprovalStatus.Pending;
 
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
