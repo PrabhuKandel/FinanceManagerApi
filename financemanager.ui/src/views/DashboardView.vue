@@ -79,7 +79,7 @@
                        class="form-control form-control-sm p-2" />
               </div>
               <button class="btn btn-primary " @click="openCreateModal">
-                + Add new 
+                <i class="bi bi-plus-lg me-1"></i> Add New
               </button>
             </div>
           </div>

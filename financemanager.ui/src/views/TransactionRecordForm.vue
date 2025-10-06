@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-backdrop">
+  <div class="modal-backdrop" >
     <div class="modal-container">
       <div class="modal-content shadow-sm">
         <div class="modal-header">
@@ -11,7 +11,7 @@
             <!-- Category -->
             <div class="mb-3">
               <label class="form-label">Transaction Category</label>
-              <select v-model="form.transactionCategoryId" class="form-select" :class="{ 'is-invalid': getFieldError('TransactionRecord.TransactionCategoryId') }">
+              <select v-model="form.transactionCategoryId"  :class="['form-select',{ 'is-invalid': getFieldError('TransactionRecord.TransactionCategoryId') }]">
                 <option value="">Select Category</option>
                 <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
               </select>
@@ -50,7 +50,13 @@
                 <div class="col-md-5">
                   <select v-model="p.paymentMethodId" class="form-select" :class="{ 'is-invalid': getFieldError(`TransactionRecord.Payments[${index}].PaymentMethodId`) }">
                     <option value="">Select Payment Method</option>
-                    <option v-for="m in availableMethods(index)" :key="m.id" :value="m.id">{{ m.name }}</option>
+                    <option v-for="m in availableMethods(index)"
+                            :key="m.id"
+                            :value="m.id"
+                            :disabled="!m.isActive"
+                            >
+                      {{ m.name }} {{ !m.isActive ? '(Inactive)' : '' }}
+                    </option>
                   </select>
                   <div class="invalid-feedback">{{ getFieldError(`TransactionRecord.Payments[${index}].PaymentMethodId`) }}</div>
                 </div>
@@ -64,7 +70,7 @@
               </div>
             </div>
 
-            <button type="submit" class="btn btn-success w-100">{{ props.formMode === 'create' ? 'Submit' : 'Update' }}</button>
+            <button type="submit" class="btn btn-success  w-25">{{ props.formMode === 'create' ? 'Submit' : 'Update' }}</button>
           </form>
         </div>
       </div>

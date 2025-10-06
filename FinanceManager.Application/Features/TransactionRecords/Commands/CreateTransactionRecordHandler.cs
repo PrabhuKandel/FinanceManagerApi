@@ -1,5 +1,6 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
@@ -25,10 +26,9 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             // Start a transaction
              await using var transaction = await context.Database.BeginTransactionAsync();
 
+                var entity = request.TransactionRecord.ToEntity(userContext.UserId);
 
-            var entity = request.TransactionRecord.ToEntity(userContext.UserId);
-        
-         
+
 
             await context.TransactionRecords.AddAsync(entity);
 
