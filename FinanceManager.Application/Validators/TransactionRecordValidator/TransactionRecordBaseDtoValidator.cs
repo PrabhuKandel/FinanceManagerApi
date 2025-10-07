@@ -29,9 +29,10 @@ namespace FinanceManager.Application.Validators.TransactionRecordValidator
                  .NotEmpty().WithMessage("At least one payment is required.")
                 .SetValidator(new TransactionPaymentDtoValidator(_context));
 
-            RuleFor(x => x)
-                 .Must(x => x.Amount == x.Payments.Sum(p => p.Amount))
-                 .WithMessage("Total transaction amount must equal sum of payments");
+            RuleFor(x => x.Amount)
+                .Must((transaction, amount) => amount == transaction.Payments.Sum(p => p.Amount))
+                .WithMessage("Total transaction amount must equal sum of payments");
+
 
 
             RuleFor(x => x.Description)

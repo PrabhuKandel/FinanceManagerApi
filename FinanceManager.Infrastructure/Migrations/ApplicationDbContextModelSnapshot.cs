@@ -220,8 +220,17 @@ namespace FinanceManager.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("ActionedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ActionedByApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ApprovalStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -247,6 +256,8 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ActionedByApplicationUserId");
 
                     b.HasIndex("CreatedByApplicationUserId");
 
@@ -422,6 +433,10 @@ namespace FinanceManager.Infrastructure.Migrations
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
                 {
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "ActionedByApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ActionedByApplicationUserId");
+
                     b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "CreatedByApplicationUser")
                         .WithMany("CreatedTransactionsRecords")
                         .HasForeignKey("CreatedByApplicationUserId")
@@ -438,6 +453,8 @@ namespace FinanceManager.Infrastructure.Migrations
                         .WithMany("UpdatedTransactionsRecords")
                         .HasForeignKey("UpdatedByApplicationUserId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ActionedByApplicationUser");
 
                     b.Navigation("CreatedByApplicationUser");
 

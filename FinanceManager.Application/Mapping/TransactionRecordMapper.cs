@@ -20,6 +20,7 @@ namespace FinanceManager.Application.Mapping
                  Amount = entity.Amount,
                 Description = entity.Description,
                 TransactionDate = entity.TransactionDate,
+                ApprovalStatus = entity.ApprovalStatus.ToString(),
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt
              };
@@ -29,6 +30,7 @@ namespace FinanceManager.Application.Mapping
             {
                 dto.CreatedBy = entity.CreatedByApplicationUser?.ToSummary();
                 dto.UpdatedBy = entity.UpdatedByApplicationUser?.ToSummary();
+                dto.ActionedBy = entity.ActionedByApplicationUser?.ToSummary();
             }
 
             return dto;

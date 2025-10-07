@@ -14,16 +14,18 @@ namespace FinanceManager.Application.Services
      
         public UserContext(IHttpContextAccessor httpContextAccessor)
         {
-            var user = httpContextAccessor.HttpContext?.User
-                  ?? throw new UnauthorizedAccessException();
+            var user = httpContextAccessor.HttpContext?.User;
+            if (user == null || !user.Identity!.IsAuthenticated)
+                throw new AuthenticationException("User is not authenticated");
+
 
             UserId = user.FindFirst("userId")?.Value
-            ?? throw new AuthorizationException();
+            ?? throw new AuthenticationException("UserId claim missing");
 
-             Role = user.FindFirst(ClaimTypes.Role)?.Value 
-               ?? throw new UnauthorizedAccessException();
+            Role = user.FindFirst(ClaimTypes.Role)?.Value 
+               ?? throw new AuthenticationException("Role claim missing");
 
-           
+
         }
         public bool IsAdmin() => Role == RoleConstants.Admin;
     }

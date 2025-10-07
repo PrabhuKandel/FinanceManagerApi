@@ -12,6 +12,7 @@ namespace FinanceManager.Application.Common
         public string ?Message { get; set; }
         public T? Data { get; set; }
 
-        
+
+
     }
 }
