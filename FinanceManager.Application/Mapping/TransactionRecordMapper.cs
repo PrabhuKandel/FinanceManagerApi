@@ -30,6 +30,7 @@ namespace FinanceManager.Application.Mapping
             {
                 dto.CreatedBy = entity.CreatedByApplicationUser?.ToSummary();
                 dto.UpdatedBy = entity.UpdatedByApplicationUser?.ToSummary();
+                dto.ActionedBy = entity.ActionedByApplicationUser?.ToSummary();
             }
 
             return dto;

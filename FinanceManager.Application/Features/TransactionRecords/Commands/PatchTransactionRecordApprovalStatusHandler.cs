@@ -22,6 +22,10 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
                 throw new AuthorizationException("You do not have permission to change the approval status.");
             }
             transactionRecordEntity!.ApprovalStatus = request.ApprovalStatus;
+
+            transactionRecordEntity.ActionedAt = DateTime.UtcNow;            
+            transactionRecordEntity.ActionedByApplicationUserId = userContext.UserId;
+
             transactionRecordEntity.UpdatedAt = DateTime.UtcNow;
             transactionRecordEntity.UpdatedByApplicationUserId = userContext.UserId;
 

@@ -37,6 +37,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
                         .ThenInclude(tp => tp.PaymentMethod)
                 .Include(t => t.CreatedByApplicationUser)
                  .Include(t => t.UpdatedByApplicationUser)
+                 .Include(t=>t.ActionedByApplicationUser)
                  .AsQueryable();
 
             // Check admin status once

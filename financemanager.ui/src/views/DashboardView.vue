@@ -4,7 +4,7 @@
 
 
       <main>
-        <div class="container mt-4">
+        <div class="container ">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h3>Transaction Record List</h3>
 
@@ -53,6 +53,17 @@
                   </option>
                 </select>
               </div>
+
+              <!-- Actioned By -->
+              <!--<div class="col-12 col-md-3  d-flex  gap-2 align-items-center ">
+                <label class="form-label small mb-0">Actioned By:</label>
+                <select v-model="filters.actionedBy" class="form-select form-select-sm">
+                  <option value="">All</option>
+                  <option v-for="user in users" :key="user.id" :value="user.id">
+                    {{ user.firstName }} {{ user.lastName }}
+                  </option>
+                </select>
+              </div>-->
 
               <!-- Approval Status -->
               <div class="col-12 col-md-3 d-flex gap-2 align-items-center">
@@ -145,6 +156,11 @@
                     </i>
 
                   </th>
+
+                  <th >
+                    Actioned By
+
+                  </th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -182,6 +198,7 @@
                   </td>
                   <td>{{ txn.createdBy?.email || 'N/A' }}</td>
                   <td>{{ txn.updatedBy?.email || 'N/A' }}</td>
+                  <td>{{txn.actionedBy?.email || 'N/A' }}</td>
                   <td class="text-center">
                     <div class="btn-group">
                       <!-- Dropdown toggle -->
