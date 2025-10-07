@@ -14,9 +14,9 @@
           </div>
           <!-- API message -->
           <!--<div v-if="transactionRecords.message" class="alert alert-success">
-    {{ transactionRecords.message }}
-  </div>-->
-   
+            {{ transactionRecords.message }}
+          </div>-->
+
           <div class="container">
             <!-- 🔹 Filters Card -->
             <div class="row g-3 mb-3 text-nowrap">
@@ -53,6 +53,19 @@
                   </option>
                 </select>
               </div>
+
+              <!-- Approval Status -->
+              <div class="col-12 col-md-3 d-flex gap-2 align-items-center">
+                <label class="form-label small mb-0">Approval Status:</label>
+                <select v-model="filters.approvalStatus" class="form-select form-select-sm">
+                  <option value="">All</option>
+                  <option v-for="(label, key) in ApprovalStatus" :key="key" :value="label">
+                    {{ label }}
+                  </option>
+                </select>
+              </div>
+
+
             </div>
           </div>
 
@@ -84,9 +97,9 @@
             </div>
           </div>
 
-          <div class="table-responsive shadow-sm rounded ">
+          <div class="table-responsive shadow-sm rounded "style="max-height: 700px; overflow-y: auto;">
             <table class="table table-hover table-sm custom-table">
-              <thead class="table-primary text-center align-middle">
+              <thead class="table-primary text-center align-middle sticky-top">
                 <tr>
                   <th>SN</th>
                   <th>Description</th>
@@ -114,6 +127,7 @@
                     </i>
 
                   </th>
+                  <th>Approval Status</th>
                   <th @click="sort('createdBy')" style="cursor: pointer;">
                     Created By
                     <i :class="sortBy === 'createdBy'
@@ -156,18 +170,67 @@
                   <td class="text-center">
                     {{ formatDate(txn.transactionDate) }}
                   </td>
+                  <td class="text-center">
+                    <span :class="['badge',
+              txn.approvalStatus === ApprovalStatus.Pending ? 'bg-warning text-dark' : '',
+              txn.approvalStatus === ApprovalStatus.Approved ? 'bg-success' : '',
+              txn.approvalStatus === ApprovalStatus.Cancelled ? 'bg-danger' : '']"
+                          style="font-size: 0.9rem; font-weight:200;">
+                      {{ txn.approvalStatus }}
+                    </span>
+
+                  </td>
                   <td>{{ txn.createdBy?.email || 'N/A' }}</td>
                   <td>{{ txn.updatedBy?.email || 'N/A' }}</td>
                   <td class="text-center">
-                    <div class="d-flex justify-content-center gap-1 flex-nowrap">
-                      <button class="btn btn-sm btn-warning" @click="openEditModal(txn.id)">
-                        Edit
+                    <div class="btn-group">
+                      <!-- Dropdown toggle -->
+                      <button class="btn btn-sm btn-outline-primary dropdown-toggle"
+                              type="button"
+                              data-bs-toggle="dropdown"
+                              aria-expanded="false"
+                              style="cursor: pointer;"
+                              title="Actions">
+                        <i class="bi bi-three-dots-vertical"></i>
                       </button>
-                      <button class="btn btn-sm btn-danger" @click="deleteTransaction(txn)">
-                        Delete
-                      </button>
+
+                      <!-- Dropdown menu -->
+                      <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                        <li v-if="txn.approvalStatus === ApprovalStatus.Pending">
+                          <a class="dropdown-item text-success"
+                             @click="updateStatus(txn.id, ApprovalStatus.Approved)"
+                             style="cursor: pointer;">
+                            <i class="bi bi-check-lg me-2"></i> Approve
+                          </a>
+                        </li>
+
+                        <li v-if="txn.approvalStatus === ApprovalStatus.Pending">
+                          <a class="dropdown-item text-danger"
+                             @click="updateStatus(txn.id, ApprovalStatus.Cancelled)"
+                             style="cursor: pointer;">
+                            <i class="bi bi-x-lg me-2"></i> Cancel
+                          </a>
+                        </li>
+
+                        <li  v-if="txn.approvalStatus === ApprovalStatus.Pending"><hr class="dropdown-divider" /></li>
+
+                        <li>
+                          <a class="dropdown-item text-warning" @click="openEditModal(txn.id)" style="cursor: pointer;">
+                            <i class="bi bi-pencil-square me-2"></i> Edit
+                          </a>
+                        </li>
+
+                        <li>
+                          <a class="dropdown-item text-secondary" @click="deleteTransaction(txn)" style="cursor: pointer;">
+                            <i class="bi bi-trash me-2"></i> Delete
+                          </a>
+                        </li>
+                      </ul>
                     </div>
                   </td>
+
+
+
                 </tr>
               </tbody>
             </table>
@@ -231,8 +294,9 @@
   import { useFlashStore } from '../stores/flashStore'
   import TransactionRecordForm from './TransactionRecordForm.vue'
   import Layout from '../components/Layout.vue';
-  import { getTransactionRecords, deleteTransactionRecord } from '../api/transactionRecordApi'; // your separate API module
+  import { getTransactionRecords, deleteTransactionRecord, patchApprovalStatus } from '../api/transactionRecordApi'; // your separate API module
   import { getApplicationUsers } from '../api/applicationUserApi';
+  import { ApprovalStatus } from '../constants/approvalStatus.js';
 
   // Reactive state
   const transactionRecords = ref({ message: '', data: [] });
@@ -252,7 +316,8 @@
     toDate: '',
     createdBy: '',
     updatedBy: '',
-    search:'',
+    approvalStatus:'',
+    search: '',
   });
 
   // create flash store instance
@@ -308,16 +373,18 @@
 
   // Fetch transaction records from API
   const fetchTransactionRecords = async (page = 1, size = 10) => {
+
     loading.value = true;
     error.value = null;
     try {
       const response = await getTransactionRecords(page, size, {
-        ...filters.value,          
-        sortBy: sortBy.value,      
-        sortDescending: sortDescending.value 
+        ...filters.value,
+        sortBy: sortBy.value,
+        sortDescending: sortDescending.value
       });
 
       transactionRecords.value = response;
+      console.log(response);
       // Update pagination info
       currentPage.value = response.pageNumber;
       totalPages.value = response.totalPages;
@@ -328,6 +395,17 @@
       console.error(err);
     } finally {
       loading.value = false;
+    }
+  };
+
+  const updateStatus = async (txnId, newStatus) => {
+    try {
+      await patchApprovalStatus(txnId, newStatus);
+      //txn.approvalStatus = newStatus;
+      fetchTransactionRecords();
+      console.log('Status updated successfully');
+    } catch (error) {
+      console.error('Failed to update status', error);
     }
   };
 

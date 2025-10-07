@@ -13,6 +13,8 @@ namespace FinanceManager.Application.Dtos.TransactionRecord
             public List<TransactionPaymentSummaryDto>? TransactionPayments { get; set; }
             public decimal Amount { get; set; }
             public string? Description { get; set; }
+
+            public string ApprovalStatus { get; set; } = string.Empty;
             public DateTime TransactionDate { get; set; }
             public DateTime CreatedAt { get; set; }
             public DateTime UpdatedAt { get; set; }

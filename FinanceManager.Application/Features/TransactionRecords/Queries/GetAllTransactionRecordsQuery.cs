@@ -1,5 +1,6 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Domain.Enums;
 using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries
@@ -14,6 +15,8 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
         public string? CreatedBy { get; set; }
 
         public string? UpdatedBy { get; set; }
+
+        public TransactionRecordApprovalStatus? ApprovalStatus { get; set; }
 
         public string? Search { get; set; }
 

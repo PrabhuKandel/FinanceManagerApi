@@ -20,6 +20,7 @@ namespace FinanceManager.Application.Mapping
                  Amount = entity.Amount,
                 Description = entity.Description,
                 TransactionDate = entity.TransactionDate,
+                ApprovalStatus = entity.ApprovalStatus.ToString(),
                 CreatedAt = entity.CreatedAt,
                 UpdatedAt = entity.UpdatedAt
              };

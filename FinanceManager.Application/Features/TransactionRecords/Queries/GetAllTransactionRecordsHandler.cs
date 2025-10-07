@@ -60,6 +60,9 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries
             if (!string.IsNullOrEmpty(request.UpdatedBy))
                 query = query.Where(x => x.UpdatedByApplicationUserId == request.UpdatedBy);
 
+            if (request.ApprovalStatus.HasValue)
+                query = query.Where(x => x.ApprovalStatus == request.ApprovalStatus);
+
             if (!string.IsNullOrWhiteSpace(request.Search))
             {
                 var search = request.Search.Trim().ToLower();

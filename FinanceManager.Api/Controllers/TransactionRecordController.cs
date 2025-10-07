@@ -109,6 +109,13 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [HttpPatch("approval")]
+        public async Task<IActionResult> PatchApprovalStatus(PatchTransactionRecordApprovalStatusCommand patchCommand)
+        {
+            var response = await mediator.Send(patchCommand);
+            return Ok(response);
+        }
+
 
 
         [HttpPatch("{id}")]

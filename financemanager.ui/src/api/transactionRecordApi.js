@@ -6,6 +6,7 @@ export const getTransactionRecords = async (page = 1, size = 10, filters = {}) =
       toDate = '',
       createdBy = '',
       updatedBy = '',
+      approvalStatus='',
       search = '',
       sortBy = '',
       sortDescending=false
@@ -18,6 +19,7 @@ export const getTransactionRecords = async (page = 1, size = 10, filters = {}) =
       toDate,
       createdBy,
       updatedBy,
+      approvalStatus,
       search,
       sortBy,
       sortDescending
@@ -55,6 +57,18 @@ export const updateTransactionRecord = async (id,data) => {
   }
 };
 
+
+export const patchApprovalStatus = async (id, approvalStatus) => {
+  try {
+    const response = await axiosInstance.patch('/transaction-records/approval', {
+      id,
+      approvalStatus
+    });
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error.response.data);
+  }
+};
 
 export const addTransactionRecord = async (data) => {
   try {
