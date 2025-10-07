@@ -1,9 +1,11 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
 using FinanceManager.Domain.Entities;
+using FinanceManager.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,10 +27,14 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
             // Start a transaction
              await using var transaction = await context.Database.BeginTransactionAsync();
 
+                var entity = request.TransactionRecord.ToEntity(userContext.UserId);
 
-            var entity = request.TransactionRecord.ToEntity(userContext.UserId);
-        
-         
+            // Set ApprovalStatus based on user role
+            entity.ApprovalStatus = userContext.IsAdmin()
+                ? TransactionRecordApprovalStatus.Approved
+                : TransactionRecordApprovalStatus.Pending;
+
+
 
             await context.TransactionRecords.AddAsync(entity);
 

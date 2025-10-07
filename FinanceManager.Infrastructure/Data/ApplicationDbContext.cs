@@ -24,6 +24,7 @@ namespace FinanceManager.Infrastructure.Data
         public DbSet<TransactionPayment> TransactionPayments { get; set; }
 
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -5,7 +5,6 @@ using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.DependencyInjection;
-using FinanceManager.Infrastructure.Jobs.Recurring;
 using FinanceManager.Infrastructure.Jobs.Registration;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,6 +15,17 @@ using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("FinanceManagerVue", policy =>
+    {
+        policy.WithOrigins("http://localhost:4643")
+               .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 
 // Configure Serilog
 // Add Serilog
@@ -125,6 +135,8 @@ builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLo
 builder.Services.AddHangfireServer();
 
 var app = builder.Build();
+app.UseCors("FinanceManagerVue");
+
 // Apply migrations and seed data
 //using (var scope = app.Services.CreateScope())
 
