@@ -33,7 +33,8 @@
               </div>
 
               <!-- Created By -->
-              <div class="col-12 col-md-3  d-flex gap-2 align-items-center">
+            
+              <div v-if="isAdmin"  class="col-12 col-md-3  d-flex gap-2 align-items-center">
                 <label class="form-label small mb-0">Created By:</label>
                 <select v-model="filters.createdBy" class="form-select form-select-sm">
                   <option value="">All</option>
@@ -44,7 +45,7 @@
               </div>
 
               <!-- Updated By -->
-              <div class="col-12 col-md-3  d-flex  gap-2 align-items-center ">
+              <div v-if="isAdmin"  class="col-12 col-md-3  d-flex  gap-2 align-items-center ">
                 <label class="form-label small mb-0">Updated By:</label>
                 <select v-model="filters.updatedBy" class="form-select form-select-sm">
                   <option value="">All</option>
@@ -139,29 +140,31 @@
 
                   </th>
                   <th>Approval Status</th>
-                  <th @click="sort('createdBy')" style="cursor: pointer;">
-                    Created By
-                    <i :class="sortBy === 'createdBy'
+                  <template v-if="isAdmin">
+                    <th @click="sort('createdBy')" style="cursor: pointer;">
+                      Created By
+                      <i :class="sortBy === 'createdBy'
             ? (sortDescending ? 'bi bi-caret-down-fill ms-1 text-primary' : 'bi bi-caret-up-fill ms-1 text-primary')
             : 'bi bi-caret-up ms-1 text-muted'">
-                    </i>
+                      </i>
 
-                  </th>
+                    </th>
 
-                  <th @click="sort('updatedBy')" style="cursor: pointer;">
-                    Updated By
-                    <i :class="sortBy === 'updatedBy'
+                    <th @click="sort('updatedBy')" style="cursor: pointer;">
+                      Updated By
+                      <i :class="sortBy === 'updatedBy'
             ? (sortDescending ? 'bi bi-caret-down-fill ms-1 text-primary' : 'bi bi-caret-up-fill ms-1 text-primary')
             : 'bi bi-caret-up ms-1 text-muted'">
-                    </i>
+                      </i>
 
-                  </th>
+                    </th>
 
-                  <th >
-                    Actioned By
+                    <th>
+                      Actioned By
 
-                  </th>
-                  <th>Actions</th>
+                    </th>
+                    </template>
+                    <th>Actions</th>
                 </tr>
               </thead>
 
@@ -196,55 +199,57 @@
                     </span>
 
                   </td>
-                  <td>{{ txn.createdBy?.email || 'N/A' }}</td>
-                  <td>{{ txn.updatedBy?.email || 'N/A' }}</td>
-                  <td>{{txn.actionedBy?.email || 'N/A' }}</td>
-                  <td class="text-center">
-                    <div class="btn-group">
-                      <!-- Dropdown toggle -->
-                      <button class="btn btn-sm btn-outline-primary dropdown-toggle"
-                              type="button"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                              style="cursor: pointer;"
-                              title="Actions">
-                        <i class="bi bi-three-dots-vertical"></i>
-                      </button>
+                  <template v-if="isAdmin">
+                    <td >{{ txn.createdBy?.email || 'N/A' }}</td>
+                    <td>{{ txn.updatedBy?.email || 'N/A' }}</td>
+                    <td>{{txn.actionedBy?.email || 'N/A' }}</td>
+                    </template>
+                    <td class="text-center">
+                      <div class="btn-group">
+                        <!-- Dropdown toggle -->
+                        <button class="btn btn-sm btn-outline-primary dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                                style="cursor: pointer;"
+                                title="Actions">
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </button>
 
-                      <!-- Dropdown menu -->
-                      <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-                        <li v-if="txn.approvalStatus === ApprovalStatus.Pending">
-                          <a class="dropdown-item text-success"
-                             @click="updateStatus(txn.id, ApprovalStatus.Approved)"
-                             style="cursor: pointer;">
-                            <i class="bi bi-check-lg me-2"></i> Approve
-                          </a>
-                        </li>
+                        <!-- Dropdown menu -->
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                          <li v-if="txn.approvalStatus === ApprovalStatus.Pending  && isAdmin">
+                            <a class="dropdown-item text-success"
+                               @click="updateStatus(txn.id, ApprovalStatus.Approved)"
+                               style="cursor: pointer;">
+                              <i class="bi bi-check-lg me-2"></i> Approve
+                            </a>
+                          </li>
 
-                        <li v-if="txn.approvalStatus === ApprovalStatus.Pending">
-                          <a class="dropdown-item text-danger"
-                             @click="updateStatus(txn.id, ApprovalStatus.Cancelled)"
-                             style="cursor: pointer;">
-                            <i class="bi bi-x-lg me-2"></i> Cancel
-                          </a>
-                        </li>
+                          <li v-if="txn.approvalStatus === ApprovalStatus.Pending  && isAdmin">
+                            <a class="dropdown-item text-danger"
+                               @click="updateStatus(txn.id, ApprovalStatus.Cancelled)"
+                               style="cursor: pointer;">
+                              <i class="bi bi-x-lg me-2"></i> Cancel
+                            </a>
+                          </li>
 
-                        <li  v-if="txn.approvalStatus === ApprovalStatus.Pending"><hr class="dropdown-divider" /></li>
+                          <li v-if="txn.approvalStatus === ApprovalStatus.Pending && isAdmin"><hr class="dropdown-divider" /></li>
 
-                        <li>
-                          <a class="dropdown-item text-warning" @click="openEditModal(txn.id)" style="cursor: pointer;">
-                            <i class="bi bi-pencil-square me-2"></i> Edit
-                          </a>
-                        </li>
+                          <li>
+                            <a class="dropdown-item text-warning" @click="openEditModal(txn.id)" style="cursor: pointer;">
+                              <i class="bi bi-pencil-square me-2"></i> Edit
+                            </a>
+                          </li>
 
-                        <li>
-                          <a class="dropdown-item text-secondary" @click="deleteTransaction(txn)" style="cursor: pointer;">
-                            <i class="bi bi-trash me-2"></i> Delete
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
+                          <li>
+                            <a class="dropdown-item text-secondary" @click="deleteTransaction(txn)" style="cursor: pointer;">
+                              <i class="bi bi-trash me-2"></i> Delete
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
 
 
 
@@ -314,6 +319,8 @@
   import { getTransactionRecords, deleteTransactionRecord, patchApprovalStatus } from '../api/transactionRecordApi'; // your separate API module
   import { getApplicationUsers } from '../api/applicationUserApi';
   import { ApprovalStatus } from '../constants/approvalStatus.js';
+  import { Roles } from '../constants/Roles.js';
+  import { getUserRole } from "../utils/auth";
 
   // Reactive state
   const transactionRecords = ref({ message: '', data: [] });
@@ -336,6 +343,9 @@
     approvalStatus:'',
     search: '',
   });
+
+  const userRole = ref(getUserRole());
+  const isAdmin = computed(() => userRole.value === Roles.Admin);
 
   // create flash store instance
   const flash = useFlashStore()
@@ -479,6 +489,9 @@
     fetchTransactionRecords();
     fetchApplicationUsers();
   });
+
+
+
 
   // Helper to format date
   const formatDate = (dateStr) => new Date(dateStr).toLocaleString();
