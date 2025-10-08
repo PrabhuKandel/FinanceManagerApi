@@ -39,12 +39,13 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.G
             {
                 parameters.Add("@CurrentUserId", userContext.UserId);
             }
-            var rows = await connection.QueryAsync("usp_GetAllTransactionRecords", commandType: CommandType.StoredProcedure);
+            using var transactionRecordsWithTotalCount = await connection.QueryMultipleAsync("usp_GetAllTransactionRecords", commandType: CommandType.StoredProcedure);
 
+            var rows = (await transactionRecordsWithTotalCount.ReadAsync()).ToList();
+            var totalCount = await transactionRecordsWithTotalCount.ReadSingleAsync<int>();
             var result = TransactionRecordDapperMapper.MapTransactionRecordResults(rows);
 
-            // Extract total count from the first row (all rows have same TotalCount)
-            int totalCount = rows.Any() ? (int)rows.First().TotalCount : 0;
+         
 
 
             return new PaginatedOperationResult<IEnumerable<TransactionRecordResponseDto>>

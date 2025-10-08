@@ -403,10 +403,10 @@
       transactionRecords.value = response;
       console.log(response);
       // Update pagination info
-      currentPage.value = response.pageNumber;
-      totalPages.value = response.totalPages;
-      pageSize.value = response.pageSize;
-      totalCount.value = response.totalCount;
+      currentPage.value = response?.pageNumber;
+      totalPages.value = response?.totalPages;
+      pageSize.value = response?.pageSize;
+      totalCount.value = response?.totalCount;
     } catch (err) {
       error.value = 'Failed to load transactions.';
       console.error(err);

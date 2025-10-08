@@ -17,12 +17,12 @@ namespace FinanceManager.Application.Features.Auth.Commands
         private readonly ITokenGenerator tokenGenerator;
         private readonly IApplicationDbContext context;
         private readonly IUserContext userContext;
-        public RefreshTokenHandler(UserManager<ApplicationUser> _userManager, ITokenGenerator _tokenGenerator, IApplicationDbContext _context, IUserContext _userContext)
+        public RefreshTokenHandler(UserManager<ApplicationUser> _userManager, ITokenGenerator _tokenGenerator, IApplicationDbContext _context)
         {
             userManager = _userManager;
             tokenGenerator = _tokenGenerator;
             context = _context;
-            userContext = _userContext;
+
 
         }
 
