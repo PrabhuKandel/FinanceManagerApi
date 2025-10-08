@@ -38,7 +38,12 @@ namespace FinanceManager.Application.Mapping
                             Id = row.UpdatedByUserId,
                             Email = row.UpdatedByEmail
                         },
-   
+                        ActionedBy = row.ActionedByUserId == null ? null : new ApplicationUserSummaryDto
+                        {
+                            Id = row.ActionedByUserId,
+                            Email = row.ActionedByEmail
+                        },
+
                         TransactionPayments = new List<TransactionPaymentSummaryDto>()
                     };
 
