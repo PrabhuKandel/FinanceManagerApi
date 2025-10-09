@@ -26,7 +26,7 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.
 
             RuleForEach(x => x.Payments)
                 .NotEmpty().WithMessage("At least one payment is required.")
-               .SetValidator(new TransactionPaymentDtoValidator(_context));
+               .SetValidator(new TransactionPaymentCreateDtoValidator(_context));
 
             RuleFor(x => x)
                  .Must(x => x.Amount == x.Payments.Sum(p => p.Amount))

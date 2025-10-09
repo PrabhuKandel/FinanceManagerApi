@@ -53,7 +53,7 @@
                     <option v-for="m in availableMethods(index)"
                             :key="m.id"
                             :value="m.id"
-                            :disabled="!m.isActive"
+                    
                             >
                       {{ m.name }} {{ !m.isActive ? '(Inactive)' : '' }}
                     </option>
