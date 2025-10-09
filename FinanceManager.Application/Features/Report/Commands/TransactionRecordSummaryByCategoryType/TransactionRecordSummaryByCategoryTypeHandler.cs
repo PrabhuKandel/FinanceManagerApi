@@ -5,6 +5,7 @@ using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.Report;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Domain.Entities;
+using FinanceManager.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ namespace FinanceManager.Application.Features.Report.Commands.TransactionRecordS
         {
             var query = context.TransactionRecords
           .Include(tr => tr.TransactionCategory)
+          .Where(tr=>tr.ApprovalStatus==TransactionRecordApprovalStatus.Approved)
           .AsQueryable();
 
             // Apply optional filters
@@ -42,25 +44,21 @@ namespace FinanceManager.Application.Features.Report.Commands.TransactionRecordS
             if (request.CategoryType == CategoryType.Income)
             {
                 response.TotalIncome = summaryData
-                    .Where(x => x.CategoryType == CategoryType.Income)
-                    .Sum(x => x.TotalAmount);
+                .FirstOrDefault(x => x.CategoryType == CategoryType.Income)?.TotalAmount ?? 0m;
             }
             else if (request.CategoryType == CategoryType.Expense)
             {
                 response.TotalExpense = summaryData
-                    .Where(x => x.CategoryType == CategoryType.Expense)
-                    .Sum(x => x.TotalAmount);
+                .FirstOrDefault(x => x.CategoryType == CategoryType.Expense)?.TotalAmount ?? 0m;
             }
             else
             {
                 // No filter - get both
                 response.TotalIncome = summaryData
-                    .Where(x => x.CategoryType == CategoryType.Income)
-                    .Sum(x => x.TotalAmount);
+                .FirstOrDefault(x => x.CategoryType == CategoryType.Income)?.TotalAmount ?? 0m;
 
                 response.TotalExpense = summaryData
-                    .Where(x => x.CategoryType == CategoryType.Expense)
-                    .Sum(x => x.TotalAmount);
+                .FirstOrDefault(x => x.CategoryType == CategoryType.Expense)?.TotalAmount ?? 0m;
             }
 
             return new OperationResult<TransactionRecordSummaryByCategoryTypeDto>

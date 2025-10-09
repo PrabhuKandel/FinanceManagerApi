@@ -28,6 +28,7 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken'); // get token from localStorage
+    console.log("login api called");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
