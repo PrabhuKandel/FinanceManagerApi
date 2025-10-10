@@ -6,5 +6,6 @@ namespace FinanceManager.Application.Features.Auth.Commands
 {
     public record ApplicationUserRegisterCommand(ApplicationUserRegisterDto RegisterUser):IRequest<OperationResult<string>>
     {
+
     }
 }

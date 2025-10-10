@@ -1,6 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionPayment;
 using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Interfaces;
@@ -9,7 +8,7 @@ using FinanceManager.Application.Mapping;
 using FinanceManager.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
 {

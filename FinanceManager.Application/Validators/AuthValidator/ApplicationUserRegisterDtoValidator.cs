@@ -22,12 +22,12 @@ namespace FinanceManager.Application.Validators.AuthValidator
                 .NotEmpty().WithMessage("Email is required.")
                 .Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("Invalid email format.");
 
-            RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.")
-                .Matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{8,}$")
-                .WithMessage("Password must be at least 8 characters long, " +
-                             "contain uppercase and lowercase letters, " +
-                             "a number, and a special character.");
+            //RuleFor(x => x.Password)
+            //    .NotEmpty().WithMessage("Password is required.")
+            //    .Matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{8,}$")
+            //    .WithMessage("Password must be at least 8 characters long, " +
+            //                 "contain uppercase and lowercase letters, " +
+            //                 "a number, and a special character.");
 
 
 

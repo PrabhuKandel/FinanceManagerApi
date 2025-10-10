@@ -9,7 +9,7 @@
         <ul>
           <li><router-link to="/dashboard"> <i class="bi bi-speedometer2 me-2 text-white text-lg"></i>Dashboard</router-link></li>
           <li><router-link to="/transaction-records"><i class="bi bi-wallet2 me-2"></i>Transactions</router-link></li>
-          <li><router-link to=""> <i class="bi bi-people me-2"></i>Users</router-link></li>
+          <li><router-link to="/users"> <i class="bi bi-people me-2"></i>Users</router-link></li>
           <li><router-link to=""><i class="bi bi-gear me-2"></i>Settings</router-link></li>
         </ul>
       </nav>
