@@ -25,8 +25,12 @@ namespace FinanceManager.Application.Features.Auth.Commands
             var existingUser = await userManager.FindByEmailAsync(request.RegisterUser.Email);
             if (existingUser != null)
             {
-                throw new BusinessValidationException("Email is already registered.");
+                throw new BusinessValidationException(new Dictionary<string, string[]>
+            {
+                { "RegisterUser.Email", new[] { "Email is already registered." } }
+            });
             }
+
             var tempPassword = Guid.NewGuid().ToString("N").Substring(0, 12) + "aA!1";
 
             var applicationUser = new ApplicationUser

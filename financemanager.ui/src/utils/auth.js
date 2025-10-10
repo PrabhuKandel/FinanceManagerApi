@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
-
+import { Roles } from '../constants/roles.js';
+import { computed,ref } from "vue";
 export function getUserRole() {
   const token = localStorage.getItem("accessToken"); 
   console.log("Token in getUserRole:", token);
@@ -17,3 +18,11 @@ export function getUserRole() {
     return null;
   }
 }
+
+export function isAdmin() {
+  const userRole = ref(getUserRole());
+
+
+  return computed(() => userRole.value === Roles.Admin);
+}
+

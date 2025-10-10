@@ -3,6 +3,8 @@ import LoginForm from '../components/LoginForm.vue';
 import TransactionRecordList from '../views/TransactionRecordList.vue';
 import DashboardView from '../views/DashboardView.vue';
 import UserList from '../views/UserList.vue';
+import { isAdmin } from '../utils/auth.js';
+
 
 
 
@@ -13,7 +15,7 @@ const routes = [
   { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
 
   { path: '/transaction-records', component: TransactionRecordList, meta: { requiresAuth: true } },
-  { path: '/users', component: UserList, meta: { requiresAuth: true } },
+  { path: '/users', component: UserList, meta: { requiresAuth: true ,requiresAdmin:true} },
 
 
 
@@ -27,6 +29,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('accessToken'); // or use authStore
   if (to.meta.requiresAuth && !token) next('/login');
-  else next();
+  if (to.meta.requiresAdmin && !isAdmin().value) return next('/dashboard');
+
+   next();
 });
 export default router;
