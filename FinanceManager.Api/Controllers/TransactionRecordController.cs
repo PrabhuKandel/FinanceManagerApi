@@ -33,11 +33,11 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-        [HttpGet("dapperGetAll")]
-        public async Task<IActionResult> DapperGetAll()
+        [HttpPost("dapper-get-all")]
+        public async Task<IActionResult> DapperGetAll( GetAllTransactionRecordsDapperQuery query)
         {
 
-            var response = await mediator.Send(new GetAllTransactionRecordsDapperQuery());
+            var response = await mediator.Send(query);
             return Ok(response);
         }
 

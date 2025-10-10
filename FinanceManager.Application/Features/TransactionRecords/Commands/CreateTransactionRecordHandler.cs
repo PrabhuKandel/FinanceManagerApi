@@ -7,6 +7,7 @@ using FinanceManager.Application.Mapping;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Commands
@@ -24,6 +25,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
 
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
+
             // Start a transaction
              await using var transaction = await context.Database.BeginTransactionAsync();
 

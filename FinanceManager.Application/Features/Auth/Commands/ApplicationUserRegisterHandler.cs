@@ -25,8 +25,13 @@ namespace FinanceManager.Application.Features.Auth.Commands
             var existingUser = await userManager.FindByEmailAsync(request.RegisterUser.Email);
             if (existingUser != null)
             {
-                throw new BusinessValidationException("Email is already registered.");
+                throw new BusinessValidationException(new Dictionary<string, string[]>
+            {
+                { "RegisterUser.Email", new[] { "Email is already registered." } }
+            });
             }
+
+            var tempPassword = Guid.NewGuid().ToString("N").Substring(0, 12) + "aA!1";
 
             var applicationUser = new ApplicationUser
             {
@@ -38,38 +43,33 @@ namespace FinanceManager.Application.Features.Auth.Commands
 
             };
 
-            var result = await userManager.CreateAsync(applicationUser, request.RegisterUser.Password);
+            var result = await userManager.CreateAsync(applicationUser, tempPassword);
 
             if (!result.Succeeded)
             {
-                if (result.Errors.Any())
-                {
-                    var errors = new Dictionary<string, string[]>
-                        {
-                            { "Error", result.Errors.Select(e => e.Description).ToArray() }
-                        };
+                var errors = result.Errors.Any()
+                    ? result.Errors.ToDictionary(_ => "Error", e => new[] { e.Description })
+                    : new Dictionary<string, string[]> { { "Error", new[] { "Registration failed due to unknown error." } } };
 
-                    throw new BusinessValidationException(errors);
-                }
-                throw new Exception("Registration failed due to server error.");
+                throw new BusinessValidationException(errors);
             }
 
-            //assingning role based on user input 
-            if (!string.IsNullOrEmpty(request.RegisterUser.RoleId))
-            {
-                var role = await roleManager.FindByIdAsync(request.RegisterUser.RoleId);
-                if (role == null)
-                    throw new BusinessValidationException("Invalid role selected.");
+            // Assign role — default to "User" if not provided
+            var roleId = string.IsNullOrEmpty(request.RegisterUser.RoleId)
+                ? null
+                : request.RegisterUser.RoleId;
 
-                await userManager.AddToRoleAsync(applicationUser, role.Name!);
-            }
-            else
-            {
-                await userManager.AddToRoleAsync(applicationUser, RoleConstants.User);
-            }
+            var role = roleId != null
+                ? await roleManager.FindByIdAsync(roleId)
+                : await roleManager.FindByNameAsync(RoleConstants.User);
+
+            if (role == null)
+                throw new BusinessValidationException("Invalid role selected.");
+
+            await userManager.AddToRoleAsync(applicationUser, role.Name!);
 
             // Publish notification instead of sending email directly
-            await _mediator.Publish(new UserRegisterNotification( applicationUser.Email,applicationUser.FirstName, request.RegisterUser.Password));
+            await _mediator.Publish(new UserRegisterNotification( applicationUser.Email,applicationUser.FirstName, tempPassword));
 
             return new OperationResult<String>
             {

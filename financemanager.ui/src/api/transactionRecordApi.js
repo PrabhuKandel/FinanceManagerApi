@@ -29,7 +29,7 @@ export const getTransactionRecords = async (page = 1, size = 10, filters = {}) =
     return response.data;
     
   } catch (error) {
-    console.error('Error fetching transactions:', error.response.data);
+    console.error('Error fetching transactions:', error.response);
 
 
   }

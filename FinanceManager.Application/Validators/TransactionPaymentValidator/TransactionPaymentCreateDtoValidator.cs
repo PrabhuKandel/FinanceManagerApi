@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Validators.TransactionPaymentValidator
 {
-    public class TransactionPaymentDtoValidator : AbstractValidator<TransactionPaymentDto>
+    public class TransactionPaymentCreateDtoValidator : AbstractValidator<TransactionPaymentDto>
     {
-        public TransactionPaymentDtoValidator(IApplicationDbContext _context)
+        public TransactionPaymentCreateDtoValidator(IApplicationDbContext _context)
         { 
              RuleFor(p => p.PaymentMethodId)
                 .NotEmpty().WithMessage("Payment method is required.")
