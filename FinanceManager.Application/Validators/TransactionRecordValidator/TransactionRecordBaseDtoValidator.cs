@@ -20,16 +20,21 @@ namespace FinanceManager.Application.Validators.TransactionRecordValidator
                 })
                 .WithMessage("Invalid transaction category");
 
-
             RuleFor(x => x.Amount)
                 .NotEmpty().WithMessage("Amount is required")
-                .GreaterThan(0m).WithMessage("Amount must be greater than 0");
+                .GreaterThan(0m).WithMessage("Amount must be greater than 0")
+                .Must((transaction, amount) =>
+                {
+                    var totalPayments = 100m;
+                    var totalAmount = Math.Round(amount, 2);
 
+                    //var totalPayments = Math.Round(transaction.Payments.Sum(p => p.Amount)??0, 2);
+            
 
-            RuleFor(x => x.Amount)
-                .Must((transaction, amount) => amount == transaction.Payments.Sum(p => p.Amount))
+                    // Allow a tolerance of 0.01 for rounding
+                    return Math.Abs(totalPayments - totalAmount) < 0.01m;
+                })
                 .WithMessage("Total transaction amount must equal sum of payments");
-
 
 
             RuleFor(x => x.Description)

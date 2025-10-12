@@ -66,7 +66,7 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateTransactionRecordCommand createCommand)
+        public async Task<IActionResult> Create([FromForm]CreateTransactionRecordCommand createCommand)
         {
             
             var response = await mediator.Send(createCommand);

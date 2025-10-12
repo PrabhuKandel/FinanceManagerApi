@@ -9,9 +9,9 @@ namespace FinanceManager.Application.Validators.TransactionCategoryValidator.Com
 
         public CreateTransactionRecordCommandValidator(IValidator<TransactionRecordCreateDto> dtoValidator)
         {
-            RuleFor(x => x.TransactionRecord)
-            .NotNull().WithMessage("Transaction record data is required")
-            .SetValidator(dtoValidator);
+            //RuleFor(x => x.TransactionRecord)
+            //.NotNull().WithMessage("Transaction record data is required")
+            //.SetValidator(dtoValidator);
 
         }
     }

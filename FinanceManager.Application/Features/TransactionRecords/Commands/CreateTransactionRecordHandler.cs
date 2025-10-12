@@ -16,11 +16,12 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
     {
         private readonly IApplicationDbContext context;
         private readonly IUserContext userContext;
-
-        public CreateTransactionRecordHandler(IApplicationDbContext _context, IUserContext _userContext)
+        private readonly ITransactionAttachmentService transactionAttachmentService;
+        public CreateTransactionRecordHandler(IApplicationDbContext _context, IUserContext _userContext, ITransactionAttachmentService transactionAttachmentService)
         {
             context = _context;
             userContext = _userContext;
+            this.transactionAttachmentService = transactionAttachmentService;
         }
 
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
@@ -40,7 +41,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
 
             await context.TransactionRecords.AddAsync(entity);
 
-            await context.SaveChangesAsync();
+    
 
             //throw new Exception("Testing rollback!");
 
@@ -56,11 +57,23 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands
                     }).ToList();
 
                 await context.TransactionPayments.AddRangeAsync(payments);
-                await context.SaveChangesAsync();
+             
             }
 
+            // **Save attachments if any**
+            if (request.TransactionRecord.TransactionAttachments?.Any() == true)
+            {
+                await transactionAttachmentService.SaveAttachmentsAsync(
+                    entity.Id,                          
+                    request.TransactionRecord.TransactionAttachments,
+                    userContext.UserId                    
+                );
+            }
+
+            await context.SaveChangesAsync();
             //Commit transaction
             await transaction.CommitAsync();
+
             var savedEntity =  await context.TransactionRecords
                 .Include(tr => tr.TransactionCategory)
                 .Include(tr => tr.TransactionPayments)

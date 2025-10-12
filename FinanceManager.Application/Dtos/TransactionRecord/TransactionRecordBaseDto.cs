@@ -18,6 +18,8 @@ namespace FinanceManager.Application.Dtos.TransactionRecord
 
 
         public List<TransactionPaymentDto> Payments { get; set; } = new List<TransactionPaymentDto>();
+
+
     }
 
 

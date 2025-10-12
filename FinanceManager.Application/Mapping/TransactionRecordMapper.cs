@@ -1,5 +1,6 @@
 ﻿using FinanceManager.Application.Dtos.PaymentMethod;
 using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Application.Features.TransactionRecords.Commands;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Entities;
 using static FinanceManager.Application.Dtos.Shared.SummaryDtos;
