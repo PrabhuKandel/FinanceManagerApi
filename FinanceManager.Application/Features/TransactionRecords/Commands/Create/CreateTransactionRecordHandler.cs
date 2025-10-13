@@ -3,7 +3,6 @@ using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Features.TransactionRecords.Mapping;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Mapping;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Domain.Enums;
 using MediatR;

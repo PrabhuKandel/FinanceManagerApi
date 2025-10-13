@@ -1,4 +1,6 @@
-﻿using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
+﻿using System.Text.Json;
+using FinanceManager.Api.ModelBinder;
+using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchTransactionRecord;
@@ -70,13 +72,27 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromForm]CreateTransactionRecordCommand createCommand)
-        {
-            
-            var response = await mediator.Send(createCommand);
-            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
+        //[HttpPost]
+        //public async Task<IActionResult> Create([FromForm(Name="transactionRecord")] string transactionRecord, [FromForm(Name ="transactionAttachments")] IFormFile[]?transactionAttachments)
+        //{
+        //    var command = JsonSerializer.Deserialize<CreateTransactionRecordCommand>(
+        //           transactionRecord,
+        //           new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!
+        //           with
+        //    { TransactionAttachments = transactionAttachments ?? Array.Empty<IFormFile>() };
+        //    var response = await mediator.Send(command);
+        //    return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrUpdate(
+        [FromForm]
+        [ModelBinder(BinderType = typeof(TransactionRecordCommandModelBinder))]
+        CreateTransactionRecordCommand command)
+        {
+            var result = await mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpPost("dapperCreate")]
