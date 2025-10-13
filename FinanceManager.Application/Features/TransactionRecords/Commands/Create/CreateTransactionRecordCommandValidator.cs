@@ -50,7 +50,19 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands.Create
                         })
                         .WithMessage("Invalid or inactive payment method");
                 });
-                
+
+
+            RuleForEach(x => x.TransactionAttachments)
+            .Must(file => file.Length <= 5 * 1024 * 1024)
+            .WithMessage("Each file must be 5 MB or less");
+
+            //RuleForEach(x => x.TransactionAttachments)
+            //    .Must(file => new[] { "application/pdf", "image/png", "image/jpeg" }.Contains(file.ContentType))
+            //    .WithMessage("Only PDF, PNG, or JPEG files are allowed");
+
+            RuleFor(x => x.TransactionAttachments)
+                .Must(files => files == null || files.Length <= 5)
+                .WithMessage("Maximum 5 files are allowed");
         }
     }
 }

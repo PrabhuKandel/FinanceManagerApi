@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
+using Azure;
 using FinanceManager.Api.ModelBinder;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;
+using FinanceManager.Application.Features.TransactionRecords.Commands.DeleteAttachment;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchTransactionRecord;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Update;
@@ -175,6 +177,16 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
 
         }
+
+        [HttpDelete("attachments")]
+        public async Task<IActionResult> DeleteAttachments(DeleteTransactionRecordAttachmentCommand command)
+        {
+    
+            var response = await mediator.Send(command);
+             return Ok(response);
+
+        }
+
 
 
 

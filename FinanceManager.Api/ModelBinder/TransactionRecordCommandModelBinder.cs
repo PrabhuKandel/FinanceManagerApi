@@ -17,7 +17,7 @@ namespace FinanceManager.Api.ModelBinder
 
             var form = await bindingContext.HttpContext.Request.ReadFormAsync();
 
-            // Extract JSON string for command
+       
             var commandJson = form["transactionRecord"].FirstOrDefault();
             var files = form.Files.GetFiles("transactionAttachments").ToArray();
 
@@ -28,7 +28,7 @@ namespace FinanceManager.Api.ModelBinder
                 return;
             }
 
-            // Deserialize JSON into your command
+         
             var command = JsonSerializer.Deserialize<CreateTransactionRecordCommand>(
                 commandJson,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -40,7 +40,7 @@ namespace FinanceManager.Api.ModelBinder
                 return;
             }
 
-            // Attach files if the command supports them
+     
             var commandWithFiles = command with { TransactionAttachments = files };
 
             bindingContext.Result = ModelBindingResult.Success(commandWithFiles);

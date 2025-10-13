@@ -3,10 +3,11 @@ using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Data;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Infrastructure.Services
 {
-    internal class TransactionAttachmentService : ITransactionAttachmentService
+    public class TransactionAttachmentService : ITransactionAttachmentService
     {
           private readonly ApplicationDbContext _context;
         private readonly string _uploadFolder;
@@ -40,6 +41,7 @@ namespace FinanceManager.Infrastructure.Services
                     TransactionRecordId = transactionRecordId,
                     FileName = file.FileName,
                     FilePath = filePath,
+
                     FileType = file.ContentType,
                     UploadedByApplicationUserId = uploadedByApplicationUserId,
                     UploadDate = DateTime.UtcNow
@@ -49,6 +51,24 @@ namespace FinanceManager.Infrastructure.Services
             }
 
           
+        }
+
+        public async Task DeleteAttachmentsAsync(Guid transactionRecordId, List<Guid> attachmentIds)
+        {
+
+            var attachments = await _context.TransactionAttachments
+                .Where(a => attachmentIds.Contains(a.Id) && a.TransactionRecordId == transactionRecordId)
+                .ToListAsync();
+
+            foreach (var attachment in attachments)
+            {
+                if (File.Exists(attachment.FilePath))
+                    File.Delete(attachment.FilePath);
+
+                _context.TransactionAttachments.Remove(attachment);
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }
