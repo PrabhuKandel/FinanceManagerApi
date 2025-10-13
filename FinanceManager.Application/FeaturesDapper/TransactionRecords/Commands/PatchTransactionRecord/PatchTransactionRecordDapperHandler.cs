@@ -2,8 +2,8 @@
 using Ardalis.GuardClauses;
 using Dapper;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionRecord;
 using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;

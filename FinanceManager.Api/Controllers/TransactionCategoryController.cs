@@ -1,6 +1,8 @@
-﻿using FinanceManager.Application.Dtos.TransactionCategory;
-using FinanceManager.Application.Features.TransactionCategories.Commands;
-using FinanceManager.Application.Features.TransactionCategories.Queries;
+﻿using FinanceManager.Application.Features.TransactionCategories.Commands.Create;
+using FinanceManager.Application.Features.TransactionCategories.Commands.Delete;
+using FinanceManager.Application.Features.TransactionCategories.Commands.Update;
+using FinanceManager.Application.Features.TransactionCategories.Queries.GetAll;
+using FinanceManager.Application.Features.TransactionCategories.Queries.GetById;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.CreateTransactionCategory;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.DeleteTransactionCategory;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.UpdateTransactionCategory;

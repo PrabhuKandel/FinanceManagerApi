@@ -1,4 +1,4 @@
-﻿using FinanceManager.Application.Dtos.TransactionRecord;
+﻿using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Domain.Enums;
 using static FinanceManager.Application.Dtos.Shared.SummaryDtos;
 

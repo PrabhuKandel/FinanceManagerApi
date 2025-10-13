@@ -1,5 +1,9 @@
-﻿using FinanceManager.Application.Features.TransactionRecords.Commands;
+﻿using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
+using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
+using FinanceManager.Application.Features.TransactionRecords.Commands.PatchTransactionRecord;
+using FinanceManager.Application.Features.TransactionRecords.Commands.Update;
 using FinanceManager.Application.Features.TransactionRecords.Queries;
+using FinanceManager.Application.Features.TransactionRecords.Queries.GetAll;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.DeleteTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.PatchTransactionRecord;

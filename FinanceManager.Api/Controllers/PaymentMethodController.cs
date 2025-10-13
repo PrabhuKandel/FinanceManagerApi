@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Features.PaymentMethods.Commands;
+﻿using FinanceManager.Application.Features.PaymentMethods.Commands.Create;
+using FinanceManager.Application.Features.PaymentMethods.Commands.Update;
 using FinanceManager.Application.Features.PaymentMethods.Queries;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.CreatePaymentMethod;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.DeletePaymentMethod;

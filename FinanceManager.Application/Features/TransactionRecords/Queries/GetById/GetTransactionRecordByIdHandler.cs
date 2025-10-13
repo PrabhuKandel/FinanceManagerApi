@@ -1,0 +1,55 @@
+﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Features.TransactionRecords.Dtos;
+using FinanceManager.Application.Interfaces;
+using FinanceManager.Application.Interfaces.Services;
+using FinanceManager.Application.Mapping;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace FinanceManager.Application.Features.TransactionRecords.Queries.GetById
+{
+    public class GetTransactionRecordByIdHandler : IRequestHandler<GetTransactionRecordByIdQuery, OperationResult<TransactionRecordResponseDto>>
+    {
+        private readonly IApplicationDbContext context;
+        private readonly IUserContext userContext;
+
+        public GetTransactionRecordByIdHandler(IApplicationDbContext _context,IUserContext _userContext)
+        {
+            context = _context;
+            userContext = _userContext;
+        }
+
+        public async Task<OperationResult<TransactionRecordResponseDto>> Handle(GetTransactionRecordByIdQuery request, CancellationToken cancellationToken)
+        {
+            var isAdmin = userContext.IsAdmin();
+            
+            var transactionRecord = await context.TransactionRecords
+                .Include(tr => tr.TransactionCategory)
+                .Include(tr => tr.TransactionPayments)
+                .ThenInclude(tp => tp.PaymentMethod)
+                .Include(t => t.CreatedByApplicationUser)
+                .Include(t => t.UpdatedByApplicationUser).FirstOrDefaultAsync(tr => tr.Id == request.Id);
+
+            // Filter for non-admin users
+            if (!isAdmin)
+            {
+                if (transactionRecord?.CreatedByApplicationUserId != userContext.UserId)
+                {
+                    throw new AuthorizationException("You can't access this record.");
+                }
+            }
+                var transactionRecordDto =   transactionRecord?.ToResponseDto(isAdmin);
+             return new OperationResult<TransactionRecordResponseDto>
+            {
+
+                Data = transactionRecordDto,
+                Message = "Transaction record  retrieved successfully"
+
+
+            };
+
+        }
+
+    }
+}

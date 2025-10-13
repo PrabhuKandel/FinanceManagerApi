@@ -1,7 +1,7 @@
 ﻿
 
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Domain.Enums;
 using MediatR;
 
