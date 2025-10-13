@@ -1,9 +1,9 @@
 ﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
+using FinanceManager.Application.Features.TransactionRecords.Mapping;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Mapping;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

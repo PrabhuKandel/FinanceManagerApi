@@ -6,6 +6,7 @@ using FinanceManager.Application.Mapping;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
+using FinanceManager.Application.Features.TransactionRecords.Mapping;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries.GetAll
 {

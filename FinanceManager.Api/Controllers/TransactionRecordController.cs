@@ -1,9 +1,10 @@
 ﻿using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
+using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchTransactionRecord;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Update;
-using FinanceManager.Application.Features.TransactionRecords.Queries;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetAll;
+using FinanceManager.Application.Features.TransactionRecords.Queries.GetById;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.DeleteTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.PatchTransactionRecord;
@@ -159,19 +160,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [HttpGet("filter")]
-        public async Task<IActionResult> FilterTransactionRecords(
-            [FromQuery] decimal? minAmount,
-            [FromQuery] decimal? maxAmount,
-            [FromQuery] Guid? transacionCategoryId,
-            [FromQuery] Guid? paymentMethodId,
-             [FromQuery] DateTime transactionDate
-            )
-        {
 
-            var response = await mediator.Send( new FilterTransactionRecordsQuery(minAmount, maxAmount, transacionCategoryId, paymentMethodId, transactionDate));
-            return Ok(response);
-        }
 
 
     }
