@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250922031216_UpdateTransactionRecordStoredProcedure")]
-    partial class UpdateTransactionRecordStoredProcedure
+    [Migration("20251014031117_MigrateAllSp")]
+    partial class MigrateAllSp
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -167,6 +167,46 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FileType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<Guid>("TransactionRecordId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UploadedByApplicationUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionRecordId");
+
+                    b.HasIndex("UploadedByApplicationUserId");
+
+                    b.ToTable("TransactionAttachments");
+                });
+
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionCategory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -223,8 +263,17 @@ namespace FinanceManager.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("ActionedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ActionedByApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ApprovalStatus")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -250,6 +299,8 @@ namespace FinanceManager.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ActionedByApplicationUserId");
 
                     b.HasIndex("CreatedByApplicationUserId");
 
@@ -404,6 +455,25 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
+            modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionAttachment", b =>
+                {
+                    b.HasOne("FinanceManager.Domain.Entities.TransactionRecord", "TransactionRecord")
+                        .WithMany("TransactionAttachments")
+                        .HasForeignKey("TransactionRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "UploadedByApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UploadedByApplicationUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("TransactionRecord");
+
+                    b.Navigation("UploadedByApplicationUser");
+                });
+
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionPayment", b =>
                 {
                     b.HasOne("FinanceManager.Domain.Entities.PaymentMethod", "PaymentMethod")
@@ -425,6 +495,10 @@ namespace FinanceManager.Infrastructure.Migrations
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
                 {
+                    b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "ActionedByApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ActionedByApplicationUserId");
+
                     b.HasOne("FinanceManager.Domain.Entities.ApplicationUser", "CreatedByApplicationUser")
                         .WithMany("CreatedTransactionsRecords")
                         .HasForeignKey("CreatedByApplicationUserId")
@@ -441,6 +515,8 @@ namespace FinanceManager.Infrastructure.Migrations
                         .WithMany("UpdatedTransactionsRecords")
                         .HasForeignKey("UpdatedByApplicationUserId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ActionedByApplicationUser");
 
                     b.Navigation("CreatedByApplicationUser");
 
@@ -516,6 +592,8 @@ namespace FinanceManager.Infrastructure.Migrations
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
                 {
+                    b.Navigation("TransactionAttachments");
+
                     b.Navigation("TransactionPayments");
                 });
 #pragma warning restore 612, 618

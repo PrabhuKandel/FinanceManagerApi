@@ -51,7 +51,7 @@ namespace FinanceManager.Infrastructure.Services
             }
 
           
-        }
+        }               
 
         public async Task DeleteAttachmentsAsync(Guid transactionRecordId, List<Guid> attachmentIds)
         {
