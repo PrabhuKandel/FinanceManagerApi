@@ -14,7 +14,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Step 1: Insert filtered data into temp table
+
     SELECT 
         tr.Id AS TransactionRecordId,
         tr.Amount AS TransactionAmount,
@@ -54,7 +54,6 @@ BEGIN
 
     DECLARE @TotalCount INT = (SELECT COUNT(*) FROM #FilteredRecords);
 
-    -- Step 2: Select paged results
     ;WITH Paged AS (
         SELECT 
             fr.*,
@@ -80,6 +79,6 @@ BEGIN
                     AND (@PageNumber * @PageSize)
     ORDER BY RowNum;
 
-    -- Step 3: Return total count
+
     SELECT @TotalCount AS TotalCount;
 END

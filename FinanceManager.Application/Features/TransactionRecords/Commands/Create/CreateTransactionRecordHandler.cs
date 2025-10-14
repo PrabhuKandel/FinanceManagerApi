@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Application.Common;
+using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Features.TransactionRecords.Mapping;
 using FinanceManager.Application.Interfaces;
@@ -24,9 +25,9 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands.Create
 
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(CreateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
-
-            // Start a transaction
-             await using var transaction = await context.Database.BeginTransactionAsync();
+     
+           // Start a transaction
+            await using var transaction = await context.Database.BeginTransactionAsync();
 
                 var entity = request.ToEntity(userContext.UserId);
 

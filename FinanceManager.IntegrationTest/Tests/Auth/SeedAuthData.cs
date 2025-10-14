@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FinanceManager.Domain.Entities;
+﻿using FinanceManager.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,11 +11,19 @@ namespace FinanceManager.IntegrationTest.Tests.Auth
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-            if (!await roleManager.RoleExistsAsync("Admin"))
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
+
+            // --- Ensure roles exist ---
+            var roles = new[] { "Admin", "User" };
+            foreach (var role in roles)
+            {
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new IdentityRole(role));
+            }
 
 
-            var adminUser = await userManager.FindByEmailAsync("admin@gmail.com");
+
+            var adminEmail = "admin@gmail.com";
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)
             {
                 adminUser = new ApplicationUser
@@ -40,6 +46,26 @@ namespace FinanceManager.IntegrationTest.Tests.Auth
 
                 }
             }
+
+                // --- Seed Normal user ---
+                var normalEmail = "user@test.com";
+                var normalUser = await userManager.FindByEmailAsync(normalEmail);
+                if (normalUser == null)
+                {
+                    normalUser = new ApplicationUser
+                    {
+                        FirstName = "Normal",
+                        LastName = "User",
+                        UserName = normalEmail,
+                        Email = normalEmail,
+                        Address = "User Country"
+                    };
+                    var result = await userManager.CreateAsync(normalUser, "User@123");
+                    if (result.Succeeded)
+                        await userManager.AddToRoleAsync(normalUser, "User");
+                }
+
+            
         }
     }
 

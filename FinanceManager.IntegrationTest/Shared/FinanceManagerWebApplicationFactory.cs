@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Data.SqlClient;
 using Serilog;
+using FinanceManager.Application.Interfaces.Services;
 
 
 namespace FinanceManager.IntegrationTest.Shared
@@ -35,7 +36,11 @@ namespace FinanceManager.IntegrationTest.Shared
                     }
                     services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(GetConnectionString()));
-                       
+
+                    services.RemoveAll<IUserContext>();
+                    services.AddScoped<IUserContext>(_ => new TestUserContext());
+
+
                     services.RemoveAll<IDbConnection>();
                     services.AddScoped<IDbConnection>(sp =>
                     {
