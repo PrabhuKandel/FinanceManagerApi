@@ -33,6 +33,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddScoped<IEmailJobScheduler, EmailJobScheduler>();
             services.AddScoped<ITokenCleanupService, TokenCleanupService>();
             services.AddScoped<ITransactionAttachmentService, TransactionAttachmentService>();
+            services.AddTransient<ITransactionRecordExportService, TransactionRecordExportService>();
             services.AddScoped<TokenCleanupJob>();
 
 

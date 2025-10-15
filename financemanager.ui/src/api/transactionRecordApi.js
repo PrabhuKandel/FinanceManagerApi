@@ -9,7 +9,7 @@ export const getTransactionRecords = async (page = 1, size = 10, filters = {}) =
       approvalStatus='',
       search = '',
       sortBy = '',
-      sortDescending=false
+      sortDescending=true
     } = filters;
 
     const payload = {
@@ -57,6 +57,33 @@ export const updateTransactionRecord = async (id,data) => {
   }
 };
 
+export const exportTransactionRecords = async (filters = {}, page = 1, pageSize = 10, exportAll = false) => {
+  try {
+    const payload = {
+      pageNumber: exportAll ? 1 : page,
+      pageSize: exportAll ? 1000000 : pageSize, // backend will return all rows
+      fromDate: filters.fromDate || null,
+      toDate: filters.toDate || null,
+      createdBy: filters.createdBy || null,
+      updatedBy: filters.updatedBy || null,
+      approvalStatus: filters.approvalStatus || null,
+      search: filters.search || null,
+      sortBy: filters.sortBy || null,
+      sortDescending: filters.sortDescending || true
+    };
+    console.log(filters);
+    console.log(payload);
+    // Pass filters as query parameters if needed
+    const response = await axiosInstance.post('/transaction-records/export',payload ,{
+
+      responseType: 'blob', 
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error exporting transaction records:', error.response?.data || error.message);
+    return Promise.reject(error.response.data);
+  }
+};
 
 export const patchApprovalStatus = async (id, approvalStatus) => {
   try {
