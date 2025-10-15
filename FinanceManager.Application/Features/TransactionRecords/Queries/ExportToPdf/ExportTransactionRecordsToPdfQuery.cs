@@ -3,10 +3,9 @@
 using FinanceManager.Domain.Enums;
 using MediatR;
 
-namespace FinanceManager.Application.Features.TransactionRecords.Queries.Export
+namespace FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf
 {
-    public record ExportTransactionRecordsQuery
-        (
+    public record ExportTransactionRecordsToPdfQuery(
         int PageNumber = 1,
         int PageSize = 10,
         bool SortDescending = true,
@@ -17,6 +16,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries.Export
         TransactionRecordApprovalStatus? ApprovalStatus = null,
         string? Search = null,
         string? SortBy = null) : IRequest<byte[]>
+       
     {
     }
 }

@@ -57,7 +57,7 @@ export const updateTransactionRecord = async (id,data) => {
   }
 };
 
-export const exportTransactionRecords = async (filters = {}, page = 1, pageSize = 10, exportAll = false) => {
+export const exportTransactionRecordsExcel = async (filters = {}, page = 1, pageSize = 10, exportAll = false) => {
   try {
     const payload = {
       pageNumber: exportAll ? 1 : page,
@@ -74,7 +74,7 @@ export const exportTransactionRecords = async (filters = {}, page = 1, pageSize 
     console.log(filters);
     console.log(payload);
     // Pass filters as query parameters if needed
-    const response = await axiosInstance.post('/transaction-records/export',payload ,{
+    const response = await axiosInstance.post('/transaction-records/export/excel',payload ,{
 
       responseType: 'blob', 
     });
@@ -84,6 +84,34 @@ export const exportTransactionRecords = async (filters = {}, page = 1, pageSize 
     return Promise.reject(error.response.data);
   }
 };
+export const exportTransactionRecordsPdf = async (filters = {}, page = 1, pageSize = 10, exportAll = false) => {
+  try {
+    const payload = {
+      pageNumber: exportAll ? 1 : page,
+      pageSize: exportAll ? 1000000 : pageSize, // backend will return all rows
+      fromDate: filters.fromDate || null,
+      toDate: filters.toDate || null,
+      createdBy: filters.createdBy || null,
+      updatedBy: filters.updatedBy || null,
+      approvalStatus: filters.approvalStatus || null,
+      search: filters.search || null,
+      sortBy: filters.sortBy || null,
+      sortDescending: filters.sortDescending ?? true
+    };
+
+    console.log('PDF export payload:', payload);
+
+    const response = await axiosInstance.post('/transaction-records/export/pdf', payload, {
+      responseType: 'blob', // receive binary PDF data
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error exporting PDF:', error.response?.data || error.message);
+    return Promise.reject(error.response?.data || error);
+  }
+};
+
 
 export const patchApprovalStatus = async (id, approvalStatus) => {
   try {

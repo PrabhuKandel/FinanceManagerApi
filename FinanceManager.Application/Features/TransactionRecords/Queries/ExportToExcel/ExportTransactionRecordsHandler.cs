@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 
 
-    namespace FinanceManager.Application.Features.TransactionRecords.Queries.Export
+    namespace FinanceManager.Application.Features.TransactionRecords.Queries.ExportToExcel
     {
         public class ExportTransactionRecordsHandler(
             ITransactionRecordExportService exportService,

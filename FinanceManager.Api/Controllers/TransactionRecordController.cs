@@ -7,7 +7,8 @@ using FinanceManager.Application.Features.TransactionRecords.Commands.DeleteAtta
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchTransactionRecord;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Update;
-using FinanceManager.Application.Features.TransactionRecords.Queries.Export;
+using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToExcel;
+using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetAll;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetById;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord;
@@ -188,7 +189,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [HttpPost("export")]
+        [HttpPost("export/excel")]
         public async Task<IActionResult> ExportTransactionRecords(ExportTransactionRecordsQuery query)
         {
             var fileBytes = await mediator.Send(query);
@@ -197,6 +198,13 @@ namespace FinanceManager.Api.Controllers
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 "TransactionRecords.xlsx"
             );
+        }
+
+        [HttpPost("export/pdf")]
+        public async Task<IActionResult> ExportToPdf(ExportTransactionRecordsToPdfQuery query)
+        {
+            var pdfBytes = await mediator.Send(query);
+            return File(pdfBytes, "application/pdf", $"transactions-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf");
         }
 
 

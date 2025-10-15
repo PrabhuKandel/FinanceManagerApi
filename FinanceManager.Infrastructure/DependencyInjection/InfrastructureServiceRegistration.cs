@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Infrastructure.Data;
@@ -34,6 +35,14 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddScoped<ITokenCleanupService, TokenCleanupService>();
             services.AddScoped<ITransactionAttachmentService, TransactionAttachmentService>();
             services.AddTransient<ITransactionRecordExportService, TransactionRecordExportService>();
+            services.AddSingleton<IPdfGenerator, PuppeteerPdfGenerator>();
+            services.AddSingleton<ITemplateRenderer>(sp =>
+            {
+                var appAssembly = typeof(ExportTransactionRecordsToPdfQuery).Assembly;
+                return new HandlebarsTemplateRenderer(appAssembly);
+
+            });
+                
             services.AddScoped<TokenCleanupJob>();
 
 
