@@ -1,6 +1,5 @@
-﻿using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Exceptions;
-using FinanceManager.Application.Features.PaymentMethods.Commands;
+﻿using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Features.PaymentMethods.Commands.Create;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.CreatePaymentMethod;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.DeletePaymentMethod;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.UpdatePaymentMethod;
@@ -38,16 +37,10 @@ namespace FinanceManager.IntegrationTest.Tests.PaymentMethod
         [Fact]
         public async Task CreatePaymentMethod_ReturnsCreatedPaymentMethod()
         {
-            // Arrange
-            var newPaymentMethod = new PaymentMethodCreateDto
-            {
-                Name = "TestCase1",
-                Description = "Test case",
-                IsActive = true
 
-            };
 
-            var command = new CreatePaymentMethodCommand(newPaymentMethod);
+            //Arrange
+            var command = new CreatePaymentMethodCommand("TestCase1", "Test case", true);
 
 
             // Act
@@ -58,9 +51,9 @@ namespace FinanceManager.IntegrationTest.Tests.PaymentMethod
             // Assert
 
             Assert.NotNull(createdPaymentMethod);
-            Assert.Equal(newPaymentMethod.Name, createdPaymentMethod.Data?.Name);
-            Assert.Equal(newPaymentMethod.Description, createdPaymentMethod.Data?.Description);
-            Assert.Equal(newPaymentMethod.IsActive, createdPaymentMethod.Data?.IsActive);
+            Assert.Equal(command.Name, createdPaymentMethod.Data?.Name);
+            Assert.Equal(command.Description, createdPaymentMethod.Data?.Description);
+            Assert.Equal(command.IsActive, createdPaymentMethod.Data?.IsActive);
             Assert.NotEqual(Guid.Empty, createdPaymentMethod.Data?.Id);
 
             // Assert the message
@@ -78,21 +71,9 @@ namespace FinanceManager.IntegrationTest.Tests.PaymentMethod
         public async Task CreatePaymentMethod_ShouldReturnException_WhenNameAlreadyExist()
         {
             //Arange
-            var newPaymentMethod1 = new PaymentMethodCreateDto
-            {
-                Name = "TestCase2",
-                Description = "Test case",
-                IsActive = true
-            };
-            var newPaymentMethod2 = new PaymentMethodCreateDto
-            {
-                Name = "TestCase2", // Same name to test uniqueness
-                Description = "Another test case",
-                IsActive = true
-            };
-
-            var command1 = new CreatePaymentMethodCommand(newPaymentMethod1);
-            var command2 = new CreatePaymentMethodCommand(newPaymentMethod2);
+   
+            var command1 = new CreatePaymentMethodCommand("TestCase2","Test case", true);
+            var command2 = new CreatePaymentMethodCommand("TestCase2", " Another Test case", true);
 
 
             //Act
@@ -106,8 +87,8 @@ namespace FinanceManager.IntegrationTest.Tests.PaymentMethod
             Assert.Equal(400, ex.StatusCode);
             Assert.Equal("Validation failed", ex.Message);
             // Assert the field-specific error
-            Assert.True(ex.Errors?.ContainsKey("PaymentMethod.Name"));
-            Assert.Equal("Name already exists", ex.Errors?["PaymentMethod.Name"][0]);
+            Assert.True(ex.Errors?.ContainsKey("Name"));
+            Assert.Equal("Name already exists", ex.Errors?["Name"][0]);
 
 
             _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(ex.Errors, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
@@ -285,25 +266,6 @@ namespace FinanceManager.IntegrationTest.Tests.PaymentMethod
         }
 
 
-        //[Fact]
-        //public async Task GetPaymentMethodById_WithDapper_WhenNotFound_ShouldReturnException()
-        //{
-        //    // Arrange: use a random Guid that doesn’t exist
-        //    var nonExistentId = Guid.NewGuid();
-
-        //    // Act
-        //    var getByIdQuery = new GetPaymentMethodByIdDapperQuery(nonExistentId);
-
-        //    var ex = await Assert.ThrowsAsync<BusinessValidationException>(
-        //    () => _mediator.Send(getByIdQuery));
-
-        //    // Assert the exception message
-
-        //    //sending server error due to unhandled exception
-        //    // will use result pattern to throw error later
-
-
-        //}
 
         [Fact]
         public async Task DeletePaymentMethod_WithDapper_DeletesSuccessfully()

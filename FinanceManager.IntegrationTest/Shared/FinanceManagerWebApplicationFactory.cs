@@ -9,6 +9,8 @@ using System.Data;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Data.SqlClient;
+using Serilog;
+using FinanceManager.Application.Interfaces.Services;
 
 
 namespace FinanceManager.IntegrationTest.Shared
@@ -35,6 +37,10 @@ namespace FinanceManager.IntegrationTest.Shared
                     services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(GetConnectionString()));
 
+                    services.RemoveAll<IUserContext>();
+                    services.AddScoped<IUserContext>(_ => new TestUserContext());
+
+
                     services.RemoveAll<IDbConnection>();
                     services.AddScoped<IDbConnection>(sp =>
                     {
@@ -48,24 +54,27 @@ namespace FinanceManager.IntegrationTest.Shared
                     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     scope.ServiceProvider.GetRequiredService<IMediator>();
 
-                //Optional: clean DB before each test run
-                    db.Database.EnsureDeleted();
-                    db.Database.Migrate();
+                        // Optional: clean DB
+                        db.Database.EnsureDeleted();
+                        db.Database.Migrate();
+
+  
+       
                 });
 
             
         }
 
-        private static string GetConnectionString()
-        {
-            // Build the configuration to access the connection string
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.Test.json")
-                .Build();
+            private static string GetConnectionString()
+            {
+                // Build the configuration to access the connection string
+                var configuration = new ConfigurationBuilder()
+                    .SetBasePath(AppContext.BaseDirectory)
+                    .AddJsonFile("appsettings.Test.json")
+                    .Build();
 
-            return configuration.GetConnectionString("DefaultConnection")!;
-        }
+                return configuration.GetConnectionString("DefaultConnection")!;
+            }
 
 
 

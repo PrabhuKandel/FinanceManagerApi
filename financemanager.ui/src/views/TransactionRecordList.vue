@@ -106,6 +106,44 @@
               <button class="btn btn-primary " @click="openCreateModal">
                 <i class="bi bi-plus-lg me-1"></i> Add New
               </button>
+              <div class="btn-group">
+                <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Excel
+                </button>
+                <ul class="dropdown-menu" style="z-index: 1055;">
+                  <li>
+                    <button class="dropdown-item" type="button" @click="downloadExcel(false)">
+                      Current Page
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" type="button" @click="downloadExcel(true)">
+                      All Records
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div class="btn-group">
+                <button class="btn btn-danger dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-file-earmark-pdf me-1"></i> Export PDF
+                </button>
+                <ul class="dropdown-menu" style="z-index: 1055;">
+                  <li>
+                    <button class="dropdown-item" type="button" @click="downloadPdf(false)">
+                      Current Page
+                    </button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" type="button" @click="downloadPdf(true)">
+                      All Records
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+
+
+
             </div>
           </div>
 
@@ -316,11 +354,19 @@
   import { useFlashStore } from '../stores/flashStore'
   import TransactionRecordForm from './TransactionRecordForm.vue'
   import Layout from '../components/Layout.vue';
-  import { getTransactionRecords, deleteTransactionRecord, patchApprovalStatus } from '../api/transactionRecordApi'; // your separate API module
+  import {
+    getTransactionRecords,
+    deleteTransactionRecord,
+    patchApprovalStatus,
+    exportTransactionRecordsExcel,
+    exportTransactionRecordsPdf
+
+  } from '../api/transactionRecordApi'; // your separate API module
   import { getApplicationUsers } from '../api/applicationUserApi';
   import { ApprovalStatus } from '../constants/approvalStatus.js';
   import { Roles } from '../constants/Roles.js';
   import { getUserRole } from "../utils/auth";
+
 
   // Reactive state
   const transactionRecords = ref({ message: '', data: [] });
@@ -333,7 +379,6 @@
   const users = ref([]);
   const sortBy = ref('transactionDate');  // default sort column
   const sortDescending = ref(true);       // default sort order
-
 
   const filters = ref({
     fromDate: '',
@@ -422,6 +467,60 @@
       console.error(err);
     } finally {
       loading.value = false;
+    }
+  };
+
+  const downloadExcel = async (exportAll=false) => {
+    try {
+
+      const blobData = await exportTransactionRecordsExcel(
+
+        {
+          ...filters.value,
+          sortBy: sortBy.value,
+          sortDescending: sortDescending.value
+        },
+        currentPage.value,
+        pageSize.value,
+        exportAll
+      );
+      const url = window.URL.createObjectURL(new Blob([blobData]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'TransactionRecords.xls');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Failed to download Excel:', error);
+      alert('Failed to export Excel. Please try again.');
+    }
+  };
+
+  const downloadPdf = async (exportAll = false) => {
+    try {
+
+      const blobData = await exportTransactionRecordsPdf(
+
+        {
+          ...filters.value,
+          sortBy: sortBy.value,
+          sortDescending: sortDescending.value
+        },
+        currentPage.value,
+        pageSize.value,
+        exportAll
+      );
+      const url = window.URL.createObjectURL(new Blob([blobData], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'TransactionRecords.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Failed to download pdf:', error);
+      alert('Failed to export pdf. Please try again.');
     }
   };
 
@@ -541,6 +640,7 @@
     margin-bottom: 0.25rem;
     font-size: 0.8rem;
   }
+
 
   .table-hover tbody tr:hover {
     background-color: #f9fcff !important; /* soft hover effect */

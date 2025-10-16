@@ -13,6 +13,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Features\TransactionRecords\Queries\ExportToPdf\Templates\transactions-template.hbs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Features\TransactionRecords\Queries\ExportToPdf\Templates\transactions-template.hbs" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+	      <PackageReference Include="ClosedXML" Version="0.105.0" />
 	      <PackageReference Include="Dapper" Version="2.1.66" />	  
     <PackageReference Include="Ardalis.GuardClauses" Version="5.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
@@ -36,6 +46,8 @@
 
   <ItemGroup>
     <Folder Include="Features\Auth\Queries\" />
+    <Folder Include="Features\PaymentMethods\Queries\GetAll\" />
+    <Folder Include="Features\PaymentMethods\Queries\GetById\" />
   </ItemGroup>
 
 </Project>

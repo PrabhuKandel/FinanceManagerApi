@@ -21,6 +21,7 @@ namespace FinanceManager.Application.Interfaces
 
         DbSet<IdentityRole> Roles { get; set; }
 
+        DbSet<TransactionAttachment> TransactionAttachments { get; set; }
 
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionRecord;
+using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Application.Mapping;
 using FinanceManager.Application.Services;

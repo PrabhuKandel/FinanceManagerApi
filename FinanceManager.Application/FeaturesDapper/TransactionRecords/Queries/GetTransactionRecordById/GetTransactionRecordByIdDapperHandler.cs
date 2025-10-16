@@ -1,10 +1,10 @@
 ﻿using Ardalis.GuardClauses;
 using System.Data;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionRecord;
 using MediatR;
 using Dapper;
 using FinanceManager.Application.Mapping;
+using FinanceManager.Application.Features.TransactionRecords.Dtos;
 
 namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetTransactionRecordById
 {
