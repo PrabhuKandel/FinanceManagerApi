@@ -6,6 +6,8 @@
 # Ignore sensitive config
 
 appsettings.Development.json
+appsettings.Test.json
+Uploads/
 
 # User-specific files
 *.rsuser
