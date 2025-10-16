@@ -1,5 +1,16 @@
-﻿using FinanceManager.Application.Features.TransactionRecords.Commands;
-using FinanceManager.Application.Features.TransactionRecords.Queries;
+﻿using System.Text.Json;
+using Azure;
+using FinanceManager.Api.ModelBinder;
+using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
+using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;
+using FinanceManager.Application.Features.TransactionRecords.Commands.DeleteAttachment;
+using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
+using FinanceManager.Application.Features.TransactionRecords.Commands.PatchTransactionRecord;
+using FinanceManager.Application.Features.TransactionRecords.Commands.Update;
+using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToExcel;
+using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
+using FinanceManager.Application.Features.TransactionRecords.Queries.GetAll;
+using FinanceManager.Application.Features.TransactionRecords.Queries.GetById;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.DeleteTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.PatchTransactionRecord;
@@ -33,11 +44,11 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-        [HttpGet("dapperGetAll")]
-        public async Task<IActionResult> DapperGetAll()
+        [HttpPost("dapper-get-all")]
+        public async Task<IActionResult> DapperGetAll( GetAllTransactionRecordsDapperQuery query)
         {
 
-            var response = await mediator.Send(new GetAllTransactionRecordsDapperQuery());
+            var response = await mediator.Send(query);
             return Ok(response);
         }
 
@@ -65,13 +76,27 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(CreateTransactionRecordCommand createCommand)
-        {
-            
-            var response = await mediator.Send(createCommand);
-            return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
+        //[HttpPost]
+        //public async Task<IActionResult> Create([FromForm(Name="transactionRecord")] string transactionRecord, [FromForm(Name ="transactionAttachments")] IFormFile[]?transactionAttachments)
+        //{
+        //    var command = JsonSerializer.Deserialize<CreateTransactionRecordCommand>(
+        //           transactionRecord,
+        //           new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!
+        //           with
+        //    { TransactionAttachments = transactionAttachments ?? Array.Empty<IFormFile>() };
+        //    var response = await mediator.Send(command);
+        //    return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrUpdate(
+        [FromForm]
+        [ModelBinder(BinderType = typeof(TransactionRecordCommandModelBinder))]
+        CreateTransactionRecordCommand command)
+        {
+            var result = await mediator.Send(command);
+            return Ok(result);
         }
 
         [HttpPost("dapperCreate")]
@@ -155,19 +180,33 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [HttpGet("filter")]
-        public async Task<IActionResult> FilterTransactionRecords(
-            [FromQuery] decimal? minAmount,
-            [FromQuery] decimal? maxAmount,
-            [FromQuery] Guid? transacionCategoryId,
-            [FromQuery] Guid? paymentMethodId,
-             [FromQuery] DateTime transactionDate
-            )
+        [HttpDelete("attachments")]
+        public async Task<IActionResult> DeleteAttachments(DeleteTransactionRecordAttachmentCommand command)
         {
+    
+            var response = await mediator.Send(command);
+             return Ok(response);
 
-            var response = await mediator.Send( new FilterTransactionRecordsQuery(minAmount, maxAmount, transacionCategoryId, paymentMethodId, transactionDate));
-            return Ok(response);
         }
+
+        [HttpPost("export/excel")]
+        public async Task<IActionResult> ExportTransactionRecords(ExportTransactionRecordsQuery query)
+        {
+            var fileBytes = await mediator.Send(query);
+            return File(
+                fileBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "TransactionRecords.xlsx"
+            );
+        }
+
+        [HttpPost("export/pdf")]
+        public async Task<IActionResult> ExportToPdf(ExportTransactionRecordsToPdfQuery query)
+        {
+            var pdfBytes = await mediator.Send(query);
+            return File(pdfBytes, "application/pdf", $"transactions-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf");
+        }
+
 
 
     }

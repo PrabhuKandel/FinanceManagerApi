@@ -11,7 +11,7 @@
             <!-- Category -->
             <div class="mb-3">
               <label class="form-label">Transaction Category</label>
-              <select v-model="form.transactionCategoryId"  :class="['form-select',{ 'is-invalid': getFieldError('TransactionRecord.TransactionCategoryId') }]">
+              <select v-model="form.transactionCategoryId" :class="['form-select',{ 'is-invalid': getFieldError('TransactionRecord.TransactionCategoryId') }]">
                 <option value="">Select Category</option>
                 <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
               </select>
@@ -52,9 +52,7 @@
                     <option value="">Select Payment Method</option>
                     <option v-for="m in availableMethods(index)"
                             :key="m.id"
-                            :value="m.id"
-                            :disabled="!m.isActive"
-                            >
+                            :value="m.id">
                       {{ m.name }} {{ !m.isActive ? '(Inactive)' : '' }}
                     </option>
                   </select>
@@ -69,6 +67,18 @@
                 </div>
               </div>
             </div>
+
+            <!-- Transaction Attachments -->
+            <div class="mb-3">
+              <label class="form-label">Attachments</label>
+              <input type="file"
+                     multiple
+                     @change="onFilesSelected"
+                     class="form-control"
+                     :class="{ 'is-invalid': getFieldError('TransactionRecord.TransactionAttachments') }" />
+              <div class="invalid-feedback">{{ getFieldError('TransactionRecord.TransactionAttachments') }}</div>
+            </div>
+
 
             <button type="submit" class="btn btn-success  w-25">{{ props.formMode === 'create' ? 'Submit' : 'Update' }}</button>
           </form>
@@ -105,7 +115,8 @@
     transactionCategoryId: '',
     amount: '',
     transactionDate: '',
-    payments: props.transactionRecordId ? [] : [{ paymentMethodId: '', amount: '' }]
+    payments: props.transactionRecordId ? [] : [{ paymentMethodId: '', amount: '' }],
+    transactionAttachments:[]
   })
 
   const categories = ref([])
@@ -117,6 +128,10 @@
   // Add/Remove payments
   const addPayment = () => form.value.payments.push({ paymentMethodId: '', amount: '' })
   const removePayment = (index) => form.value.payments.splice(index, 1)
+  const onFilesSelected = (event) => {
+    form.value.transactionAttachments = Array.from(event.target.files)
+  }
+
 
   // Filter methods to prevent duplicates
   const availableMethods = (currentIndex) => {
@@ -156,6 +171,25 @@
     return Object.keys(errors).length === 0
   }
 
+  const prepareTransactionFormData = () => {
+    const formData = new FormData()
+
+    // Separate files from other fields
+    const { transactionAttachments, ...rest } = form.value
+
+    // Append JSON string of the transaction (without files)
+    formData.append('transactionRecord', JSON.stringify(rest))
+
+    // Append all selected files
+    if (transactionAttachments && transactionAttachments.length > 0) {
+      transactionAttachments.forEach(file => {
+        formData.append('transactionAttachments', file)
+      })
+    }
+
+    return formData
+  }
+
 
   // Submit form
   const submitForm = async () => {
@@ -164,15 +198,15 @@
     if (!validateForm()) return
 
     try {
-      const payload = { transactionRecord: { ...form.value } }
+      const formData = prepareTransactionFormData()
+     
       if (props.formMode === 'create') {
-        await addTransactionRecord(payload);
+        await addTransactionRecord(formData);
         flashStore.setMessage(' Transaction created successfully!', 'success')
 
       } else {
-        payload.id = props.transactionRecordId;
-        console.log(payload);
-        await updateTransactionRecord(props.transactionRecordId, payload);
+  
+        await updateTransactionRecord(props.transactionRecordId, {...form.value});
         flashStore.setMessage(' Transaction updated successfully!', 'success')
 
       }

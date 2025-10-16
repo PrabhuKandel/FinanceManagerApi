@@ -101,7 +101,6 @@ namespace FinanceManager.IntegrationTest.Tests.Auth
                 LastName = "Test",
                 Address = "Test Address",
                 Email = "test@gmail.com",
-                Password = "Test@123",
                 RoleId = role?.Id
             };
 

@@ -16,6 +16,7 @@ create or alter procedure usp_CreateTransactionRecord
 @Description nvarchar(500) = null,
 @TransactionDate datetime,
 @CreatedByApplicationUserId nvarchar(450),
+@ApprovalStatus int = 0,
 @Payments TransactionPaymentType READONLY  -- table-valued parameter
 as
 begin
@@ -26,8 +27,8 @@ begin
      BEGIN TRANSACTION;
 
        -- Insert main transaction record
-	insert into TransactionRecords ( Id, TransactionCategoryId,  Amount, Description, TransactionDate, CreatedByApplicationUserId ,CreatedAt,UpdatedAt)
-	values (@Id, @TransactionCategoryId, @Amount, @Description, @TransactionDate, @CreatedByApplicationUserId, SYSUTCDATETIME(), SYSUTCDATETIME());
+	insert into TransactionRecords ( Id, TransactionCategoryId,  Amount, Description, TransactionDate, CreatedByApplicationUserId,ApprovalStatus ,CreatedAt,UpdatedAt)
+	values (@Id, @TransactionCategoryId, @Amount, @Description, @TransactionDate, @CreatedByApplicationUserId,@ApprovalStatus, SYSUTCDATETIME(), SYSUTCDATETIME());
 
 
 	    -- Insert payments
@@ -42,6 +43,7 @@ begin
         tr.Amount AS TransactionAmount,
         tr.Description,
         tr.TransactionDate,
+        tr.ApprovalStatus,
         tr.CreatedAt,
         tr.UpdatedAt,
 

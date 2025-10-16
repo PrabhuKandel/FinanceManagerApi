@@ -8,25 +8,22 @@ namespace FinanceManager.Application.Services
 {
     public class UserContext:IUserContext
     {
-        
-        public string UserId { get; private set; }
-        public string Role { get; private set; }
-     
+
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         public UserContext(IHttpContextAccessor httpContextAccessor)
         {
-            var user = httpContextAccessor.HttpContext?.User;
-            if (user == null || !user.Identity!.IsAuthenticated)
-                throw new AuthenticationException("User is not authenticated");
-
-
-            UserId = user.FindFirst("userId")?.Value
-            ?? throw new AuthenticationException("UserId claim missing");
-
-            Role = user.FindFirst(ClaimTypes.Role)?.Value 
-               ?? throw new AuthenticationException("Role claim missing");
-
-
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        public string UserId =>
+            _httpContextAccessor.HttpContext?.User?.FindFirst("userId")?.Value
+            ?? throw new AuthenticationException("User is not authenticated");
+
+        public string Role =>
+            _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Role)?.Value
+            ?? throw new AuthenticationException("Role claim missing");
+
         public bool IsAdmin() => Role == RoleConstants.Admin;
     }
  

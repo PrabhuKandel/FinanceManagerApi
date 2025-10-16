@@ -25,8 +25,6 @@ namespace FinanceManager.Application.Dtos.ApplicationUser
         public required string Email { get; set; }
 
      
-        public required string Password { get; set; }
-
         
         public string? RoleId { get; set; }
     }

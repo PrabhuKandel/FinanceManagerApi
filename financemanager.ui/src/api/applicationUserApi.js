@@ -9,3 +9,14 @@ export const getApplicationUsers = async () => {
 
   }
 };
+
+// Create a new user
+export const createApplicationUser = async (userData) => {
+  try {
+    const response = await axiosInstance.post('/Auth/register', userData);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating application user:', error);
+    return Promise.reject(error.response.data);
+  }
+}

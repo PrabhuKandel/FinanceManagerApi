@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Dtos.TransactionRecord;
+﻿using FinanceManager.Application.Features.TransactionRecords.Dtos;
+using FinanceManager.Domain.Enums;
 using static FinanceManager.Application.Dtos.Shared.SummaryDtos;
 
 namespace FinanceManager.Application.Mapping
@@ -21,6 +22,7 @@ namespace FinanceManager.Application.Mapping
                         TransactionDate = row.TransactionDate,
                         CreatedAt = row.CreatedAt,
                         UpdatedAt = row.UpdatedAt,
+                        ApprovalStatus = ((TransactionRecordApprovalStatus)row.ApprovalStatus).ToString(),
                         TransactionCategory = row.TransactionCategoryId == null ? null : new TransactionCategorySummaryDto
                         {
                             Id = row.TransactionCategoryId,
@@ -36,6 +38,12 @@ namespace FinanceManager.Application.Mapping
                             Id = row.UpdatedByUserId,
                             Email = row.UpdatedByEmail
                         },
+                        ActionedBy = row.ActionedByUserId == null ? null : new ApplicationUserSummaryDto
+                        {
+                            Id = row.ActionedByUserId,
+                            Email = row.ActionedByEmail
+                        },
+
                         TransactionPayments = new List<TransactionPaymentSummaryDto>()
                     };
 

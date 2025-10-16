@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionCategory;
+using FinanceManager.Application.Features.TransactionCategories.Dtos;
 using FinanceManager.Domain.Entities;
 using MediatR;
 

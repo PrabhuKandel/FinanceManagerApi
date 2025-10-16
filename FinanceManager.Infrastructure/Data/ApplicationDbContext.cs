@@ -23,6 +23,8 @@ namespace FinanceManager.Infrastructure.Data
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<TransactionPayment> TransactionPayments { get; set; }
 
+        public DbSet<TransactionAttachment> TransactionAttachments { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,6 +37,7 @@ namespace FinanceManager.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
             modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
             modelBuilder.ApplyConfiguration(new TransactionPaymentConfiguration());
+            modelBuilder.ApplyConfiguration(new TransactionAttachmentConfiguration());
 
 
         }

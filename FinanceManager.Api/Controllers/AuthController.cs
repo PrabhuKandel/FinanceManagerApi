@@ -48,10 +48,10 @@ namespace FinanceManager.Api.Controllers
 
         [HttpPost("refresh-token")]
 
-        public async Task<IActionResult> RefreshToken(string refreshToken)
+        public async Task<IActionResult> RefreshToken(RefreshTokenCommand refreshToken)
         {
 
-            var response  = await mediator.Send(new RefreshTokenCommand(refreshToken));
+            var response  = await mediator.Send(refreshToken);
             return Ok(response);
         }
 

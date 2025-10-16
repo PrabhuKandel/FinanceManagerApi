@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            font-size: 0.85rem;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+
+        td {
+            vertical-align: top;
+        }
+
+        .text-end {
+            text-align: right;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .bg-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .bg-success {
+            background-color: #198754;
+            color: white;
+        }
+
+        .bg-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .payment-item {
+            margin-bottom: 2px;
+        }
+
+        /* optional: make inner payment table slightly smaller */
+        .payment-table td {
+            font-size: 0.8rem;
+            border: none;
+            padding: 2px 4px;
+        }
+
+        .payment-table {
+            width: 100%;
+            border: none;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    <h2 class="text-center">Transaction Record List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>SN</th>
+                <th>Category</th>
+                <th style="min-width:100px">Amount</th>
+                <th style="min-width:230px">Payments<br><small>(Name / Amount)</small></th>
+                <th>Transaction Date</th>
+                <th>Approval Status</th>
+                {{#if IsAdmin}}
+                <th>Created By</th>
+                <th>Updated By</th>
+                <th>Actioned By</th>
+                {{/if}}
+            </tr>
+        </thead>
+        <tbody>
+            {{#each Transactions}}
+            <tr>
+                <td style="text-align:center">{{plusOne @index}}</td>
+                <td>{{this.TransactionCategory.Name}}</td>
+                <td class="text-end">Rs {{this.Amount}}</td>
+                <td>
+                    <table class="payment-table">
+                        <tbody>
+                            {{#each this.TransactionPayments}}
+                            <tr>
+                                <td>{{this.Name}}</td>
+                                <td class="text-end">Rs {{this.Amount}}</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </td>
+
+                <td style="text-align:center">{{formatDate this.TransactionDate "dd/MM/yyyy"}}</td>
+                <td style="text-align:center">
+                    {{#if (eq this.ApprovalStatus "Pending")}}
+                    <span class="badge bg-warning">Pending</span>
+                    {{else if (eq this.ApprovalStatus "Approved")}}
+                    <span class="badge bg-success">Approved</span>
+                    {{else}}
+                    <span class="badge bg-danger">Cancelled</span>
+                    {{/if}}
+                </td>
+
+                {{#if ../IsAdmin}}
+                <td>{{this.CreatedBy.Email}}</td>
+                <td>
+                    {{#if this.UpdatedBy.Email}}
+                    {{this.UpdatedBy.Email}}
+                    {{else}}
+                    -
+                    {{/if}}
+                </td>
+                <td>
+                    {{#if this.ActionedBy.Email}}
+                    {{this.ActionedBy.Email}}
+                    {{else}}
+                    -
+                    {{/if}}
+                </td>
+                {{/if}}
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>

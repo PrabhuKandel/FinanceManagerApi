@@ -6,6 +6,7 @@ using FinanceManager.Application.Mapping;
 using MediatR;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using FinanceManager.Application.Features.PaymentMethods.Mapping;
 
 
 namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GellAllPaymentMethod

@@ -1,0 +1,47 @@
+﻿
+using FinanceManager.Application.Interfaces;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+
+namespace FinanceManager.Application.Features.TransactionRecords.Commands.PatchTransactionRecord
+{
+    public class PatchTransactionRecordCommandValidator:AbstractValidator<PatchTransactionRecordCommand>
+    {
+        public PatchTransactionRecordCommandValidator(IApplicationDbContext _context)
+        {
+            RuleFor(x => x.Id).NotEmpty().WithMessage("Id is required.");
+
+            RuleFor(x => x.TransactionCategoryId)
+           .MustAsync(async (transactionCategoryId, cancellation) =>
+           {
+               var exists = await _context.TransactionCategories.AnyAsync(c => c.Id == transactionCategoryId);
+               return exists;// true = valid, false = invalid //valid only if category exists
+           })
+           .WithMessage("Invalid transaction category")
+            .When(x => x.TransactionCategoryId.HasValue); // only validate if supplied
+
+            // Payments validation
+            RuleFor(x => x.Payments)
+                .MustAsync(async (payments, cancellation) =>
+                {
+                    if (payments == null || !payments.Any()) return true; // skip if null or empty
+
+                    foreach (var p in payments)
+                    {
+                        var exists = await _context.PaymentMethods.AnyAsync(pm => pm.Id == p.PaymentMethodId, cancellation);
+                        if (!exists) return false;
+                    }
+
+                    return true;
+                })
+                .WithMessage("One or more payment methods are invalid");
+
+            RuleFor(p => p.Amount)
+                .GreaterThan(0m).WithMessage("Payment amount must be greater than 0");
+
+            RuleFor(x => x.Description)
+                .MaximumLength(500).WithMessage("Description cannot exceed 500 characters.");
+
+        }
+    }
+}

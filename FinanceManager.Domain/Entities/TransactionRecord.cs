@@ -31,6 +31,8 @@ namespace FinanceManager.Domain.Entities
         public ApplicationUser?ActionedByApplicationUser { get; set; }
         public DateTime? ActionedAt { get; set; }
 
+        public ICollection<TransactionAttachment> TransactionAttachments { get; set; } = new List<TransactionAttachment>();
+
 
     }
 }

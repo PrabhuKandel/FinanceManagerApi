@@ -1,5 +1,4 @@
 ﻿using FinanceManager.Application.Interfaces;
-using FinanceManager.Application.Validators.TransactionPaymentValidator;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,17 +19,11 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.
                })
                .WithMessage("Invalid transaction category");
 
-
             RuleFor(x => x.Amount)
-                .GreaterThan(0m).WithMessage("Amount must be greater than 0");
-
-            RuleForEach(x => x.Payments)
-                .NotEmpty().WithMessage("At least one payment is required.")
-               .SetValidator(new TransactionPaymentDtoValidator(_context));
-
-            RuleFor(x => x)
-                 .Must(x => x.Amount == x.Payments.Sum(p => p.Amount))
-                 .WithMessage("Total transaction amount must equal sum of payments");
+           .NotEmpty().WithMessage("Amount is required")
+           .GreaterThan(0m).WithMessage("Amount must be greater than 0")
+           .Must((transaction, amount) => amount == transaction.Payments.Sum(p => p.Amount))
+            .WithMessage("Total transaction amount must equal sum of payments");
 
 
             RuleFor(x => x.Description)
