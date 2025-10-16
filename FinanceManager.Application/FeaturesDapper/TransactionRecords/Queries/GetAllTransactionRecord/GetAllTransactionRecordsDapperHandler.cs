@@ -16,6 +16,7 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.G
 
       public async  Task<PaginatedOperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsDapperQuery request, CancellationToken cancellationToken)
         {
+            var isAdmin = userContext.IsAdmin();
 
             var parameters = new DynamicParameters();
             // Pagination
@@ -43,7 +44,7 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.G
 
             var rows = (await transactionRecordsWithTotalCount.ReadAsync()).ToList();
             var totalCount = await transactionRecordsWithTotalCount.ReadSingleAsync<int>();
-            var result = TransactionRecordDapperMapper.MapTransactionRecordResults(rows);
+            var result = TransactionRecordDapperMapper.MapTransactionRecordResults(rows,isAdmin );
 
          
 

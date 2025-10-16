@@ -25,6 +25,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Dtos
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]    
             public ApplicationUserSummaryDto? UpdatedBy { get; set; }
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public ApplicationUserSummaryDto? ActionedBy { get; set; }
 
         }

@@ -6,7 +6,7 @@ namespace FinanceManager.Application.Mapping
 {
     public static class TransactionRecordDapperMapper
     {
-        public static List<TransactionRecordResponseDto> MapTransactionRecordResults(IEnumerable<dynamic> rows)
+        public static List<TransactionRecordResponseDto> MapTransactionRecordResults(IEnumerable<dynamic> rows,bool isAdmin = false)
         {
             var lookup = new Dictionary<Guid, TransactionRecordResponseDto>();
 
@@ -28,24 +28,29 @@ namespace FinanceManager.Application.Mapping
                             Id = row.TransactionCategoryId,
                             Name = row.TransactionCategoryName
                         },
-                        CreatedBy = row.CreatedByUserId == null ? null : new ApplicationUserSummaryDto
-                        {
-                            Id = row.CreatedByUserId,
-                            Email = row.CreatedByEmail
-                        },
-                        UpdatedBy = row.UpdatedByUserId == null ? null : new ApplicationUserSummaryDto
-                        {
-                            Id = row.UpdatedByUserId,
-                            Email = row.UpdatedByEmail
-                        },
-                        ActionedBy = row.ActionedByUserId == null ? null : new ApplicationUserSummaryDto
-                        {
-                            Id = row.ActionedByUserId,
-                            Email = row.ActionedByEmail
-                        },
+              
 
                         TransactionPayments = new List<TransactionPaymentSummaryDto>()
                     };
+                    //only populate for admins
+                    if (isAdmin)
+                    {
+                        tr.CreatedBy = row.CreatedByUserId == null ? null : new ApplicationUserSummaryDto
+                        {
+                            Id = row.CreatedByUserId,
+                            Email = row.CreatedByEmail
+                        };
+                        tr.UpdatedBy = row.UpdatedByUserId == null ? null : new ApplicationUserSummaryDto
+                        {
+                            Id = row.UpdatedByUserId,
+                            Email = row.UpdatedByEmail
+                        };
+                        tr.ActionedBy = row.ActionedByUserId == null ? null : new ApplicationUserSummaryDto
+                        {
+                            Id = row.ActionedByUserId,
+                            Email = row.ActionedByEmail
+                        };
+                    }
 
                     lookup.Add(tr.Id, tr);
                 }
