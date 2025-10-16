@@ -27,7 +27,7 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.ViewAll)]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.View)]
         public async Task<IActionResult> GetAll()
         {
             var response = await mediator.Send(new GetAllTransactionCategoriesQuery());
@@ -37,7 +37,7 @@ namespace FinanceManager.Api.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.ViewAll)]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.View)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var response = await mediator.Send(new GetTransactionCategoryByIdQuery(id));
@@ -68,7 +68,7 @@ namespace FinanceManager.Api.Controllers
 
         [HttpPut("{id}")]
         //[Authorize(Roles = "Admin")]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.UpdateAll)]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.Update)]
         public async Task<IActionResult> Update(UpdateTransactionCategoryCommand updateCommand)
         {
             var response = await mediator.Send(updateCommand);
@@ -91,7 +91,7 @@ namespace FinanceManager.Api.Controllers
 
         [HttpDelete("{id}")]
         //[Authorize(Roles = "Admin")]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.DeleteAll)]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var response = await mediator.Send(new DeleteTransactionCategoryCommand(id));

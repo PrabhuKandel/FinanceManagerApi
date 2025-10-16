@@ -1,5 +1,6 @@
 ﻿
 
+using FinanceManager.Application.Interfaces;
 using FinanceManager.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,9 +15,11 @@ namespace FinanceManager.Infrastructure.Identity
             using var scope = serviceProvider.CreateScope();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
 
             // Seed role claims
-            await RoleClaimsSeeder.SeedRoleClaims(roleManager);
+            await PermissionSeeder.SeedPermissionsAsync(context);
+            await RoleClaimsSeeder.SeedRoleClaims(roleManager,context);
 
          
         }

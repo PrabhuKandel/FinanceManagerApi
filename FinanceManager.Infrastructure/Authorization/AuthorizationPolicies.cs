@@ -10,13 +10,11 @@ namespace FinanceManager.Infrastructure.Authorization
         {
             var allPermissions = new[]
             {
-                PermissionConstants.TransactionCategoryPermissions.ViewOwn,
-                PermissionConstants.TransactionCategoryPermissions.ViewAll,
+                PermissionConstants.TransactionCategoryPermissions.View,
                 PermissionConstants.TransactionCategoryPermissions.Create,
-                PermissionConstants.TransactionCategoryPermissions.UpdateOwn,
-                PermissionConstants.TransactionCategoryPermissions.UpdateAll,
-                PermissionConstants.TransactionCategoryPermissions.DeleteOwn,
-                PermissionConstants.TransactionCategoryPermissions.DeleteAll,
+                PermissionConstants.TransactionCategoryPermissions.Update,
+                PermissionConstants.TransactionCategoryPermissions.Delete
+       
             };
                     
             foreach (var permission in allPermissions)

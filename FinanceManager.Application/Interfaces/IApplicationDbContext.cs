@@ -23,6 +23,8 @@ namespace FinanceManager.Application.Interfaces
 
         DbSet<TransactionAttachment> TransactionAttachments { get; set; }
 
+        DbSet<Permission> Permissions { get; set; }
+
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
