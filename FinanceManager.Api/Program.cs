@@ -3,8 +3,10 @@ using FinanceManager.Api.Filters;
 using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Domain.Entities;
+using FinanceManager.Infrastructure.Authorization;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.DependencyInjection;
+using FinanceManager.Infrastructure.Identity;
 using FinanceManager.Infrastructure.Jobs.Registration;
 using HandlebarsDotNet;
 using Hangfire;
@@ -130,6 +132,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    AuthorizationPolicies.AddPermissionPolicies(options);
+});
 
 
 builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLoggingFillter>());
@@ -153,6 +159,11 @@ app.UseCors("FinanceManagerVue");
 //    await RoleSeeder.SeedAdminUserAsync(userManager);
 
 //}
+using (var scope = app.Services.CreateScope())
+{
+    await scope.ServiceProvider.SeedIdentityDataAsync();
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -14,16 +14,16 @@ namespace FinanceManager.Application.Services
     {
         private readonly IConfiguration _config;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;    
 
-        public TokenGenerator(IConfiguration config, UserManager<ApplicationUser> userManager)
+        public TokenGenerator(IConfiguration config, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _config = config;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
         public async Task<string> GenerateAccessToken(ApplicationUser user)
         {
-            var roles = await _userManager.GetRolesAsync(user);
-            var role = roles.FirstOrDefault();
 
             var claims = new List<Claim>
             {
@@ -32,8 +32,21 @@ namespace FinanceManager.Application.Services
             
 
             };
-            if (role != null)
-                claims.Add(new Claim(ClaimTypes.Role, role));
+            // 1️⃣ Add role(s)
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var roleName in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, roleName));
+
+                // 2️⃣ Add role claims
+                var role = await _roleManager.FindByNameAsync(roleName);
+                if (role != null)
+                {
+                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+                    claims.AddRange(roleClaims);
+                }
+            }
+
 
             var SignKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SecretKey"]));
 

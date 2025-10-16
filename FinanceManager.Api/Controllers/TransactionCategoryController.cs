@@ -6,6 +6,7 @@ using FinanceManager.Application.Features.TransactionCategories.Queries.GetById;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.CreateTransactionCategory;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.DeleteTransactionCategory;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.UpdateTransactionCategory;
+using FinanceManager.Infrastructure.Authorization;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace FinanceManager.Api.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TransactionCategoryController : ControllerBase
     {
         private readonly IMediator mediator;
@@ -25,6 +27,7 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.ViewAll)]
         public async Task<IActionResult> GetAll()
         {
             var response = await mediator.Send(new GetAllTransactionCategoriesQuery());
@@ -34,6 +37,7 @@ namespace FinanceManager.Api.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.ViewAll)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var response = await mediator.Send(new GetTransactionCategoryByIdQuery(id));
@@ -44,6 +48,7 @@ namespace FinanceManager.Api.Controllers
         }   
         [HttpPost]
         //[Authorize(Roles = "Admin")]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.Create)]
         public async Task<IActionResult> Create(CreateTransactionCategoryCommand createCommand)
         {
 
@@ -63,6 +68,7 @@ namespace FinanceManager.Api.Controllers
 
         [HttpPut("{id}")]
         //[Authorize(Roles = "Admin")]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.UpdateAll)]
         public async Task<IActionResult> Update(UpdateTransactionCategoryCommand updateCommand)
         {
             var response = await mediator.Send(updateCommand);
@@ -85,6 +91,7 @@ namespace FinanceManager.Api.Controllers
 
         [HttpDelete("{id}")]
         //[Authorize(Roles = "Admin")]
+        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.DeleteAll)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var response = await mediator.Send(new DeleteTransactionCategoryCommand(id));
