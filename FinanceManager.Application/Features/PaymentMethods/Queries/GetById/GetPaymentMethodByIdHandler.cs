@@ -6,7 +6,7 @@ using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Mapping;
 using MediatR;
 
-namespace FinanceManager.Application.Features.PaymentMethods.Queries
+namespace FinanceManager.Application.Features.PaymentMethods.Queries.GetById
 {
     public class GetPaymentMethodByIdHandler : IRequestHandler<GetPaymentMethodByIdQuery, OperationResult<PaymentMethodResponseDto>>
     {

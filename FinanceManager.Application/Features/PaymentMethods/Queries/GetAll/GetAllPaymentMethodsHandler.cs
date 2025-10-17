@@ -7,7 +7,7 @@ using FinanceManager.Application.Mapping;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinanceManager.Application.Features.PaymentMethods.Queries
+namespace FinanceManager.Application.Features.PaymentMethods.Queries.GetAll
 {
     public class GetAllPaymentMethodsHandler : IRequestHandler<GetAllPaymentMethodsQuery, OperationResult<IEnumerable<PaymentMethodResponseDto>>>
     {

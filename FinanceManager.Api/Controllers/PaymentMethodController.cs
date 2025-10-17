@@ -1,7 +1,8 @@
 ﻿using FinanceManager.Application.Features.PaymentMethods.Commands.Create;
 using FinanceManager.Application.Features.PaymentMethods.Commands.Delete;
 using FinanceManager.Application.Features.PaymentMethods.Commands.Update;
-using FinanceManager.Application.Features.PaymentMethods.Queries;
+using FinanceManager.Application.Features.PaymentMethods.Queries.GetAll;
+using FinanceManager.Application.Features.PaymentMethods.Queries.GetById;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.CreatePaymentMethod;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.DeletePaymentMethod;
 using FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.UpdatePaymentMethod;
