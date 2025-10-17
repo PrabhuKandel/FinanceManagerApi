@@ -1,7 +1,7 @@
 import axiosInstance from './axiosInstance';
-export const getRoles = async () => {
+export const getPermission = async () => {
   try {
-    const response = await axiosInstance.get('/roles/get-all'); 
+    const response = await axiosInstance.get('/permissions/get-all');
     return response.data;
   } catch (error) {
     console.error('Error fetching roles ', error);
