@@ -28,7 +28,7 @@ const processQueue = (error, token = null) => {
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken'); // get token from localStorage
-    console.log("login api called");
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -44,7 +44,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log(error.response);
+  
     // If 401 and not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
