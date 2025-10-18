@@ -1,5 +1,6 @@
 ﻿    using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Features.Auth.Commands;
+using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +19,7 @@ namespace FinanceManager.Api.Controllers
             mediator = _mediator;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = PermissionConstants.AuthPermissions.RegisterUser)]
         [HttpPost("register")]
         public async Task<IActionResult> Register(ApplicationUserRegisterDto registerUser)
         {
@@ -29,7 +30,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login(ApplicationUserLoginDto loginUser)
         {
@@ -46,6 +47,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
+
         [HttpPost("refresh-token")]
 
         public async Task<IActionResult> RefreshToken(RefreshTokenCommand refreshToken)
@@ -55,8 +57,9 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
+
+        [Authorize(Policy = PermissionConstants.AuthPermissions.RevokeToken)]
         [HttpPost("revoke-token")]
-        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> RevokeToken(RevokeTokenCommand command)
         {
             var response = await mediator.Send(command);

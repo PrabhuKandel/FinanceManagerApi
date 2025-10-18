@@ -48,7 +48,7 @@ export const getTransactionRecordById = async (id) => {
 
 export const updateTransactionRecord = async (id,data) => {
   try {
-    console.log(id);
+
     const response = await axiosInstance.put(`/transaction-records/${id}`, data);
     return response.data;
   } catch (error) {
@@ -71,8 +71,7 @@ export const exportTransactionRecordsExcel = async (filters = {}, page = 1, page
       sortBy: filters.sortBy || null,
       sortDescending: filters.sortDescending || true
     };
-    console.log(filters);
-    console.log(payload);
+
     // Pass filters as query parameters if needed
     const response = await axiosInstance.post('/transaction-records/export/excel',payload ,{
 
@@ -127,8 +126,10 @@ export const patchApprovalStatus = async (id, approvalStatus) => {
 
 export const addTransactionRecord = async (data) => {
   try {
-    const response = await axiosInstance.post('/transaction-records', data); 
-    console.log("mock:", response)
+    console.log("Transacton record data", data);
+    const response = await axiosInstance.post('/transaction-records', data);
+
+   
     return response.data;
   } catch (error) {
     return Promise.reject(error.response.data); 

@@ -46,8 +46,6 @@
 
   <ItemGroup>
     <Folder Include="Features\Auth\Queries\" />
-    <Folder Include="Features\PaymentMethods\Queries\GetAll\" />
-    <Folder Include="Features\PaymentMethods\Queries\GetById\" />
   </ItemGroup>
 
 </Project>
