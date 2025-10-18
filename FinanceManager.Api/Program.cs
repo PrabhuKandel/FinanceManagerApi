@@ -3,7 +3,8 @@ using FinanceManager.Api.Filters;
 using FinanceManager.Api.Middlewares;
 using FinanceManager.Application.DependencyInjection;
 using FinanceManager.Domain.Entities;
-using FinanceManager.Infrastructure.Authorization;
+using FinanceManager.Infrastructure.Authorization.Extensions;
+using FinanceManager.Infrastructure.Authorization.Policies;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.DependencyInjection;
 using FinanceManager.Infrastructure.Identity;
@@ -132,10 +133,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    AuthorizationPolicies.AddPermissionPolicies(options);
-});
+builder.Services.AddAppAuthorization();
+
 
 
 builder.Services.AddControllers(options => options.Filters.Add<RequestResponseLoggingFillter>());
@@ -144,21 +143,7 @@ builder.Services.AddHangfireServer();
 var app = builder.Build();
 app.UseCors("FinanceManagerVue");
 
-// Apply migrations and seed data
-//using (var scope = app.Services.CreateScope())
 
-//{
-//    var services = scope.ServiceProvider;
-//    var context = services.GetRequiredService<ApplicationDbContext>();
-//    context.Database.Migrate(); // apply any pending migrations
-//    DbSeeder.Seed(context);     // run your manual seeding
-//    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-//    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-
-//    await RoleSeeder.SeedRolesAsync(roleManager);
-//    await RoleSeeder.SeedAdminUserAsync(userManager);
-
-//}
 using (var scope = app.Services.CreateScope())
 {
     await scope.ServiceProvider.SeedIdentityDataAsync();
@@ -225,7 +210,7 @@ Handlebars.RegisterHelper("formatDate", (writer, context, parameters) =>
 });
 
 
-
+    
 app.MapControllers();
 app.Run();
 public partial class Program { }

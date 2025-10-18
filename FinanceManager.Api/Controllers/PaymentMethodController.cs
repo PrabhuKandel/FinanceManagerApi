@@ -13,7 +13,9 @@ using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands
 using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Commands.UpdatePaymentMethod;
 using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GellAllPaymentMethod;
 using FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GetPaymentMethodById;
+using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -22,6 +24,7 @@ namespace FinanceManager.Api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PaymentMethodController: ControllerBase
     {
         private readonly IMediator mediator;
@@ -33,6 +36,8 @@ namespace FinanceManager.Api.Controllers
            
         }
 
+
+        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.View)]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -57,7 +62,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-
+        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.View)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById( Guid id)
         {
@@ -88,6 +93,7 @@ namespace FinanceManager.Api.Controllers
 
 
 
+        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.Create)]
         [HttpPost]
         public async Task<IActionResult> Create(CreatePaymentMethodCommand createCommand)
         {
@@ -117,8 +123,8 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.Update)]
         [HttpPut("{id}")]
-
         public async Task<IActionResult> Update(UpdatePaymentMethodCommand updateCommand)
         {
             var response = await mediator.Send(updateCommand);
@@ -145,8 +151,8 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.Delete)]
         [HttpDelete("{id}")]
-
         public async Task<IActionResult> Delete(Guid id)
         {
             var response = await mediator.Send(new DeletePaymentMethodCommand(id));

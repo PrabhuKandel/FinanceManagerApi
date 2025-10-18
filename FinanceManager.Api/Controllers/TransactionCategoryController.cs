@@ -6,7 +6,7 @@ using FinanceManager.Application.Features.TransactionCategories.Queries.GetById;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.CreateTransactionCategory;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.DeleteTransactionCategory;
 using FinanceManager.Application.FeaturesStoredProcedure.TransactionCategory.Commands.UpdateTransactionCategory;
-using FinanceManager.Infrastructure.Authorization;
+using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -2,6 +2,8 @@
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Infrastructure.Authorization;
+using FinanceManager.Infrastructure.Authorization.ClaimTypes;
+using FinanceManager.Infrastructure.Authorization.Permissions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using  System.Security.Claims;
@@ -10,35 +12,40 @@ namespace FinanceManager.Infrastructure.Identity
 {
     public static class RoleClaimsSeeder
     {
-        public static async Task SeedRoleClaims(RoleManager<IdentityRole> roleManager, IApplicationDbContext context)
+        private static readonly Dictionary<string, IEnumerable<string>> RolePermissions = new()
         {
-            // Ensure Admin role exists
-            var adminRole = await roleManager.FindByNameAsync(RoleConstants.Admin)?? new IdentityRole(RoleConstants.Admin);
-            if (adminRole.Id == null) await roleManager.CreateAsync(adminRole);
+            [RoleConstants.Admin] = PermissionHelper.GetAdminPermissions(),
 
-          
-            // Example: Normal User role
-            var userRole = await roleManager.FindByNameAsync(RoleConstants.User)??new IdentityRole(RoleConstants.User);
-            if (userRole.Id == null) await roleManager.CreateAsync(userRole);
+            [RoleConstants.User] = PermissionHelper.GetUserPermissions()
+        };
 
-            // Get all permissions
-            var permissions = await context.Permissions.Where(p => p.IsActive).ToListAsync();
-
-            // Assign all permissions to Admin
-            var adminClaims = await roleManager.GetClaimsAsync(adminRole);
-            foreach (var perm in permissions)
+        public static async Task SeedRoleClaimsAsync(RoleManager<IdentityRole> roleManager)
+        {
+            foreach (var (roleName, permissions) in RolePermissions)
             {
-                if (!adminClaims.Any(c => c.Type == perm.Name))
-                    await roleManager.AddClaimAsync(adminRole, new Claim(perm.Name, "true"));
+                var role = await EnsureRoleExistsAsync(roleManager, roleName);
+
+                var existingClaims = await roleManager.GetClaimsAsync(role);
+                foreach (var permission in permissions)
+                {
+                    if (!existingClaims.Any(c =>
+                        c.Type == CustomClaimTypes.Permission && c.Value == permission))
+                    {
+                        await roleManager.AddClaimAsync(role,
+                            new Claim(CustomClaimTypes.Permission, permission));
+                    }
+                }
             }
-            // Assign all permissions to User (for simplicity now)
-            var userClaims = await roleManager.GetClaimsAsync(userRole);
-            foreach (var perm in permissions)
-            {
-                if (!userClaims.Any(c => c.Type == perm.Name))
-                    await roleManager.AddClaimAsync(userRole, new Claim(perm.Name, "true"));
-            }
-       
+        }
+
+        private static async Task<IdentityRole> EnsureRoleExistsAsync(RoleManager<IdentityRole> roleManager, string roleName)
+        {
+            var role = await roleManager.FindByNameAsync(roleName);
+            if (role != null) return role;
+
+            role = new IdentityRole(roleName);
+            await roleManager.CreateAsync(role);
+            return role;
         }
     }
 }

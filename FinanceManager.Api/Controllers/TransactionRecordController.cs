@@ -17,7 +17,9 @@ using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.Patc
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.UpdateTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetAllTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetTransactionRecordById;
+using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -34,6 +36,7 @@ namespace FinanceManager.Api.Controllers
         {
             mediator = _mediator;
         }
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.View)]
 
         [HttpPost("get-all")]
         public async Task<IActionResult> GetAll(GetAllTransactionRecordsQuery query)
@@ -52,7 +55,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.View)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -76,21 +79,11 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromForm(Name="transactionRecord")] string transactionRecord, [FromForm(Name ="transactionAttachments")] IFormFile[]?transactionAttachments)
-        //{
-        //    var command = JsonSerializer.Deserialize<CreateTransactionRecordCommand>(
-        //           transactionRecord,
-        //           new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!
-        //           with
-        //    { TransactionAttachments = transactionAttachments ?? Array.Empty<IFormFile>() };
-        //    var response = await mediator.Send(command);
-        //    return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
-        //}
 
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Create)]
         [HttpPost]
-        public async Task<IActionResult> CreateOrUpdate(
+        public async Task<IActionResult> Create(
         [FromForm]
         [ModelBinder(BinderType = typeof(TransactionRecordCommandModelBinder))]
         CreateTransactionRecordCommand command)
@@ -109,6 +102,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Update)]
         [HttpPut("{id}")]   
         public async Task<IActionResult> Update(UpdateTransactionRecordCommand updateCommand)
         {
@@ -134,6 +128,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Approve)]
         [HttpPatch("approval")]
         public async Task<IActionResult> PatchApprovalStatus(PatchTransactionRecordApprovalStatusCommand patchCommand)
         {
@@ -142,7 +137,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Update)]
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patch(PatchTransactionRecordCommand patchCommand)
         {
@@ -160,9 +155,8 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Delete)]
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
           
@@ -180,6 +174,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Delete)]
         [HttpDelete("attachments")]
         public async Task<IActionResult> DeleteAttachments(DeleteTransactionRecordAttachmentCommand command)
         {
@@ -189,6 +184,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Export)]
         [HttpPost("export/excel")]
         public async Task<IActionResult> ExportTransactionRecords(ExportTransactionRecordsQuery query)
         {
@@ -200,6 +196,7 @@ namespace FinanceManager.Api.Controllers
             );
         }
 
+        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Export)]
         [HttpPost("export/pdf")]
         public async Task<IActionResult> ExportToPdf(ExportTransactionRecordsToPdfQuery query)
         {
