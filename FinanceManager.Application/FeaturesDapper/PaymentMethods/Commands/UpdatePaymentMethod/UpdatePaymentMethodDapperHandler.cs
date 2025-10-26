@@ -2,7 +2,7 @@
 using Ardalis.GuardClauses;
 using Dapper;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Features.PaymentMethods.Dtos;
 using MediatR;
 
 namespace FinanceManager.Application.FeaturesDapper.PaymentMethods.Commands.UpdatePaymentMethod

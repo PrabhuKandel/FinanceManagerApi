@@ -1,12 +1,10 @@
-﻿using System.Data;
-using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.PaymentMethod;
+﻿using FinanceManager.Application.Common;
 using FinanceManager.Application.Interfaces;
-using FinanceManager.Application.Mapping;
 using MediatR;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using FinanceManager.Application.Features.PaymentMethods.Mapping;
+using FinanceManager.Application.Features.PaymentMethods.Dtos;
 
 
 namespace FinanceManager.Application.FeaturesStoredProcedure.PaymentMethods.Queries.GellAllPaymentMethod

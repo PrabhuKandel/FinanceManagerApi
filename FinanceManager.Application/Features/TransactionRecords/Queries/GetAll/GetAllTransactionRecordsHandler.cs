@@ -2,7 +2,6 @@
 using System.Linq.Dynamic.Core;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Mapping;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;

@@ -1,12 +1,11 @@
 ﻿using Dapper;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Mapping;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Mapping;
 using FinanceManager.Domain.Enums;
 using MediatR;
 using System.Data;
-using static Dapper.SqlMapper;
 
 namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord
 {
@@ -48,7 +47,7 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.
 
           
 
-                var result = TransactionRecordDapperMapper.MapTransactionRecordResults(rows);
+                var result = TransactionRecordMappingProfile.MapTransactionRecordResults(rows);
 
                 return new OperationResult<TransactionRecordResponseDto>
                 {

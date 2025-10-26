@@ -1,31 +1,23 @@
 import axiosInstance from './axiosInstance';
 export const getTransactionRecords = async (page = 1, size = 10, filters = {}) => {
   try {
-    const {
-      fromDate = '',
-      toDate = '',
-      createdBy = '',
-      updatedBy = '',
-      approvalStatus='',
-      search = '',
-      sortBy = '',
-      sortDescending=true
-    } = filters;
+
 
     const payload = {
       pageNumber: page,
       pageSize: size,
-      fromDate,
-      toDate,
-      createdBy,
-      updatedBy,
-      approvalStatus,
-      search,
-      sortBy,
-      sortDescending
+      fromDate: filters.fromDate || null,
+      toDate: filters.toDate || null,
+      createdBy: filters.createdBy || null,
+      updatedBy: filters.updatedBy || null,
+      approvalStatus: filters.approvalStatus || null,
+      search: filters.search || null,
+      sortBy: filters.sortBy || null,
+      sortDescending: filters.sortDescending ?? true
     };
 
-    const response = await axiosInstance.post('/transaction-records/get-all', payload) 
+    const response = await axiosInstance.post('/transaction-records/dapper-get-all', payload)
+
     return response.data;
     
   } catch (error) {
@@ -69,8 +61,9 @@ export const exportTransactionRecordsExcel = async (filters = {}, page = 1, page
       approvalStatus: filters.approvalStatus || null,
       search: filters.search || null,
       sortBy: filters.sortBy || null,
-      sortDescending: filters.sortDescending || true
+      sortDescending: filters.sortDescending ?? true
     };
+
 
     // Pass filters as query parameters if needed
     const response = await axiosInstance.post('/transaction-records/export/excel',payload ,{

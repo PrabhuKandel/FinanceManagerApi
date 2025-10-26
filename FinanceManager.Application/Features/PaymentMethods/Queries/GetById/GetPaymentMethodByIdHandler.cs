@@ -1,9 +1,8 @@
 ﻿using Ardalis.GuardClauses;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Features.PaymentMethods.Dtos;
 using FinanceManager.Application.Features.PaymentMethods.Mapping;
 using FinanceManager.Application.Interfaces;
-using FinanceManager.Application.Mapping;
 using MediatR;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Queries.GetById

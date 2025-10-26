@@ -8,7 +8,6 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.
     public record UpdateTransactionRecordDapperCommand(
         Guid Id, 
         Guid TransactionCategoryId,
-        Guid PaymentMethodId,
         Decimal Amount, 
         string? Description,
         DateTime TransactionDate,

@@ -2,10 +2,10 @@
 using Dapper;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Mapping;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Mapping;
-using FinanceManager.Application.Services;
 using MediatR;
+
 
 
 
@@ -40,11 +40,11 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.G
             {
                 parameters.Add("@CurrentUserId", userContext.UserId);
             }
-            using var transactionRecordsWithTotalCount = await connection.QueryMultipleAsync("usp_GetAllTransactionRecords", commandType: CommandType.StoredProcedure);
+             var rows   = await connection.QueryAsync("usp_GetAllTransactionRecordsV2",parameters, commandType: CommandType.StoredProcedure);
 
-            var rows = (await transactionRecordsWithTotalCount.ReadAsync()).ToList();
-            var totalCount = await transactionRecordsWithTotalCount.ReadSingleAsync<int>();
-            var result = TransactionRecordDapperMapper.MapTransactionRecordResults(rows,isAdmin );
+            var totalCount = rows.FirstOrDefault()?.TotalCount ?? 0;
+
+            var result = TransactionRecordMappingProfile.MapTransactionRecordResults(rows,isAdmin );
 
          
 

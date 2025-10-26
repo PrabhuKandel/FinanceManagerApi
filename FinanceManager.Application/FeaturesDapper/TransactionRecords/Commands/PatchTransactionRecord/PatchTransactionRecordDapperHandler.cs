@@ -4,9 +4,9 @@ using Dapper;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Exceptions;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Mapping;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Mapping;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -62,7 +62,7 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.
                 parameters
                 , commandType: CommandType.StoredProcedure);
 
-            var result = TransactionRecordDapperMapper.MapTransactionRecordResults(rows);
+            var result = TransactionRecordMappingProfile.MapTransactionRecordResults(rows);
             return new OperationResult<TransactionRecordResponseDto>
             {
                 Message = "Transaction record patched",
