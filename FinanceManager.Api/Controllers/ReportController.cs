@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Application.Features.Report.Commands.TransactionRecordSummaryByIncomeExpense;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,14 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> GetIncomeExpenseSummary( TransactionRecordSummaryByCategoryTypeCommand command)
         {
             var response = await sender.Send(command);
+            return Ok(response);
+
+        }
+
+        [HttpPost("summary/payment-method")]
+        public async Task<IActionResult> GetTransactionRecordSummaryByPaymentMethod(TransactionRecordSummaryByPaymentMethodQuery query)
+        {
+            var response = await sender.Send(query);
             return Ok(response);
 
         }

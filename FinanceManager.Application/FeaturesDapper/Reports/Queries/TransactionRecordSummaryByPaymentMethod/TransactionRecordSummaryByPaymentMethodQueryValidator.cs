@@ -1,19 +1,19 @@
-﻿using FinanceManager.Application.Interfaces;
+﻿
+
+using FinanceManager.Application.Interfaces;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory
+namespace FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod
 {
-    public class TransactionRecordSummaryByTransactionCategoryQueryValidator:AbstractValidator<TransactionRecordSummaryByTransactionCategoryQuery>
+    public class TransactionRecordSummaryByPaymentMethodQueryValidator:AbstractValidator<TransactionRecordSummaryByPaymentMethodQuery>
     {
-   
-
-        public TransactionRecordSummaryByTransactionCategoryQueryValidator(IApplicationDbContext context)
+        public TransactionRecordSummaryByPaymentMethodQueryValidator(IApplicationDbContext context)
         {
-            RuleFor(x => x.TransactionCategoryId)
-                .MustAsync((id, ct) => context.TransactionCategories.AnyAsync(c => c.Id == id, ct))
-                .WithMessage("Invalid transaction category")
-                .When(x => x.TransactionCategoryId.HasValue);
+            RuleFor(x => x.PaymentMethodId)
+                .MustAsync((id, ct) => context.PaymentMethods.AnyAsync(pm => pm.Id == id, ct))
+                .WithMessage("Invalid payment  methos")
+                .When(x => x.PaymentMethodId.HasValue);
 
             RuleFor(x => x.FromDate)
                 .Must(date => !date.HasValue || date.Value <= DateTime.UtcNow)
