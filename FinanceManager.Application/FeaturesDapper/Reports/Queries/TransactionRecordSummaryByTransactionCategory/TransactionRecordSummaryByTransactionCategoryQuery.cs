@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.Report;
+using FinanceManager.Application.FeaturesDapper.Reports.Dtos;
 using MediatR;
 
 namespace FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory

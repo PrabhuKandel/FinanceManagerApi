@@ -1,5 +1,4 @@
-﻿using FinanceManager.Application.Dtos.TransactionRecord;
-using FinanceManager.Application.Features.TransactionCategories.Commands.Create;
+﻿using FinanceManager.Application.Features.TransactionCategories.Commands.Create;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Update;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;

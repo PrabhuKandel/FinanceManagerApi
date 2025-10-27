@@ -456,7 +456,7 @@
       });
 
       transactionRecords.value = response;
-      console.log(response);
+
       // Update pagination info
       currentPage.value = response?.pageNumber;
       totalPages.value = response?.totalPages;
@@ -487,7 +487,7 @@
       const url = window.URL.createObjectURL(new Blob([blobData]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'TransactionRecords.xls');
+      link.setAttribute('download', 'TransactionRecords.xlsx');
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -529,7 +529,7 @@
       await patchApprovalStatus(txnId, newStatus);
       //txn.approvalStatus = newStatus;
       fetchTransactionRecords();
-      console.log('Status updated successfully');
+
     } catch (error) {
       console.error('Failed to update status', error);
     }
@@ -556,7 +556,6 @@
     try {
       const response = await getApplicationUsers();
       users.value = response?.data
-      console.log(response);
     } catch (err) {
       console.error('Failed to fetch users for dropdown', err);
     }

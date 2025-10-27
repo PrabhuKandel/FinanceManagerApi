@@ -1,6 +1,6 @@
 <template>
   <div class="modal-backdrop" >
-    <div class="modal-container">
+    <div class="modal-container p-4">
       <div class="modal-content shadow-sm">
         <div class="modal-header">
           <h5  class="modal-title align-items-center mb-4">{{ props.formMode === 'create' ? 'Create Transaction' : 'Edit Transaction' }}</h5>
@@ -40,44 +40,89 @@
             </div>
 
             <!-- Payments -->
-            <div class="mb-3">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <label class="form-label mb-0">Payments</label>
-                <button type="button" class="btn btn-sm btn-primary" @click="addPayment">Add Payment</button>
-              </div>
+                <label class="form-label mb-2">Payments</label>
+                <div class="mb-3 -center border border-gray rounded p-3  bg-light">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
 
-              <div v-for="(p, index) in form.payments" :key="index" class="row g-2 mb-2 align-items-center">
-                <div class="col-md-5">
-                  <select v-model="p.paymentMethodId" class="form-select" :class="{ 'is-invalid': getFieldError(`TransactionRecord.Payments[${index}].PaymentMethodId`) }">
-                    <option value="">Select Payment Method</option>
-                    <option v-for="m in availableMethods(index)"
-                            :key="m.id"
-                            :value="m.id">
-                      {{ m.name }} {{ !m.isActive ? '(Inactive)' : '' }}
-                    </option>
-                  </select>
-                  <div class="invalid-feedback">{{ getFieldError(`TransactionRecord.Payments[${index}].PaymentMethodId`) }}</div>
-                </div>
-                <div class="col-md-5">
-                  <input v-model.number="p.amount" type="number" placeholder="Amount" class="form-control" :class="{ 'is-invalid': getFieldError(`TransactionRecord.Payments[${index}].Amount`) }" />
-                  <div class="invalid-feedback">{{ getFieldError(`TransactionRecord.Payments[${index}].Amount`) }}</div>
-                </div>
-                <div class="col-md-2 d-flex justify-content-center">
-                  <button type="button" class="btn btn-danger btn-sm" @click="removePayment(index)">X</button>
-                </div>
-              </div>
-            </div>
+                  </div>
 
-            <!-- Transaction Attachments -->
+                  <div v-for="(p, index) in form.payments" :key="index" class="row g-2 mb-2 align-items">
+                    <div class="col-md-5">
+                      <select v-model="p.paymentMethodId" class="form-select" :class="{ 'is-invalid': getFieldError(`TransactionRecord.Payments[${index}].PaymentMethodId`) }">
+                        <option value="">Select Payment Method</option>
+                        <option v-for="m in availableMethods(index)"
+                                :key="m.id"
+                                :value="m.id">
+                          {{ m.name }} {{ !m.isActive ? '(Inactive)' : '' }}
+                        </option>
+                      </select>
+                      <div class="invalid-feedback">{{ getFieldError(`TransactionRecord.Payments[${index}].PaymentMethodId`) }}</div>
+                    </div>
+                    <div class="col-md-5">
+                      <input v-model.number="p.amount" type="number" placeholder="Amount" class="form-control" :class="{ 'is-invalid': getFieldError(`TransactionRecord.Payments[${index}].Amount`) }" />
+                      <div class="invalid-feedback">{{ getFieldError(`TransactionRecord.Payments[${index}].Amount`) }}</div>
+                    </div>
+                    <div class="col-md-2 d-flex justify-content-center">
+                      <i class="bi bi-x-lg text-danger   ms-2" style="cursor:pointer" @click="removePayment(index)"></i>
+
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-sm btn-primary d-flex mt-2 align-items-center" @click="addPayment">
+                    <i class="bi bi-plus-lg me-1"></i> Add Payment
+                  </button>
+
+
+                </div>
+
             <div class="mb-3">
               <label class="form-label">Attachments</label>
               <input type="file"
                      multiple
                      @change="onFilesSelected"
-                     class="form-control"
-                     :class="{ 'is-invalid': getFieldError('TransactionRecord.TransactionAttachments') }" />
-              <div class="invalid-feedback">{{ getFieldError('TransactionRecord.TransactionAttachments') }}</div>
+                     :class="['form-control', { 'is-invalid': getFieldError('TransactionRecord.TransactionAttachments') }]" />
+
+
+
+              <!-- Show validation error -->
+              <div v-if="getFieldError('TransactionRecord.TransactionAttachments')" class="invalid-feedback d-block">
+                {{ getFieldError('TransactionRecord.TransactionAttachments') }}
+              </div>
+
+              <div v-if="selectedFiles.length" class="mt-2 border rounded p-2 bg-light">
+                <div v-for="(file, index) in selectedFiles" :key="index"
+                     class="d-flex align-items-center g-2 mb-1">
+                  <div class="d-flex align-items-center">
+                    <!-- File icon -->
+                    <span class="me-2 fs-5">
+                      <i class="bi bi-file-earmark"></i>
+                    </span>
+                    <div>
+                      {{ file.name }}
+                      <small class="text-muted">({{ (file.size / 1024).toFixed(1) }} KB)</small>
+                    </div>
+
+                  </div>
+                  <!-- Remove button (icon only) -->
+
+                  <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" @click="removeFile(index)"></i>
+
+                </div>
+
+                <div class="text-end mt-2">
+                  <!-- Clear All as text -->
+                  <button type="button" class="btn btn-sm btn-danger" @click="clearAllFiles">
+                    Clear All
+                  </button>
+                </div>
+
+              </div>
+
+              <div class="invalid-feedback">
+                {{ getFieldError('TransactionRecord.TransactionAttachments') }}
+              </div>
             </div>
+
+
 
 
             <button type="submit" class="btn btn-success  w-25">{{ props.formMode === 'create' ? 'Submit' : 'Update' }}</button>
@@ -89,7 +134,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted ,computed} from 'vue'
   import Layout from '../components/Layout.vue'
   import { useRouter } from 'vue-router'
   import { getPaymentMethods } from '../api/paymentMethodApi'
@@ -123,13 +168,34 @@
   const paymentMethods = ref([])
 
   const validationErrors = ref({})
+  const selectedFiles = ref([])
 
 
   // Add/Remove payments
   const addPayment = () => form.value.payments.push({ paymentMethodId: '', amount: '' })
   const removePayment = (index) => form.value.payments.splice(index, 1)
+
+  const transactionAttachments = computed(() => selectedFiles.value)
   const onFilesSelected = (event) => {
-    form.value.transactionAttachments = Array.from(event.target.files)
+    //form.value.transactionAttachments = Array.from(event.target.files)
+    const files = Array.from(event.target.files)
+    selectedFiles.value.push(...files)
+    form.value.transactionAttachments = selectedFiles.value
+ 
+    console.log(form.value);
+
+    event.target.value = ''
+  }
+  const removeFile = (index) => {
+    selectedFiles.value.splice(index, 1)
+    form.value.transactionAttachments = selectedFiles.value
+   
+  }
+
+  const clearAllFiles = () => {
+    selectedFiles.value = []
+    form.value.transactionAttachments = selectedFiles.value
+
   }
 
 
@@ -174,13 +240,11 @@
   const prepareTransactionFormData = () => {
     const formData = new FormData()
 
-    // Separate files from other fields
     const { transactionAttachments, ...rest } = form.value
 
     // Append JSON string of the transaction (without files)
     formData.append('transactionRecord', JSON.stringify(rest))
 
-    // Append all selected files
     if (transactionAttachments && transactionAttachments.length > 0) {
       transactionAttachments.forEach(file => {
         formData.append('transactionAttachments', file)
@@ -199,7 +263,16 @@
 
     try {
       const formData = prepareTransactionFormData()
-     
+      // 🔍 Log all FormData entries
+      console.log('--- FormData Contents ---')
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}:`, value)
+      }
+
+      // 🔍 Check attachments specifically
+      const hasAttachments = formData.getAll('transactionAttachments').length > 0
+      console.log('Has attachments:', hasAttachments)
+
       if (props.formMode === 'create') {
         await addTransactionRecord(formData);
         flashStore.setMessage(' Transaction created successfully!', 'success')

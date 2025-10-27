@@ -1,7 +1,6 @@
-﻿
-using FinanceManager.Application.Dtos.PaymentMethod;
-using FinanceManager.Application.Features.PaymentMethods.Commands.Create;
+﻿using FinanceManager.Application.Features.PaymentMethods.Commands.Create;
 using FinanceManager.Application.Features.PaymentMethods.Commands.Update;
+using FinanceManager.Application.Features.PaymentMethods.Dtos;
 using FinanceManager.Domain.Entities;
 
 namespace FinanceManager.Application.Features.PaymentMethods.Mapping

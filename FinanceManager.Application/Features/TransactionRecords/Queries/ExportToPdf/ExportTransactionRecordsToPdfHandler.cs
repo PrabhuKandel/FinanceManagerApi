@@ -1,9 +1,7 @@
 ﻿
-
-using DocumentFormat.OpenXml.InkML;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetAll;
+using FinanceManager.Application.FeaturesDapper.TransactionRecords.Queries.GetAllTransactionRecord;
 using FinanceManager.Application.Interfaces.Services;
-using FinanceManager.Application.Services;
 using MediatR;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf
@@ -12,7 +10,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries.ExportT
     {
         public async Task<byte[]> Handle(ExportTransactionRecordsToPdfQuery request, CancellationToken cancellationToken)
         {
-            var getAllQuery = new GetAllTransactionRecordsQuery
+            var getAllQuery = new GetAllTransactionRecordsDapperQuery
             {
                 PageNumber = request.PageNumber,
                 PageSize = request.PageSize,

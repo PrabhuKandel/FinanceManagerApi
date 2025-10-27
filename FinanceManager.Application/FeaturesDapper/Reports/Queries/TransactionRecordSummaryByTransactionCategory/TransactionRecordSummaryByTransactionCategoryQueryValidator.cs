@@ -15,9 +15,17 @@ namespace FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionR
                 .WithMessage("Invalid transaction category")
                 .When(x => x.TransactionCategoryId.HasValue);
 
+            RuleFor(x => x.FromDate)
+                .Must(date => !date.HasValue || date.Value <= DateTime.UtcNow)
+                .WithMessage("FromDate cannot exceed current date.");
+
+            RuleFor(x => x.ToDate)
+                .Must(date => !date.HasValue || date.Value <= DateTime.UtcNow)
+                .WithMessage("ToDate cannot exceed current date.");
+
             RuleFor(x => x)
-                .Must(x => x.FromDate <= x.ToDate)
-                .WithMessage("FromDate must be earlier than or equal to ToDate.")
+                .Must(x => x.FromDate < x.ToDate)
+                .WithMessage("FromDate must be earlier than  ToDate.")
                 .When(x => x.FromDate.HasValue && x.ToDate.HasValue);
 
 

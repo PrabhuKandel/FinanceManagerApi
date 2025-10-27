@@ -2,7 +2,6 @@
 using FinanceManager.Application.Features.TransactionCategories.Dtos;
 using FinanceManager.Application.Features.TransactionCategories.Mapping;
 using FinanceManager.Application.Interfaces;
-using FinanceManager.Application.Mapping;
 using MediatR;
 
 

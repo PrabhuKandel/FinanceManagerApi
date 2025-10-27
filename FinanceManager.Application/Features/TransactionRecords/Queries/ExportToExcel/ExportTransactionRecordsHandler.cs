@@ -48,7 +48,7 @@ using Microsoft.EntityFrameworkCore;
 
             //    var records = await query.ToListAsync(cancellationToken);
             // Fetch current page using existing Dapper handler
-            var getAllQuery = new GetAllTransactionRecordsQuery
+            var getAllQuery = new GetAllTransactionRecordsDapperQuery
             {
                 PageNumber = request.PageNumber,
                 PageSize = request.PageSize,

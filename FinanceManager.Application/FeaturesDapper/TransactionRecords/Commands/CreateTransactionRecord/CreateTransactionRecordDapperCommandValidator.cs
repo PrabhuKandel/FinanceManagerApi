@@ -19,8 +19,12 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.
                .WithMessage("Invalid transaction category");
 
 
+
             RuleFor(x => x.Amount)
-                .GreaterThan(0m).WithMessage("Amount must be greater than 0");
+                .NotEmpty().WithMessage("Amount is required")
+                .GreaterThan(0m).WithMessage("Amount must be greater than 0")
+                .Must((transaction, amount) => amount == transaction.Payments.Sum(p => p.Amount))
+                 .WithMessage("Total transaction amount must equal sum of payments");
 
             // Payments validation
             RuleForEach(x => x.Payments)

@@ -1,31 +1,23 @@
 import axiosInstance from './axiosInstance';
 export const getTransactionRecords = async (page = 1, size = 10, filters = {}) => {
   try {
-    const {
-      fromDate = '',
-      toDate = '',
-      createdBy = '',
-      updatedBy = '',
-      approvalStatus='',
-      search = '',
-      sortBy = '',
-      sortDescending=true
-    } = filters;
+
 
     const payload = {
       pageNumber: page,
       pageSize: size,
-      fromDate,
-      toDate,
-      createdBy,
-      updatedBy,
-      approvalStatus,
-      search,
-      sortBy,
-      sortDescending
+      fromDate: filters.fromDate || null,
+      toDate: filters.toDate || null,
+      createdBy: filters.createdBy || null,
+      updatedBy: filters.updatedBy || null,
+      approvalStatus: filters.approvalStatus || null,
+      search: filters.search || null,
+      sortBy: filters.sortBy || null,
+      sortDescending: filters.sortDescending ?? true
     };
 
-    const response = await axiosInstance.post('/transaction-records/get-all', payload) 
+    const response = await axiosInstance.post('/transaction-records/dapper-get-all', payload)
+
     return response.data;
     
   } catch (error) {
@@ -48,7 +40,7 @@ export const getTransactionRecordById = async (id) => {
 
 export const updateTransactionRecord = async (id,data) => {
   try {
-    console.log(id);
+
     const response = await axiosInstance.put(`/transaction-records/${id}`, data);
     return response.data;
   } catch (error) {
@@ -69,10 +61,10 @@ export const exportTransactionRecordsExcel = async (filters = {}, page = 1, page
       approvalStatus: filters.approvalStatus || null,
       search: filters.search || null,
       sortBy: filters.sortBy || null,
-      sortDescending: filters.sortDescending || true
+      sortDescending: filters.sortDescending ?? true
     };
-    console.log(filters);
-    console.log(payload);
+
+
     // Pass filters as query parameters if needed
     const response = await axiosInstance.post('/transaction-records/export/excel',payload ,{
 
@@ -127,8 +119,10 @@ export const patchApprovalStatus = async (id, approvalStatus) => {
 
 export const addTransactionRecord = async (data) => {
   try {
-    const response = await axiosInstance.post('/transaction-records', data); 
-    console.log("mock:", response)
+    console.log("Transacton record data", data);
+    const response = await axiosInstance.post('/transaction-records', data);
+
+   
     return response.data;
   } catch (error) {
     return Promise.reject(error.response.data); 

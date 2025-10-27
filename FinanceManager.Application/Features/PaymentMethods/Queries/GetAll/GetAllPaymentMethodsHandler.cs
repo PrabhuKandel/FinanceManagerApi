@@ -1,13 +1,12 @@
 ﻿using Ardalis.GuardClauses;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.PaymentMethod;
+using FinanceManager.Application.Features.PaymentMethods.Dtos;
 using FinanceManager.Application.Features.PaymentMethods.Mapping;
 using FinanceManager.Application.Interfaces;
-using FinanceManager.Application.Mapping;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace FinanceManager.Application.Features.PaymentMethods.Queries
+namespace FinanceManager.Application.Features.PaymentMethods.Queries.GetAll
 {
     public class GetAllPaymentMethodsHandler : IRequestHandler<GetAllPaymentMethodsQuery, OperationResult<IEnumerable<PaymentMethodResponseDto>>>
     {

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using FinanceManager.Domain.Entities;
+﻿
 
-namespace FinanceManager.Application.Dtos.PaymentMethod
+namespace FinanceManager.Application.Features.PaymentMethods.Dtos
 {
     public class PaymentMethodResponseDto
     {
