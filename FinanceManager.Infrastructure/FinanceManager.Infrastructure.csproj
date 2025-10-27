@@ -14,6 +14,8 @@
 
 	<ItemGroup>
 
+    <PackageReference Include="Bogus" Version="35.6.5" />
+
     <PackageReference Include="Handlebars.Net" Version="2.1.6" />
 
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
