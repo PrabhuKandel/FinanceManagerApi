@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinanceManager.Domain.Entities;
+﻿using FinanceManager.Domain.Entities;
 
-namespace FinanceManager.Infrastructure.Data
+namespace FinanceManager.Infrastructure.Data.Seeder
 {
     public class DbSeeder
     {

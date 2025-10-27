@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FinanceManager.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace FinanceManager.Infrastructure.Data
+namespace FinanceManager.Infrastructure.Data.Seeder
 {
     public class RoleSeeder
     {
@@ -30,11 +30,11 @@ namespace FinanceManager.Infrastructure.Data
 
         public static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager)
         {
-            String FirstName = "Admin";
-            String LastName = "User";
-            String Address = " Admin Country";
-            String adminEmail = "admin@gmail.com";
-            String adminPassword = "Admin@123";
+            string FirstName = "Admin";
+            string LastName = "User";
+            string Address = " Admin Country";
+            string adminEmail = "admin@gmail.com";
+            string adminPassword = "Admin@123";
             
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
             if (adminUser == null)

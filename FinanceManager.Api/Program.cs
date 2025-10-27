@@ -144,9 +144,14 @@ var app = builder.Build();
 app.UseCors("FinanceManagerVue");
 
 
+//seed initial data
 using (var scope = app.Services.CreateScope())
 {
-    await scope.ServiceProvider.SeedIdentityDataAsync();
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+    //await services.SeedIdentityDataAsync();
+    await context.SeedDataAsync(userManager);
 }
 
 
