@@ -24,7 +24,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FinanceManagerVue", policy =>
     {
-        policy.WithOrigins("http://localhost:4643")
+        policy.WithOrigins("http://localhost:4644")
                .AllowAnyHeader()
               .AllowAnyMethod();
     });
