@@ -1,5 +1,6 @@
 ﻿
 using FinanceManager.Application.Interfaces;
+using FinanceManager.Domain.Entities;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -17,6 +18,20 @@ namespace FinanceManager.Application.Features.Budgets.Commands.Create
                  return exists;// true = valid, false = invalid //valid only if category exists
              })
              .WithMessage("Invalid transaction category");
+
+
+            RuleFor(x => x.TransactionCategoryId)
+                .MustAsync(async (id, cancellation) =>
+                {
+                    var type = await _context.TransactionCategories
+                        .Where(c => c.Id == id)
+                        .Select(c => c.Type)
+                        .FirstOrDefaultAsync(cancellation);
+
+                    return type == CategoryType.Expense;
+                })
+                .WithMessage("Budget can only be created for expense categories.");
+
 
             RuleFor(x => x.Amount)
             .NotEmpty().WithMessage("Amount is required")
