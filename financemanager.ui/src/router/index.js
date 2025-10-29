@@ -4,8 +4,8 @@ import TransactionRecordList from '../views/TransactionRecordList.vue';
 import DashboardView from '../views/DashboardView.vue';
 import UserList from '../views/UserList.vue';
 import RoleList from '../views/RoleList.vue';
-import PaymentMethodList from '../views/PaymentMethodList.vue';
-import TransactionCategoryList from '../views/TransactionCategoryList.vue';
+import ReportsHome from '../views/Reports/ReportsHome.vue';
+import BudgetVsActualOutflow from '../views/Reports/BudgetVsActualOutflow.vue';
 import { isAdmin } from '../utils/auth.js';
 
 
@@ -21,6 +21,8 @@ const routes = [
   { path: '/transaction-records', component: TransactionRecordList, meta: { requiresAuth: true } },
   { path: '/users', component: UserList, meta: { requiresAuth: true, requiresAdmin: true } },
   { path: '/roles', component: RoleList, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/reports', component: ReportsHome, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/reports/budget-vs-actual', component: BudgetVsActualOutflow, meta: { requiresAuth: true, requiresAdmin: true } },
 
 
 
