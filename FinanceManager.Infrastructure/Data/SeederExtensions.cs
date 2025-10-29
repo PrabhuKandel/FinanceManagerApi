@@ -12,7 +12,10 @@ namespace FinanceManager.Infrastructure.Data
     {
         public static async Task SeedDataAsync(this IApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-           await TransactionRecordsSeeder.SeedFakeTransactionRecordsAsync(context, userManager);
+            await TransactionCategorySeeder.SeedTransactionCategoryAsync(context);
+            await PaymentMethodSeeder.SeedPaymentMethodAsync(context);
+            await TransactionRecordsSeeder.SeedFakeTransactionRecordsAsync(context, userManager);
+
         }
     }
 }

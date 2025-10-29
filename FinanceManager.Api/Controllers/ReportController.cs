@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType;
+﻿using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
 using MediatR;
@@ -34,6 +35,14 @@ namespace FinanceManager.Api.Controllers
             var response = await sender.Send(query);
             return Ok(response);
 
+        }
+
+        [HttpPost("transaction-category-budget-vs-actual-outflow")]
+
+        public async Task<IActionResult> GetTransactionCategoryBudgetVsActualOutflow(TransactionCategoryBudgetVsActualOutflowQuery query)
+        {
+            var response = await sender.Send(query);
+            return Ok(response);
         }
 
 

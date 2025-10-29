@@ -19,6 +19,7 @@ namespace FinanceManager.Application.Features.Budgets.Mapping
                 Amount = command.Amount,
                 PeriodStart = periodStart,
                 PeriodEnd = periodEnd,
+                PeriodType = command.PeriodType,
                 CreatedByApplicationUserId = userContext.UserId,
                 CreatedAt = DateTime.UtcNow,
                 Status = userContext.IsAdmin() ? BudgetApprovalStatus.Approved : BudgetApprovalStatus.Pending,
