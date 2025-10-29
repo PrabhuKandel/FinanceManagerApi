@@ -1,8 +1,6 @@
-﻿
-
-using FinanceManager.Api.Controllers;
-using FinanceManager.Application.Dtos.TransactionPayment;
+﻿using FinanceManager.Application.Dtos.TransactionPayment;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
+using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Domain.Enums;
@@ -11,12 +9,10 @@ using FinanceManager.IntegrationTest.Shared;
 using FinanceManager.IntegrationTest.Tests.Auth;
 using FluentAssertions;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
-
+using TransactionRecordEntity = FinanceManager.Domain.Entities.TransactionRecord;
 namespace FinanceManager.IntegrationTest.Tests.TransactionRecord
 {
     public class TransactionRecordIntegrationTests : IClassFixture<FinanceManagerWebApplicationFactory>, IDisposable
@@ -131,6 +127,65 @@ namespace FinanceManager.IntegrationTest.Tests.TransactionRecord
 
             // Output for debugging
             _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        [Fact]
+        public async Task PatchApprovalStatus_AsAdmin_UpdatesApprovalStatusSuccessfully()
+        {
+            // Arrange: create an admin user context
+            var adminUser = _context.Users.First(u => u.UserName == "admin@gmail.com");
+            var roles = await _userManager.GetRolesAsync(adminUser);
+            var role = roles.FirstOrDefault() ?? "Admin";
+
+            testUserContext.UserId = adminUser.Id;
+            testUserContext.Role = role;
+
+            // Arrange: create a normal user's transaction (so it's pending initially)
+            var normalUser = _context.Users.First(u => u.UserName == "user@test.com");
+            var transactionCategoryId = _context.TransactionCategories.First().Id;
+            var paymentMethods = _context.PaymentMethods.Take(2).ToList();
+
+            var transaction = new TransactionRecordEntity
+            {
+                Id = Guid.NewGuid(),
+                TransactionCategoryId = transactionCategoryId,
+                Amount = 100m,
+                ApprovalStatus = TransactionRecordApprovalStatus.Pending, // normal user creates pending
+                Description = "Pending transaction for approval test",
+                TransactionDate = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                CreatedByApplicationUserId = normalUser.Id,
+                UpdatedByApplicationUserId = normalUser.Id
+            };
+
+            _context.TransactionRecords.Add(transaction);
+
+            // Create corresponding payments
+            var payments = new List<TransactionPayment>
+            {
+            new() { Id = Guid.NewGuid(), TransactionRecordId = transaction.Id, PaymentMethodId = paymentMethods[0].Id, Amount = 60m },
+            new() { Id = Guid.NewGuid(), TransactionRecordId = transaction.Id, PaymentMethodId = paymentMethods[1].Id, Amount = 40m }
+            };
+            _context.TransactionPayments.AddRange(payments);
+
+            await _context.SaveChangesAsync();
+
+            var patchCommand = new PatchTransactionRecordApprovalStatusCommand
+                (
+                    Id: transaction.Id,
+                    ApprovalStatus: TransactionRecordApprovalStatus.Approved
+                );
+
+            // Act
+            var result = await _mediator.Send(patchCommand);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Message.Should().Be(" Approval status updated successfully.");
+
+
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+
         }
 
 

@@ -145,14 +145,14 @@ app.UseCors("FinanceManagerVue");
 
 
 //seed initial data
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-    //await services.SeedIdentityDataAsync();
-    await context.SeedDataAsync(userManager);
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var context = services.GetRequiredService<ApplicationDbContext>();
+//    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+//    //await services.SeedIdentityDataAsync();
+//    await context.SeedDataAsync(userManager);
+//}
 
 
 // Configure the HTTP request pipeline.
