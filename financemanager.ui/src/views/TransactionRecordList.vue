@@ -134,7 +134,7 @@
                     </button>
                   </li>
                   <li>
-                    <button class="dropdown-item" type="button" @click="downloadPdf(true)">
+                    <button class="dropdown-item" disabled type="button" @click="downloadPdf(true)">
                       All Records
                     </button>
                   </li>

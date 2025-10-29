@@ -34,6 +34,10 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands.Update
 
             Guard.Against.Null(transactionRecord, nameof(transactionRecord), "Transaction record not found");
 
+            if (!userContext.IsAdmin() && transactionRecord?.CreatedByApplicationUserId != userContext.UserId)
+                throw new AuthorizationException("You can't access this record.");
+
+
             //optimization remaining.....
             // Preload active payment method IDs
             var activePaymentMethodIds = await context.PaymentMethods
@@ -64,9 +68,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands.Update
                 throw new BusinessValidationException(errors);
 
 
-            if (!userContext.IsAdmin()&& transactionRecord?.CreatedByApplicationUserId != userContext.UserId)
-                       throw new AuthorizationException("You can't access this record.");
-
+        
            
 
             transactionRecord.UpdatedByApplicationUserId = userContext.UserId;

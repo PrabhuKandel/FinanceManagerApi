@@ -2,7 +2,7 @@
 
 using FinanceManager.Application.Common;
 using FinanceManager.Application.FeaturesDapper.Reports.Dtos;
-using FinanceManager.Application.FeaturesDapper.Reports.Enums;
+using FinanceManager.Domain.Enums;
 using MediatR;
 
 namespace FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType
@@ -11,7 +11,7 @@ namespace FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionR
         (
         DateTime? FromDate
         ,DateTime? ToDate,
-        Period GroupBy = Period.Month
+        PeriodType GroupBy = PeriodType.Monthly
         ) :IRequest<OperationResult<IEnumerable<TransactionRecordSummaryByCategoryTypeDto>>>
     {
     }
