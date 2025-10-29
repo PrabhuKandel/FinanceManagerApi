@@ -16,6 +16,8 @@ namespace FinanceManager.Domain.Entities
 
         public DateTime PeriodEnd { get; set; }
 
+        public PeriodType PeriodType { get; set; }  
+
         public BudgetApprovalStatus Status { get; set; } = BudgetApprovalStatus.Pending;
 
         public bool IsActive { get; set; } = true;  

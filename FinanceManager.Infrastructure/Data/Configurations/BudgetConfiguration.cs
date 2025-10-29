@@ -25,6 +25,9 @@ namespace FinanceManager.Infrastructure.Data.Configurations
             builder.Property(b => b.PeriodEnd)
                    .IsRequired();
 
+            builder.Property(b => b.PeriodType)
+                   .IsRequired();
+
             builder.Property(b => b.Amount)
                    .IsRequired()
                    .HasPrecision(18, 2);
