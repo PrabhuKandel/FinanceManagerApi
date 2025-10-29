@@ -74,53 +74,52 @@
 
                 </div>
 
-            <div class="mb-3">
-              <label class="form-label">Attachments</label>
-              <input type="file"
-                     multiple
-                     @change="onFilesSelected"
-                     :class="['form-control', { 'is-invalid': getFieldError('TransactionRecord.TransactionAttachments') }]" />
+                <div class="mb-3">
+                  <label class="form-label">Attachments</label>
+                  <input type="file"
+                         multiple
+                         @change="onFilesSelected"
+                         :class="['form-control', { 'is-invalid': getFieldError('TransactionRecord.TransactionAttachments') }]" />
 
 
+                  <!-- Show validation error -->
+                  <div v-if="getFieldError('TransactionRecord.TransactionAttachments')" class="invalid-feedback d-block">
+                    {{ getFieldError('TransactionRecord.TransactionAttachments') }}
+                  </div>
 
-              <!-- Show validation error -->
-              <div v-if="getFieldError('TransactionRecord.TransactionAttachments')" class="invalid-feedback d-block">
-                {{ getFieldError('TransactionRecord.TransactionAttachments') }}
-              </div>
+                  <div v-if="selectedFiles.length" class="mt-2 border rounded p-2 bg-light">
+                    <div v-for="(file, index) in selectedFiles" :key="index"
+                         class="d-flex align-items-center g-2 mb-1">
+                      <div class="d-flex align-items-center">
+                        <!-- File icon -->
+                        <span class="me-2 fs-5">
+                          <i class="bi bi-file-earmark"></i>
+                        </span>
+                        <div>
+                          {{ file.name }}
+                          <small class="text-muted">({{ (file.size / 1024).toFixed(1) }} KB)</small>
+                        </div>
 
-              <div v-if="selectedFiles.length" class="mt-2 border rounded p-2 bg-light">
-                <div v-for="(file, index) in selectedFiles" :key="index"
-                     class="d-flex align-items-center g-2 mb-1">
-                  <div class="d-flex align-items-center">
-                    <!-- File icon -->
-                    <span class="me-2 fs-5">
-                      <i class="bi bi-file-earmark"></i>
-                    </span>
-                    <div>
-                      {{ file.name }}
-                      <small class="text-muted">({{ (file.size / 1024).toFixed(1) }} KB)</small>
+                      </div>
+                      <!-- Remove button (icon only) -->
+
+                      <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" @click="removeFile(index)"></i>
+
+                    </div>
+
+                    <div class="text-end mt-2">
+                      <!-- Clear All as text -->
+                      <button type="button" class="btn btn-sm btn-danger" @click="clearAllFiles">
+                        Clear All
+                      </button>
                     </div>
 
                   </div>
-                  <!-- Remove button (icon only) -->
 
-                  <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" @click="removeFile(index)"></i>
-
+                  <div class="invalid-feedback">
+                    {{ getFieldError('TransactionRecord.TransactionAttachments') }}
+                  </div>
                 </div>
-
-                <div class="text-end mt-2">
-                  <!-- Clear All as text -->
-                  <button type="button" class="btn btn-sm btn-danger" @click="clearAllFiles">
-                    Clear All
-                  </button>
-                </div>
-
-              </div>
-
-              <div class="invalid-feedback">
-                {{ getFieldError('TransactionRecord.TransactionAttachments') }}
-              </div>
-            </div>
 
 
 
@@ -164,6 +163,7 @@
     transactionAttachments:[]
   })
 
+  
   const categories = ref([])
   const paymentMethods = ref([])
 

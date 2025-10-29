@@ -1,9 +1,10 @@
-﻿using FinanceManager.Application.Features.Report.Commands.TransactionRecordSummaryByIncomeExpense;
+﻿using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace FinanceManager.Api.Controllers
 {
@@ -21,9 +22,9 @@ namespace FinanceManager.Api.Controllers
 
     
         [HttpPost("summary/category-type")]
-        public async Task<IActionResult> GetIncomeExpenseSummary( TransactionRecordSummaryByCategoryTypeCommand command)
+        public async Task<IActionResult> GetIncomeExpenseSummary( TransactionRecordSummaryByCategoryTypeQuery query)
         {
-            var response = await sender.Send(command);
+            var response = await sender.Send(query);
             return Ok(response);
 
         }
@@ -35,6 +36,16 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
 
         }
+
+        [HttpPost("transaction-category-budget-vs-actual-outflow")]
+
+        public async Task<IActionResult> GetTransactionCategoryBudgetVsActualOutflow(TransactionCategoryBudgetVsActualOutflowQuery query)
+        {
+            var response = await sender.Send(query);
+            return Ok(response);
+        }
+
+
 
     }
 }

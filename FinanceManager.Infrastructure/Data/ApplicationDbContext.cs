@@ -27,6 +27,8 @@ namespace FinanceManager.Infrastructure.Data
 
         public DbSet<Permission> Permissions { get; set; }
 
+        public DbSet<Budget> Budgets { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

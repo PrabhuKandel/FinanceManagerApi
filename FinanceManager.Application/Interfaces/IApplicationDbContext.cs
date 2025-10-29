@@ -25,6 +25,8 @@ namespace FinanceManager.Application.Interfaces
 
         DbSet<Permission> Permissions { get; set; }
 
+        DbSet<Budget> Budgets { get; set; }
+
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
