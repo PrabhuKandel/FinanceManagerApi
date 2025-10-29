@@ -1,9 +1,9 @@
 ﻿
 
-    using System.Globalization;
-    using FinanceManager.Domain.Enums;
+using System.Globalization;
+using FinanceManager.Domain.Enums;
 
-    namespace FinanceManager.Application.Features.Budgets.Helper
+namespace FinanceManager.Application.Common
     {
         public static class PeriodCalculator
         {
