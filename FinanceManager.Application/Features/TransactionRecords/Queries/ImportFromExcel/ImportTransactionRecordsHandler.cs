@@ -1,10 +1,11 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Dtos.TransactionPayment;
-using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
+using FinanceManager.Application.Features.TransactionRecords.Commands.BulkCreate;
+using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Queries.ImportFromExcel
@@ -28,6 +29,9 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries.ImportF
 
             var rows = worksheet.RowsUsed().Skip(1); // skip header
             var totalRows = rows.Count();
+
+            var transactionRows = new List<BulkCreateTransactionRecordDto>();
+            var errors = new List<string>();
 
             foreach (var row in rows)
             {
@@ -53,17 +57,22 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries.ImportF
                     Amount = paymentAmount
                 };
 
-                var command = new CreateTransactionRecordCommand(
-                    transactionCategoryId,
-                    amount,
-                    description,
-                    transactionDate,
-                    new List<TransactionPaymentDto> { payment },
-                    Array.Empty<IFormFile>()
-                );
+                transactionRows.Add(new BulkCreateTransactionRecordDto
+                {
+                    TransactionDate = transactionDate,
+                    TransactionCategoryId = transactionCategoryId,
+                    Amount = amount,
+                    Description = description,
+                    Payments = new List<TransactionPaymentDto> { payment }
+                });
 
-                await mediator.Send(command, cancellationToken);
             }
+
+            var bulkCommand = new BulkCreateTransactionRecordCommand(transactionRows);
+            var result = await mediator.Send(bulkCommand, cancellationToken);
+
+   
+            // Call bulk command
 
             return new OperationResult<string>
             {

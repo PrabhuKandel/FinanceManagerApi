@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Azure;
 using FinanceManager.Api.ModelBinder;
+using FinanceManager.Application.Features.TransactionRecords.Commands.BulkCreate;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;
 using FinanceManager.Application.Features.TransactionRecords.Commands.DeleteAttachment;
@@ -91,6 +92,14 @@ namespace FinanceManager.Api.Controllers
         {
             var result = await mediator.Send(command);
             return Ok(result);
+        }
+
+        [HttpPost("/create/bulk")]
+        public async Task<IActionResult> BulkCreate(BulkCreateTransactionRecordCommand command)
+        {
+            var response = await mediator.Send(command);
+            return Ok(response);
+
         }
 
         [HttpPost("dapperCreate")]
@@ -210,8 +219,7 @@ namespace FinanceManager.Api.Controllers
         [HttpPost("import/excel")]
         public async Task<IActionResult> ImportExcel(IFormFile excelFile)
         {
-            if (excelFile == null || excelFile.Length == 0)
-                return BadRequest("No file uploaded.");
+            
 
             var response = await mediator.Send(new ImportTransactionRecordsQuery
             {
