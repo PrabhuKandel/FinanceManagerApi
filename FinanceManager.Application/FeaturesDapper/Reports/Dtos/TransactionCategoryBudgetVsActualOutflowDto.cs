@@ -18,6 +18,6 @@ namespace FinanceManager.Application.FeaturesDapper.Reports.Dtos
 
         public decimal RemainingBudget { get; set; }
 
-        public decimal BudgetUsagePercent { get; set; }  
+        public decimal BudgetUsagePercent { get; set; }
     }
 }

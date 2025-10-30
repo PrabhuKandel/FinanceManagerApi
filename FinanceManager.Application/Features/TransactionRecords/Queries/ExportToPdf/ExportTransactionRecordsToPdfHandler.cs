@@ -34,7 +34,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries.ExportT
             // Generate PDF
             return await _pdfGenerator.GeneratePdfAsync(html);
 
-            throw new NotImplementedException();
+       
         }
     }
 }
