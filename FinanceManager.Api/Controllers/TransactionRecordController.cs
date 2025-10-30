@@ -11,6 +11,7 @@ using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToExc
 using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetAll;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetById;
+using FinanceManager.Application.Features.TransactionRecords.Queries.ImportFromExcel;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.DeleteTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.PatchTransactionRecord;
@@ -203,6 +204,22 @@ namespace FinanceManager.Api.Controllers
             var pdfBytes = await mediator.Send(query);
             return File(pdfBytes, "application/pdf", $"transactions-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf");
         }
+
+
+
+        [HttpPost("import/excel")]
+        public async Task<IActionResult> ImportExcel(IFormFile excelFile)
+        {
+            if (excelFile == null || excelFile.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            var response = await mediator.Send(new ImportTransactionRecordsQuery
+            {
+                ExcelFile = excelFile
+            });
+            return Ok("ok");
+        }
+
 
 
 
