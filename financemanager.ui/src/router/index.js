@@ -4,6 +4,8 @@ import TransactionRecordList from '../views/TransactionRecordList.vue';
 import DashboardView from '../views/DashboardView.vue';
 import UserList from '../views/UserList.vue';
 import RoleList from '../views/RoleList.vue';
+import PaymentMethodList from '../views/PaymentMethodList.vue';
+import TransactionCategoryList from '../views/TransactionCategoryList.vue';
 import { isAdmin } from '../utils/auth.js';
 
 
@@ -14,7 +16,8 @@ const routes = [
   { path: '/login', component: LoginForm },
 
   { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
-
+  { path: '/payment-methods', component: PaymentMethodList, meta: { requiresAuth: true } },
+  { path: '/transaction-categories', component: TransactionCategoryList, meta: { requiresAuth: true } },
   { path: '/transaction-records', component: TransactionRecordList, meta: { requiresAuth: true } },
   { path: '/users', component: UserList, meta: { requiresAuth: true, requiresAdmin: true } },
   { path: '/roles', component: RoleList, meta: { requiresAuth: true, requiresAdmin: true } },

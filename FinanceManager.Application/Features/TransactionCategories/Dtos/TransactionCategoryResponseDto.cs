@@ -10,6 +10,6 @@ namespace FinanceManager.Application.Features.TransactionCategories.Dtos
         public required string Name { get; set; }
         public string? Description { get; set; }
 
-        public CategoryType Type { get; set; }
+        public required string Type { get; set; }
     }
 }
