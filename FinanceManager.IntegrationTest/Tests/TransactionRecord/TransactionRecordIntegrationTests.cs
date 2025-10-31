@@ -1,6 +1,8 @@
 ﻿using FinanceManager.Application.Dtos.TransactionPayment;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
+using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
+using FinanceManager.Application.Features.TransactionRecords.Queries.GetById;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Entities;
 using FinanceManager.Domain.Enums;
@@ -187,6 +189,111 @@ namespace FinanceManager.IntegrationTest.Tests.TransactionRecord
             _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(result, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
 
         }
+
+        [Fact]
+        public async Task DeleteTransactionRecord_AsAdmin_WithValidId_ReturnsSuccessMessage()
+        {
+            // Arrange
+            var adminUser = _context.Users.First(u => u.UserName == "admin@gmail.com");
+            var roles = await _userManager.GetRolesAsync(adminUser);
+            var role = roles.FirstOrDefault() ?? "User";
+            testUserContext.UserId = adminUser.Id;
+            testUserContext.Role = role;
+
+            // Create a transaction record first (so we have something to delete)
+            var transactionCategoryId = _context.TransactionCategories.First().Id;
+            var paymentMethodId = _context.PaymentMethods.Take(2).ToList();
+
+            var createCommand = new CreateTransactionRecordCommand(
+                TransactionCategoryId: transactionCategoryId,
+                Amount: 150m,
+                Description: "Transaction to delete",
+                TransactionDate: DateTime.UtcNow,
+                Payments: new List<TransactionPaymentDto>
+                {
+            new TransactionPaymentDto { PaymentMethodId = paymentMethodId[0].Id, Amount = 100m },
+            new TransactionPaymentDto { PaymentMethodId = paymentMethodId[1].Id, Amount = 50m }
+                },
+                TransactionAttachments: null
+            );
+
+            var createdResult = await _mediator.Send(createCommand);
+
+            createdResult.Should().NotBeNull();
+            createdResult.Data.Should().NotBeNull();
+
+            var transactionId = createdResult.Data!.Id;
+
+            // Act
+            var deleteCommand = new DeleteTransactionRecordCommand(transactionId);
+            var deleteResult = await _mediator.Send(deleteCommand);
+
+            // Assert
+            deleteResult.Should().NotBeNull();
+            deleteResult.Message.Should().NotBeNullOrEmpty();
+            deleteResult.Message.Should().Be("Transaction record deleted");
+
+            // Verify the record no longer exists
+            var deletedRecord = _context.TransactionRecords.FirstOrDefault(t => t.Id == transactionId);
+            deletedRecord.Should().BeNull();
+
+            // Output for debugging
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(deleteResult, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        }
+
+        [Fact]
+        public async Task GetTransactionRecordById_AsAdmin_WithValidId_ReturnsTransactionRecord()
+        {
+            // Arrange
+            var adminUser = _context.Users.First(u => u.UserName == "admin@gmail.com");
+            var roles = await _userManager.GetRolesAsync(adminUser);
+            var role = roles.FirstOrDefault() ?? "User";
+            testUserContext.UserId = adminUser.Id;
+            testUserContext.Role = role;
+
+            // Create a transaction record first (so we have something to retrieve)
+            var transactionCategoryId = _context.TransactionCategories.First().Id;
+            var paymentMethodId = _context.PaymentMethods.Take(2).ToList();
+
+            var createCommand = new CreateTransactionRecordCommand(
+                TransactionCategoryId: transactionCategoryId,
+                Amount: 250m,
+                Description: "Transaction to retrieve",
+                TransactionDate: DateTime.UtcNow,
+                Payments: new List<TransactionPaymentDto>
+                {
+            new TransactionPaymentDto { PaymentMethodId = paymentMethodId[0].Id, Amount = 150m },
+            new TransactionPaymentDto { PaymentMethodId = paymentMethodId[1].Id, Amount = 100m }
+                },
+                TransactionAttachments: null
+            );
+
+            var createdResult = await _mediator.Send(createCommand);
+
+            createdResult.Should().NotBeNull();
+            createdResult.Data.Should().NotBeNull();
+
+            var transactionId = createdResult.Data!.Id;
+
+            // Act
+            var query = new GetTransactionRecordByIdQuery(transactionId);
+            var getResult = await _mediator.Send(query);
+
+            // Assert
+            getResult.Should().NotBeNull();
+            getResult.Data.Should().NotBeNull();
+            getResult.Data!.Id.Should().Be(transactionId);
+            getResult.Data!.Amount.Should().Be(createCommand.Amount);
+            getResult.Data!.Description.Should().Be(createCommand.Description);
+            getResult.Data!.TransactionCategory!.Id.Should().Be(createCommand.TransactionCategoryId);
+            getResult.Message.Should().NotBeNullOrEmpty();
+            getResult.Message.Should().Be("Transaction record  retrieved successfully");
+
+            // Output for debugging
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(getResult, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        }
+
+
 
 
 
