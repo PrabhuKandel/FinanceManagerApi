@@ -213,9 +213,15 @@ Handlebars.RegisterHelper("formatDate", (writer, context, parameters) =>
         writer.WriteSafeString(dt.ToString(format));
     }
 });
+Handlebars.RegisterHelper("formatPercent", (writer, context, parameters) =>
+{
+    if (parameters.Length == 1 && parameters[0] is IConvertible val)
+    {
+        writer.WriteSafeString(string.Format("{0:0.##}%", val)); // removes trailing zeros
+    }
+});
 
 
-    
 app.MapControllers();
 app.Run();
 public partial class Program { }

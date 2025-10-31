@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Azure;
 using FinanceManager.Api.ModelBinder;
+using FinanceManager.Application.Features.TransactionRecords.Commands.BulkCreate;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;
 using FinanceManager.Application.Features.TransactionRecords.Commands.DeleteAttachment;
@@ -11,6 +12,7 @@ using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToExc
 using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetAll;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetById;
+using FinanceManager.Application.Features.TransactionRecords.Queries.ImportFromExcel;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.DeleteTransactionRecord;
 using FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.PatchTransactionRecord;
@@ -90,6 +92,14 @@ namespace FinanceManager.Api.Controllers
         {
             var result = await mediator.Send(command);
             return Ok(result);
+        }
+
+        [HttpPost("/create/bulk")]
+        public async Task<IActionResult> BulkCreate(BulkCreateTransactionRecordCommand command)
+        {
+            var response = await mediator.Send(command);
+            return Ok(response);
+
         }
 
         [HttpPost("dapperCreate")]
@@ -203,6 +213,21 @@ namespace FinanceManager.Api.Controllers
             var pdfBytes = await mediator.Send(query);
             return File(pdfBytes, "application/pdf", $"transactions-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf");
         }
+
+
+
+        [HttpPost("import/excel")]
+        public async Task<IActionResult> ImportExcel(IFormFile excelFile)
+        {
+            
+
+            var response = await mediator.Send(new ImportTransactionRecordsQuery
+            {
+                ExcelFile = excelFile
+            });
+            return Ok("ok");
+        }
+
 
 
 

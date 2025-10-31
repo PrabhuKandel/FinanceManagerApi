@@ -1,4 +1,6 @@
-﻿using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow;
+﻿using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow.ExportToPdf;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
@@ -44,6 +46,14 @@ namespace FinanceManager.Api.Controllers
             var response = await sender.Send(query);
             return Ok(response);
         }
+
+        [HttpPost("transaction-category-budget-vs-actual-outflow/export/pdf")]
+        public async Task<IActionResult> ExportToPdf(ExportTransactionCategoryBudgetVsActualOutflowQuery query)
+        {
+            var pdfBytes = await sender.Send(query);
+            return File(pdfBytes, "application/pdf", $"TransactionCategoryBudgetVsActualOutflow-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf");
+        }
+
 
 
 
