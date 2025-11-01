@@ -9,7 +9,7 @@
               <th>SN</th>
               <th>Name</th>
               <th>Type</th>
-              <th>Actions</th>
+              <!--<th>Actions</th>-->
             </tr>
           </thead>
           <tbody v-if="!loading && !error && categories.length">
@@ -24,7 +24,7 @@
               </td>
 
 
-              <td>
+              <!--<td>
                 <div class="btn-group">
                   <button class="btn btn-sm btn-outline-primary dropdown-toggle"
                           type="button"
@@ -48,7 +48,7 @@
                     </li>
                   </ul>
                 </div>
-              </td>
+              </td>-->
             </tr>
           </tbody>
         </table>

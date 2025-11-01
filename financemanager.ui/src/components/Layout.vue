@@ -15,8 +15,6 @@
           <li v-if="isAdmin().value"><router-link to="/users"> <i class="bi bi-people me-2"></i>Users</router-link></li>
           <li v-if="isAdmin().value"><router-link to="/roles"> <i class="bi bi-person-badge me-2"></i>Roles</router-link></li>
           <li v-if="isAdmin().value"><router-link to="/reports"><i class="bi bi-folder2-open me-2"></i>Reports</router-link></li>
-
-          <li><router-link to=""><i class="bi bi-gear me-2"></i>Settings</router-link></li>
         </ul>
       </nav>
     </aside>

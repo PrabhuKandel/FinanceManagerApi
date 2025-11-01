@@ -6,7 +6,7 @@
     <!-- Right: Greeting + Logout -->
     <div class="navbar-right d-flex align-items-center gap-3">
       <span class="greeting">Hello, {{ userName }}</span>
-      <button class="btn-logout" @click="handleLogout">Logout</button>
+      <button class="btn-logout btn" @click="handleLogout">Logout</button>
     </div>
   </nav>
 </template>

@@ -33,7 +33,7 @@
       id: 1,
       title: 'Budget vs Actual Outflow',
       description: 'Compare your budgeted and actual spending by transaction category.',
-      route: '/reports/budget-vs-actual',
+      route: '/reports/budget-vs-actual-ouflow',
     },
     {
       id: 2,
@@ -47,12 +47,12 @@
       description: 'Analyze total transactions by payment method.',
       route: '/reports/transaction-caetgory-summary',
     },
-    {
-      id: 4,
-      title: 'Income vs Expense Trends',
-      description: 'View trends over time for income and expenses.',
-      route: '/reports/income-expense-trend',
-    },
+    //{
+    //  id: 4,
+    //  title: 'Income vs Expense Trends',
+    //  description: 'View trends over time for income and expenses.',
+    //  route: '/reports/income-expense-trend',
+    //},
   ]
 
   const goTo = (path) => {

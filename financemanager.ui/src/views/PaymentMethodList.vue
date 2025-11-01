@@ -9,7 +9,7 @@
                 <th>SN</th>
                 <th> Name</th>
                 <th>Active</th>
-                <th>Actions</th>
+                <!--<th>Actions</th>-->
               </tr>
             </thead>
             <tbody v-if="!loading && !error && paymentMethods.length">
@@ -28,20 +28,20 @@
                   </div>
                 </td>
 
-                <td class="text-center">
-                  <div class="btn-group">
+                <!--<td class="text-center">
+                  <div class="btn-group">-->
                     <!-- Dropdown toggle -->
-                    <button class="btn btn-sm btn-outline-primary dropdown-toggle"
+                    <!--<button class="btn btn-sm btn-outline-primary dropdown-toggle"
                             type="button"
                             data-bs-toggle="dropdown"
                             aria-expanded="false"
                             style="cursor: pointer;"
                             title="Actions">
                       <i class="bi bi-three-dots-vertical"></i>
-                    </button>
+                    </button>-->
 
                     <!-- Dropdown menu -->
-                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                    <!--<ul class="dropdown-menu dropdown-menu-end shadow-sm">
                       <li>
                         <a class="dropdown-item text-warning" style="cursor: pointer;">
                           <i class="bi bi-pencil-square me-2"></i> Edit
@@ -55,7 +55,7 @@
                       </li>
                     </ul>
                   </div>
-                </td>
+                </td>-->
               </tr>
             </tbody>
           </table>
