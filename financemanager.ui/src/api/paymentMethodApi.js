@@ -9,3 +9,17 @@ export const getPaymentMethods = async () => {
 
   }
 };
+
+
+export const updatePaymentMethod = async (paymentMethod) => {
+  try {
+    const response = await axiosInstance.put(`/PaymentMethod/$(paymentMethod.id}`, paymentMethod);
+    console.log(response);
+    return response.data
+  }
+  catch (error) {
+    console.error('Error updating payment methods', error);
+  }
+};
+
+

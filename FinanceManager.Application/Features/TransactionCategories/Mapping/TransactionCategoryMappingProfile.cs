@@ -18,7 +18,7 @@ namespace FinanceManager.Application.Features.TransactionCategories.Mapping
                 Id = entity.Id,
                 Name = entity.Name,
                 Description = entity.Description,
-                Type = entity.Type
+                Type = entity.Type.ToString()
             };
         }
         public static List<TransactionCategoryResponseDto> ToResponseDtoList(this IEnumerable<TransactionCategory> entities)
