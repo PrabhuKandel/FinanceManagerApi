@@ -6,11 +6,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Features-StoredProcedure\**" />
-    <EmbeddedResource Remove="Features-StoredProcedure\**" />
-    <None Remove="Features-StoredProcedure\**" />
-  </ItemGroup>
+
 
   <ItemGroup>
     <None Remove="FeaturesDapper\Reports\Queries\TransactionCategoryBudgetVsActualOutflow\ExportToPdf\ExportTransactionCategoryBudgetVsActualOutflow-template.hbs" />
@@ -46,9 +42,5 @@
     <ProjectReference Include="..\FinanceManager.Domain\FinanceManager.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Auth\Queries\" />
-    <Folder Include="Features\Budgets\Dtos\" />
-  </ItemGroup>
 
 </Project>
