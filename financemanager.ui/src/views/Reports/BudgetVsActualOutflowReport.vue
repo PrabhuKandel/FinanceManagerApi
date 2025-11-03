@@ -140,7 +140,7 @@
           </li>
         </ul>
       </div>
-      <div v-else-if="dataFetched && !loading" class="alert alert-warning mt-4 text-center">
+      <div v-else-if="dataFetched && !loading && results.length === 0" class="alert alert-warning mt-4 text-center">
         No data found for the selected period.
       </div>
 

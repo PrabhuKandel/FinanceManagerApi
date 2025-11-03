@@ -93,6 +93,13 @@ namespace FinanceManager.Api.Controllers
             var result = await mediator.Send(command);
             return Ok(result);
         }
+        [HttpPost("test-create")]
+        public async Task<IActionResult> TestCreate(
+        [FromForm] CreateTransactionRecordCommand command)
+        {
+            var result = await mediator.Send(command);
+            return Ok(result);
+        }
 
         [HttpPost("/create/bulk")]
         public async Task<IActionResult> BulkCreate(BulkCreateTransactionRecordCommand command)

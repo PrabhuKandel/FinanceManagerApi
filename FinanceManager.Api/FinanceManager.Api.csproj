@@ -43,6 +43,7 @@
 
   <ItemGroup>
     <Folder Include="Logs\" />
+	 <Folder Include="Uploads\TransactionRecords\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

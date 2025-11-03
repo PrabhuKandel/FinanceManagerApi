@@ -21,7 +21,7 @@ namespace FinanceManager.Infrastructure.Services
             await using var page = await browser.NewPageAsync();
 
             // Set HTML content
-            await page.SetContentAsync(htmlContent);
+            await page.SetContentAsync(htmlContent);    
 
             // Generate PDF
             var pdfBytes = await page.PdfDataAsync(new PdfOptions
