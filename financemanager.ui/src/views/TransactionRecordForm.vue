@@ -52,7 +52,8 @@
                         <option value="">Select Payment Method</option>
                         <option v-for="m in availableMethods(index)"
                                 :key="m.id"
-                                :value="m.id">
+                                :value="m.id"
+                                v-bind:disabled="!Boolean(m.isActive)">
                           {{ m.name }} {{ !m.isActive ? '(Inactive)' : '' }}
                         </option>
                       </select>
