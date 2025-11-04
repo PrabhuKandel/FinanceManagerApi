@@ -38,6 +38,8 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddScoped<ITransactionAttachmentService, TransactionAttachmentService>();
             services.AddTransient<ITransactionRecordExportService, TransactionRecordExportService>();
             services.AddSingleton<IPdfGenerator, PuppeteerPdfGenerator>();
+            services.AddScoped<IPermissionService, PermissionService>();
+
             services.AddSingleton<ITemplateRenderer>(sp =>
             {
                 var appAssembly = typeof(ExportTransactionRecordsToPdfQuery).Assembly;
