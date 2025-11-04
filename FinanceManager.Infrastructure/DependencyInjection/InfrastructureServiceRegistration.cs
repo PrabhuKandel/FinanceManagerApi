@@ -3,6 +3,7 @@ using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Infrastructure.Data;
+using FinanceManager.Infrastructure.Helpers;
 using FinanceManager.Infrastructure.Jobs.FireAndForget;
 using FinanceManager.Infrastructure.Jobs.Recurring;
 using FinanceManager.Infrastructure.Services;
@@ -45,7 +46,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
                 
             services.AddScoped<TokenCleanupJob>();
 
-
+            HandlebarsHelpers.RegisterHandlers();
             return services;
         }
     }
