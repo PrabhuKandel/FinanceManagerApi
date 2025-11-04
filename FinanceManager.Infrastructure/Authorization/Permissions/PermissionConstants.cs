@@ -44,7 +44,7 @@
         }
 
 
-        public static class ApplicationUserPernissions
+        public static class ApplicationUserPermissions
         {
             
             public const string View = "ApplicationUser.View";

@@ -11,7 +11,7 @@ namespace FinanceManager.Infrastructure.Authorization.Policies
         {
             services.AddAuthorization(options =>
             {
-                foreach (var permission in PermissionHelper.GetAllPermissions())
+                foreach (var permission in PermissionHelper.GetAllPermissions().Select(p => p.Permission))
                 {
                     options.AddPolicy(permission, policy =>
                         policy.RequireClaim(CustomClaimTypes.Permission, permission));
