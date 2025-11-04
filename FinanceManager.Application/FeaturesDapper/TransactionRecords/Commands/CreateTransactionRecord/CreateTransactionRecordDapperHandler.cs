@@ -5,6 +5,7 @@ using FinanceManager.Application.FeaturesDapper.TransactionRecords.Mapping;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Enums;
 using MediatR;
+using System;
 using System.Data;
 
 namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.CreateTransactionRecord
@@ -22,6 +23,7 @@ namespace FinanceManager.Application.FeaturesDapper.TransactionRecords.Commands.
 
 
             //prepare table valued parameter 
+            // data table is .NET in-memory table that stores multiple rows and columns in your application.
             var paymentsDataTable = new DataTable();
                 paymentsDataTable.Columns.Add("PaymentMethodId", typeof(Guid));
                 paymentsDataTable.Columns.Add("Amount", typeof(decimal));
