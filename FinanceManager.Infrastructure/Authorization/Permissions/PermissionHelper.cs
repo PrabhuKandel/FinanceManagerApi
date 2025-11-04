@@ -3,24 +3,40 @@
 
 namespace FinanceManager.Infrastructure.Authorization.Permissions
 {
+    public class PermissionDto
+    {
+        public string Group { get; set; } = null!;
+        public string Permission { get; set; } = null!;
+    }
+
     public static class PermissionHelper
     {
-        public static IEnumerable<string> GetAllPermissions()
+        public static IEnumerable<PermissionDto> GetAllPermissions()
         {
-            var permissions = new List<string>();
+            var permissions = new List<PermissionDto>();
 
             var nestedTypes = typeof(PermissionConstants).GetNestedTypes();
             foreach (var type in nestedTypes)
             {
                 var fields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
-                permissions.AddRange(fields.Select(f => f.GetValue(null)?.ToString()!)
-                    .Where(v => !string.IsNullOrWhiteSpace(v)));
+
+                permissions.AddRange(
+                fields.Select(f => f.GetValue(null)?.ToString())
+                   .Where(v => !string.IsNullOrWhiteSpace(v))
+                   .Select(v => new PermissionDto
+                   {
+                       Group = type.Name,
+                       Permission = v!
+                   })
+         );
+
+
             }
 
             return permissions;
         }
-     public static IEnumerable<string> GetAdminPermissions() => GetAllPermissions();
-      public static IEnumerable<string> GetUserPermissions() => new[]
+     public static IEnumerable<string> GetAdminPermissions() => GetAllPermissions().Select(p => p.Permission);
+        public static IEnumerable<string> GetUserPermissions() => new[]
         {
         PermissionConstants.TransactionRecordPermissions.View,
         PermissionConstants.TransactionRecordPermissions.Create,

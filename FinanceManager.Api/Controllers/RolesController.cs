@@ -4,6 +4,7 @@ using MediatR;
 using FinanceManager.Application.Features.Roles.Commands.AssignPermissions;
 using Microsoft.AspNetCore.Authorization;
 using FinanceManager.Infrastructure.Authorization.Permissions;
+using FinanceManager.Application.Features.Roles.Commands.Create;
 namespace FinanceManager.Api.Controllers
 {
     [Route("api/roles")]
@@ -28,5 +29,13 @@ namespace FinanceManager.Api.Controllers
            var response =  await sender.Send(command);
             return Ok(response);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRole(CreateRoleCommand command)
+        {
+            var response = await sender.Send(command);
+            return Ok(response);
+        }
+
     }
 }
