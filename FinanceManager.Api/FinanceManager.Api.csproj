@@ -6,12 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Uploads\**" />
-    <Content Remove="Uploads\**" />
-    <EmbeddedResource Remove="Uploads\**" />
-    <None Remove="Uploads\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Hangfire" Version="1.8.21" />
@@ -40,10 +34,13 @@
     <ProjectReference Include="..\FinanceManager.Domain\FinanceManager.Domain.csproj" />
     <ProjectReference Include="..\FinanceManager.Infrastructure\FinanceManager.Infrastructure.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
+	
+	<!--<Folder> is a special MSBuild item type.-->
+	<!-- MSBuild will ignore this for building your DLL or EXE.-->
+	<!--“This folder exists in the project structure, show it in Solution Explorer even if it’s empty.”-->
+	<ItemGroup>
     <Folder Include="Logs\" />
-	 <Folder Include="Uploads\TransactionRecords\" />
+    <Folder Include="Uploads\" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

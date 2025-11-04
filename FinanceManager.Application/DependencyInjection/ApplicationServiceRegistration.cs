@@ -16,7 +16,7 @@ namespace FinanceManager.Application.DependencyInjection
             services.AddMediatR(confg => confg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddHttpContextAccessor();
-            services.AddScoped<ITokenGenerator, TokenGenerator>();
+       
             services.AddScoped<IUserContext, UserContext>();
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
           
