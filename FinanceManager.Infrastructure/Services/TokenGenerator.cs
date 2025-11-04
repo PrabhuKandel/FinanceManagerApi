@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FinanceManager.Application.Services
+namespace FinanceManager.Infrastructure.Services
 {
     public class TokenGenerator:ITokenGenerator
     {

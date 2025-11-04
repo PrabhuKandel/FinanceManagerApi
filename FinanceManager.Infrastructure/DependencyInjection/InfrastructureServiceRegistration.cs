@@ -31,6 +31,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
 
             services.AddScoped<IApplicationDbContext>(provider =>
                 provider.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddTransient<IEmailService, MailKitEmailService>();
             services.AddScoped<IEmailJobScheduler, EmailJobScheduler>();
             services.AddScoped<ITokenCleanupService, TokenCleanupService>();
