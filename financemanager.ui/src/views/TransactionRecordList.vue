@@ -134,7 +134,7 @@
                     </button>
                   </li>
                   <li>
-                    <button class="dropdown-item" disabled type="button" @click="downloadPdf(true)">
+                    <button class="dropdown-item"  type="button" @click="downloadPdf(true)">
                       All Records
                     </button>
                   </li>
@@ -366,6 +366,7 @@
   import { ApprovalStatus } from '../constants/approvalStatus.js';
   import { Roles } from '../constants/Roles.js';
   import { getUserRole } from "../utils/auth";
+  import { toast } from 'vue3-toastify'
 
 
   // Reactive state
@@ -529,6 +530,8 @@
       await patchApprovalStatus(txnId, newStatus);
       //txn.approvalStatus = newStatus;
       fetchTransactionRecords();
+      toast.success("Approval status updated");
+
 
     } catch (error) {
       console.error('Failed to update status', error);
@@ -563,7 +566,7 @@
   }
 
   const deleteTransaction = async (txn) => {
-    if (!confirm(`Are you sure you want to delete "${txn.description}"?`)) return;
+
 
     try {
 
@@ -571,6 +574,7 @@
 
       // Remove it from the local state
       transactionRecords.value.data = transactionRecords.value.data.filter(t => t.id !== txn.id);
+      toast.success("Record deleted successfully!!");
 
     } catch (err) {
       console.error(err);

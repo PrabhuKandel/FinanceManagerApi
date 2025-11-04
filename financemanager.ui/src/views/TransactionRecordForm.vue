@@ -15,14 +15,14 @@
                 <option value="">Select Category</option>
                 <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
               </select>
-              <div class="invalid-feedback">{{ getFieldError('TransactionRecord.TransactionCategoryId') }}</div>
+              <div class="invalid-feedback">{{ getFieldError('TransactionCategoryId') }}</div>
             </div>
 
             <!-- Description -->
             <div class="mb-3">
               <label class="form-label">Description</label>
               <input v-model="form.description" type="text" class="form-control" :class="{ 'is-invalid': getFieldError('TransactionRecord.Description') }" />
-              <div class="invalid-feedback">{{ getFieldError('TransactionRecord.Description') }}</div>
+              <div class="invalid-feedback">{{ getFieldError('Description') }}</div>
             </div>
 
             <!-- Amount + Date -->
@@ -30,12 +30,12 @@
               <div class="col-md-6">
                 <label class="form-label">Amount</label>
                 <input v-model.number="form.amount" type="number" class="form-control" :class="{ 'is-invalid': getFieldError('TransactionRecord.Amount') }" />
-                <div class="invalid-feedback">{{ getFieldError('TransactionRecord.Amount') }}</div>
+                <div class="invalid-feedback">{{ getFieldError('Amount') }}</div>
               </div>
               <div class="col-md-6">
                 <label class="form-label">Transaction Date</label>
                 <input v-model="form.transactionDate" type="datetime-local" class="form-control" :class="{ 'is-invalid': getFieldError('TransactionRecord.TransactionDate') }" />
-                <div class="invalid-feedback">{{ getFieldError('TransactionRecord.TransactionDate') }}</div>
+                <div class="invalid-feedback">{{ getFieldError('TransactionDate') }}</div>
               </div>
             </div>
 
@@ -57,11 +57,11 @@
                           {{ m.name }} {{ !m.isActive ? '(Inactive)' : '' }}
                         </option>
                       </select>
-                      <div class="invalid-feedback">{{ getFieldError(`TransactionRecord.Payments[${index}].PaymentMethodId`) }}</div>
+                      <div class="invalid-feedback">{{ getFieldError(`Payments[${index}].PaymentMethodId`) }}</div>
                     </div>
                     <div class="col-md-5">
                       <input v-model.number="p.amount" type="number" placeholder="Amount" class="form-control" :class="{ 'is-invalid': getFieldError(`TransactionRecord.Payments[${index}].Amount`) }" />
-                      <div class="invalid-feedback">{{ getFieldError(`TransactionRecord.Payments[${index}].Amount`) }}</div>
+                      <div class="invalid-feedback">{{ getFieldError(`Payments[${index}].Amount`) }}</div>
                     </div>
                     <div class="col-md-2 d-flex justify-content-center">
                       <i class="bi bi-x-lg text-danger   ms-2" style="cursor:pointer" @click="removePayment(index)"></i>
@@ -85,7 +85,7 @@
 
                   <!-- Show validation error -->
                   <div v-if="getFieldError('TransactionRecord.TransactionAttachments')" class="invalid-feedback d-block">
-                    {{ getFieldError('TransactionRecord.TransactionAttachments') }}
+                    {{ getFieldError('TransactionAttachments') }}
                   </div>
 
                   <div v-if="selectedFiles.length" class="mt-2 border rounded p-2 bg-light">
@@ -118,7 +118,7 @@
                   </div>
 
                   <div class="invalid-feedback">
-                    {{ getFieldError('TransactionRecord.TransactionAttachments') }}
+                    {{ getFieldError('TransactionAttachments') }}
                   </div>
                 </div>
 
@@ -142,6 +142,7 @@
   import { addTransactionRecord, getTransactionRecordById, updateTransactionRecord } from '../api/transactionRecordApi'
   import { useRoute } from 'vue-router';
   import { useFlashStore } from '../stores/flashStore'
+  import { toast } from 'vue3-toastify'
 
   const props = defineProps({
     formMode: { type: String, required: true },
@@ -218,20 +219,20 @@
     const errors = {}
 
     if (!form.value.transactionCategoryId)
-      errors['TransactionRecord.TransactionCategoryId'] = ['Transaction Category is required']
+      errors['TransactionCategoryId'] = ['Transaction Category is required']
 
     if (!form.value.amount)
-      errors['TransactionRecord.Amount'] = ['Amount is required']
+      errors['Amount'] = ['Amount is required']
 
     if (!form.value.transactionDate)
-      errors['TransactionRecord.TransactionDate'] = ['Transaction date is required']
+      errors['TransactionDate'] = ['Transaction date is required']
 
     form.value.payments.forEach((p, i) => {
       if (!p.paymentMethodId)
-        errors[`TransactionRecord.Payments[${i}].PaymentMethodId`] = ['Payment method is required']
+        errors[`Payments[${i}].PaymentMethodId`] = ['Payment method is required']
 
       if (!p.amount)
-        errors[`TransactionRecord.Payments[${i}].Amount`] = ['Payment amount is required']
+        errors[`Payments[${i}].Amount`] = ['Payment amount is required']
     })
 
     validationErrors.value = errors
@@ -276,12 +277,14 @@
 
       if (props.formMode === 'create') {
         await addTransactionRecord(formData);
-        flashStore.setMessage(' Transaction created successfully!', 'success')
+        toast.success(` Transaction created successfully!`)
+        //flashStore.setMessage(' Transaction created successfully!', 'success')
 
       } else {
   
         await updateTransactionRecord(props.transactionRecordId, {...form.value});
-        flashStore.setMessage(' Transaction updated successfully!', 'success')
+        //flashStore.setMessage(' Transaction updated successfully!', 'success')
+          toast.success(` Transaction updated successfully!`)
 
       }
       emit('submit-success')

@@ -46,7 +46,7 @@ namespace FinanceManager.Infrastructure.Data.Configurations
     
             builder.Property(ta => ta.FileType)
                    .IsRequired()
-                   .HasMaxLength(50);
+                   .HasMaxLength(100);
 
             builder.Property(ta => ta.UploadDate)
                    .IsRequired();
