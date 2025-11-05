@@ -1,4 +1,4 @@
-﻿namespace FinanceManager.Infrastructure.Authorization.Permissions
+﻿    namespace FinanceManager.Infrastructure.Authorization.Permissions
 {
     public static  class PermissionConstants
     {
