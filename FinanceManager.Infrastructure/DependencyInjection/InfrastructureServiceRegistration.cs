@@ -41,7 +41,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddTransient<ITransactionRecordExportService, TransactionRecordExportService>();
             services.AddSingleton<IPdfGenerator, PuppeteerPdfGenerator>();
             services.AddScoped<IPermissionService, PermissionService>();
-            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
             services.AddSingleton<ITemplateRenderer>(sp =>
             {
