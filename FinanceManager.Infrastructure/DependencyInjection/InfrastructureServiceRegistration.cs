@@ -2,12 +2,14 @@
 using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
+using FinanceManager.Infrastructure.Authorization.Requirements;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.Helpers;
 using FinanceManager.Infrastructure.Jobs.FireAndForget;
 using FinanceManager.Infrastructure.Jobs.Recurring;
 using FinanceManager.Infrastructure.Services;
 using Hangfire;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +41,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddTransient<ITransactionRecordExportService, TransactionRecordExportService>();
             services.AddSingleton<IPdfGenerator, PuppeteerPdfGenerator>();
             services.AddScoped<IPermissionService, PermissionService>();
+            services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 
             services.AddSingleton<ITemplateRenderer>(sp =>
             {
