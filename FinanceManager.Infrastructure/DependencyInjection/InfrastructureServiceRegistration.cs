@@ -3,6 +3,7 @@ using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Infrastructure.Authorization.Requirements;
+using FinanceManager.Infrastructure.Caching;
 using FinanceManager.Infrastructure.Data;
 using FinanceManager.Infrastructure.Helpers;
 using FinanceManager.Infrastructure.Jobs.FireAndForget;
@@ -42,6 +43,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddSingleton<IPdfGenerator, PuppeteerPdfGenerator>();
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IAuthorizationHandler, PermissionHandler>();
+            services.AddSingleton<ICacheService, RedisCacheService>();
 
             services.AddSingleton<ITemplateRenderer>(sp =>
             {

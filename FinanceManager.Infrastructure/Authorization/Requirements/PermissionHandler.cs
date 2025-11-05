@@ -1,4 +1,5 @@
-﻿using FinanceManager.Infrastructure.Authorization.ClaimTypes;
+﻿using FinanceManager.Application.Interfaces.Services;
+using FinanceManager.Infrastructure.Authorization.ClaimTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Distributed;
@@ -8,7 +9,11 @@ namespace FinanceManager.Infrastructure.Authorization.Requirements
 {
 
 
-    public class PermissionHandler (RoleManager<IdentityRole> _roleManager , IDistributedCache _distributedCache): AuthorizationHandler<PermissionRequirement>
+    public class PermissionHandler (
+        RoleManager<IdentityRole> _roleManager , 
+        IDistributedCache _distributedCache,
+        ICacheService _cacheService
+        ) : AuthorizationHandler<PermissionRequirement>
     {
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
@@ -22,11 +27,11 @@ namespace FinanceManager.Infrastructure.Authorization.Requirements
             foreach (var roleName in roleClaims)
 
             {
-                //check for role in redis
-                var cacheKey =roleName; 
-                string? cachedPermissions = await _distributedCache.GetStringAsync(cacheKey);
+  
+                //fetch from cache
+                var cachedPermissions = await _cacheService.GetAsync<List<string>>(roleName);
 
-                if(string.IsNullOrEmpty(cachedPermissions))
+                if (cachedPermissions == null)
                 {
                     //not in cache, get from database
                     var role = await _roleManager.FindByNameAsync(roleName);
@@ -37,12 +42,7 @@ namespace FinanceManager.Infrastructure.Authorization.Requirements
 
 
                     //store in cache
-                     var serializedPermissions  = JsonConvert.SerializeObject(permissions);
-                    await _distributedCache.SetStringAsync(
-                        cacheKey,
-                        serializedPermissions
-
-                        );
+                    await _cacheService.SetAsync<List<string>>(roleName, permissions);
 
 
                     //return result
@@ -57,8 +57,8 @@ namespace FinanceManager.Infrastructure.Authorization.Requirements
                 else
                 {
                     //found in cache
-                    var permissions = JsonConvert.DeserializeObject<List<string>>(cachedPermissions);
-                    if (permissions != null && permissions.Contains(requirement.PermissionName))
+
+                    if (cachedPermissions != null && cachedPermissions.Contains(requirement.PermissionName))
                     {
                         context.Succeed(requirement);
                         return;
