@@ -53,6 +53,11 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddScoped<TokenCleanupJob>();
 
             HandlebarsHelpers.RegisterHandlers();
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");
+            });
             return services;
         }
     }
