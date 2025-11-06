@@ -8,7 +8,7 @@ namespace FinanceManager.Application.Features.Roles.Commands.AssignPermissions
     public record AssignPermissionsToRoleCommand
         (
         string RoleId,
-        List<Guid> PermissionIds
+          IEnumerable<string> Permissions
         ) :IRequest<OperationResult<string>>
     {
     }

@@ -1,7 +1,8 @@
 ﻿
-
-using System.Security.Claims;
+ using System.Security.Claims;
 using FinanceManager.Application.Common;
+using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,24 +14,22 @@ namespace FinanceManager.Application.Features.Roles.Commands.Create
         {
 
             var role = await _roleManager.FindByNameAsync(request.RoleName);
+            if(role!=null) throw new BusinessValidationException("Role already exists");
 
-            // 2. Create role if it does not exist
-            if (role == null)
-            {
+            //  Create role if it does not exist
+
                 role = new IdentityRole(request.RoleName);
                  await _roleManager.CreateAsync(role);
-         
-            }
 
-            var existingClaims = await _roleManager.GetClaimsAsync(role);
 
-            foreach (var permission in request.Permissions)
+            foreach (var permission in request.Permissions.Distinct())
             {
-                if (!existingClaims.Any(c => c.Type == "Permission" && c.Value == permission))
-                {
+                
                     await _roleManager.AddClaimAsync(role, new Claim("Permission", permission));
-                }
+                
             }
+
+      
 
             return new OperationResult<string> { Message = "Role created successfully"};
         }
