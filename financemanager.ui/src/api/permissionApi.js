@@ -8,3 +8,16 @@ export const getPermission = async () => {
 
   }
 };
+
+export const assignRolePermissions = async (roleId, permissions) => {
+  try {
+    const response = await axiosInstance.post(`/roles/${roleId}/assign-permissions`, {
+      roleId,
+      permissions
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error assigning permissions:', error);
+    throw error;
+  }
+};

@@ -27,6 +27,8 @@ namespace FinanceManager.Application.Interfaces
 
         DbSet<Budget> Budgets { get; set; }
 
+        DbSet<IdentityRoleClaim<string>> RoleClaims { get; set; }
+
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
