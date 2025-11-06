@@ -19,7 +19,7 @@ namespace FinanceManager.Api.Controllers
             mediator = _mediator;
         }
 
-        [Authorize(Policy = PermissionConstants.AuthPermissions.RegisterUser)]
+        [Authorize(Policy = PermissionConstants.Auth.RegisterUser)]
         [HttpPost("register")]
         public async Task<IActionResult> Register(ApplicationUserRegisterDto registerUser)
         {
@@ -58,7 +58,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-        [Authorize(Policy = PermissionConstants.AuthPermissions.RevokeToken)]
+        [Authorize(Policy = PermissionConstants.Auth.RevokeToken)]
         [HttpPost("revoke-token")]
         public async Task<IActionResult> RevokeToken(RevokeTokenCommand command)
         {

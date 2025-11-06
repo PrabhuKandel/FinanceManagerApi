@@ -113,7 +113,7 @@
   import { ref,onMounted } from 'vue';
   import Layout from '../components/Layout.vue';
   import { getRoles } from '../api/rolesApi'
-  import { getPermission, assignRolePermissions } from '../api/permissionApi';
+  import { getPermission, assignRolePermissions, getPermissionsByRole } from '../api/permissionApi';
   import { toast } from 'vue3-toastify'
  
 
@@ -178,8 +178,11 @@
 
   const openPermissionsModal = async (role) => {
     selectedRole.value = role;
-    await fetchPermissions();
-    selectedPermissions.value = role.permissions || [];
+
+    // Fetch already assigned permissions for this role
+    const rolePermissionsResponse = await getPermissionsByRole(role.id);
+    console.log(rolePermissionsResponse);
+    selectedPermissions.value = rolePermissionsResponse.data.permissions || [];
     showModal.value = true;  // show modal
   };
 
@@ -189,7 +192,10 @@
     selectedRole.value = null;
   };
 
-    onMounted(fetchRoles);
+  onMounted(async () => {
+    await fetchRoles();
+    await fetchPermissions();
+  });
 </script>
 <style>
   .custom-table {

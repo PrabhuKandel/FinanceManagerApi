@@ -2,6 +2,7 @@
 using FinanceManager.Application.Features.Permissions.Queries.GetByRole;
 using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
@@ -10,6 +11,7 @@ namespace FinanceManager.Api.Controllers
     [ApiController]
     public class PermissionController(ISender _sender) : ControllerBase
     {
+        [Authorize(Policy =PermissionConstants.Permission.View)]
         [HttpGet("get-all")]
         public  IActionResult GetAll()
         {
@@ -23,7 +25,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-
+        [Authorize(Policy = PermissionConstants.Permission.View)]
         [HttpGet("{roleId}/get-by-role")]
         public async Task<IActionResult> GetByRole(string roleId)
         {

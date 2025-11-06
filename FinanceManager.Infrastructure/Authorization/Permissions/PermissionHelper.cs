@@ -36,22 +36,7 @@ namespace FinanceManager.Infrastructure.Authorization.Permissions
             return permissions;
         }
      public static IEnumerable<string> GetAdminPermissions() => GetAllPermissions().Select(p => p.Permission);
-        public static IEnumerable<string> GetUserPermissions() => new[]
-        {
-        PermissionConstants.TransactionRecordPermissions.View,
-        PermissionConstants.TransactionRecordPermissions.Create,
-        PermissionConstants.TransactionRecordPermissions.Update,
-        PermissionConstants.TransactionRecordPermissions.Export,
 
-        PermissionConstants.TransactionCategoryPermissions.View,
-        PermissionConstants.TransactionCategoryPermissions.Create,
-        PermissionConstants.TransactionCategoryPermissions.Update,
-
-        PermissionConstants.PaymentMethodPermissions.View,
-        PermissionConstants.PaymentMethodPermissions.Create,
-        PermissionConstants.PaymentMethodPermissions.Update,
-
-        };
     }
 
 

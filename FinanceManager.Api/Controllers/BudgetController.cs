@@ -1,6 +1,8 @@
 ﻿using FinanceManager.Application.Features.Budgets.Commands.Create;
 using FinanceManager.Application.Features.PaymentMethods.Commands.Create;
+using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
@@ -10,6 +12,7 @@ namespace FinanceManager.Api.Controllers
     public class BudgetController(ISender sender) : ControllerBase
     {
 
+        [Authorize(Policy =PermissionConstants.Budeget.Create)]
         [HttpPost]
         public async Task<IActionResult> Create(CreateBudgetCommand command)
         {

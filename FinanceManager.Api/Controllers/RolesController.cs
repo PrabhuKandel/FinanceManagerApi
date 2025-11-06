@@ -12,7 +12,7 @@ namespace FinanceManager.Api.Controllers
     [Authorize]
     public class RolesController(ISender sender) : ControllerBase
     {
-        [Authorize(Policy = PermissionConstants.RolePermissions.View)]
+        [Authorize(Policy = PermissionConstants.Role.View)]
         [HttpGet("get-all")]
         public async  Task<IActionResult> GetAll()
         {
@@ -20,6 +20,8 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
+
+        [Authorize(Policy =PermissionConstants.Role.AssignPermissions)]
 
         [HttpPost("{roleId}/assign-permissions")]
         public async Task<IActionResult> AssignPermissions(AssignPermissionsToRoleCommand command)
@@ -30,6 +32,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
+        [Authorize(Policy =PermissionConstants.Role.Create)]
         [HttpPost]
         public async Task<IActionResult> CreateRole(CreateRoleCommand command)
         {

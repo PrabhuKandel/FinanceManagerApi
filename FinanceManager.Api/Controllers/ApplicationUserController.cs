@@ -14,7 +14,7 @@ namespace FinanceManager.Api.Controllers
     public class ApplicationUserController(ISender sender) : ControllerBase
     {
 
-        [Authorize(Policy = PermissionConstants.ApplicationUserPermissions.View)]
+        [Authorize(Policy = PermissionConstants.ApplicationUser.View)]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -23,7 +23,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Policy = PermissionConstants.ApplicationUserPermissions.View)]
+        [Authorize(Policy = PermissionConstants.ApplicationUser.View)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(string id)
         {
@@ -31,7 +31,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Policy = PermissionConstants.ApplicationUserPermissions.Update)]
+        [Authorize(Policy = PermissionConstants.ApplicationUser.Update)]
         [HttpPut]
         public async Task<IActionResult> Update( UpdateApplicationUserCommand command)
         {

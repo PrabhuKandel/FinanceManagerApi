@@ -16,7 +16,7 @@ namespace FinanceManager.Infrastructure.Identity
         {
             [RoleConstants.Admin] = PermissionHelper.GetAdminPermissions(),
 
-            [RoleConstants.User] = PermissionHelper.GetUserPermissions()
+          
         };
 
         public static async Task SeedRoleClaimsAsync(RoleManager<IdentityRole> roleManager)

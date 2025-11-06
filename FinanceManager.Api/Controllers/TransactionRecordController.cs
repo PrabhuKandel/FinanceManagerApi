@@ -38,7 +38,7 @@ namespace FinanceManager.Api.Controllers
         {
             mediator = _mediator;
         }
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.View)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.View)]
 
         [HttpPost("get-all")]
         public async Task<IActionResult> GetAll(GetAllTransactionRecordsQuery query)
@@ -57,7 +57,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.View)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.View)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -83,7 +83,7 @@ namespace FinanceManager.Api.Controllers
 
 
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Create)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Create)]
         [HttpPost]
         public async Task<IActionResult> Create(
         [FromForm]
@@ -93,14 +93,8 @@ namespace FinanceManager.Api.Controllers
             var result = await mediator.Send(command);
             return Ok(result);
         }
-        [HttpPost("test-create")]
-        public async Task<IActionResult> TestCreate(
-        [FromForm] CreateTransactionRecordCommand command)
-        {
-            var result = await mediator.Send(command);
-            return Ok(result);
-        }
 
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Create)]
         [HttpPost("/create/bulk")]
         public async Task<IActionResult> BulkCreate(BulkCreateTransactionRecordCommand command)
         {
@@ -119,7 +113,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Update)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Update)]
         [HttpPut("{id}")]   
         public async Task<IActionResult> Update(UpdateTransactionRecordCommand updateCommand)
         {
@@ -145,7 +139,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Approve)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Approve)]
         [HttpPatch("approval")]
         public async Task<IActionResult> PatchApprovalStatus(PatchTransactionRecordApprovalStatusCommand patchCommand)
         {
@@ -154,7 +148,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Update)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Update)]
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patch(PatchTransactionRecordCommand patchCommand)
         {
@@ -172,7 +166,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Delete)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Delete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -191,7 +185,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Delete)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Delete)]
         [HttpDelete("attachments")]
         public async Task<IActionResult> DeleteAttachments(DeleteTransactionRecordAttachmentCommand command)
         {
@@ -201,7 +195,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Export)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Export)]
         [HttpPost("export/excel")]
         public async Task<IActionResult> ExportTransactionRecords(ExportTransactionRecordsQuery query)
         {
@@ -213,7 +207,7 @@ namespace FinanceManager.Api.Controllers
             );
         }
 
-        [Authorize(Policy = PermissionConstants.TransactionRecordPermissions.Export)]
+        [Authorize(Policy = PermissionConstants.TransactionRecord.Export)]
         [HttpPost("export/pdf")]
         public async Task<IActionResult> ExportToPdf(ExportTransactionRecordsToPdfQuery query)
         {
@@ -222,6 +216,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
+        [Authorize(Policy =PermissionConstants.TransactionRecord.Import)]
 
         [HttpPost("import/excel")]
         public async Task<IActionResult> ImportExcel(IFormFile excelFile)

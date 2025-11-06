@@ -21,3 +21,15 @@ export const assignRolePermissions = async (roleId, permissions) => {
     throw error;
   }
 };
+
+
+export const getPermissionsByRole = async (roleId) => {
+
+  try {
+    const response = await axiosInstance.get(`/permissions/${roleId}/get-by-role`)
+    return response.data;
+  }
+  catch (error) {
+    console.error( error);
+  }
+}
