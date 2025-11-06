@@ -10,5 +10,8 @@ namespace FinanceManager.Application.Dtos.Roles
     {
         public required string Id { get; set; } 
         public required  string Name { get; set; }
+
+        public List<string> Permissions { get; set; } = new List<string>();
+
     }
 }

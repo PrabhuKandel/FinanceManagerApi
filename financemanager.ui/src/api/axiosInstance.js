@@ -93,6 +93,15 @@ axiosInstance.interceptors.response.use(
         isRefreshing = false;
       }
     }
+    // Handle 403: forbidden
+    if (error.response?.status === 403) {
+
+
+      // Redirect to a dedicated Access Denied page
+      window.location.href = '/access-denied';
+      return Promise.reject(error);
+    }
+
 
     return Promise.reject(error);
   }

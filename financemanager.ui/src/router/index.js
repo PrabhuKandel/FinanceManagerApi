@@ -11,6 +11,7 @@ import { isAdmin } from '../utils/auth.js';
 import BudgetVsActualOutflowReport from '../views/Reports/BudgetVsActualOutflowReport.vue';
 import TransactionSummaryByPaymentMethod from '../views/Reports/TransactionSummaryByPaymentMethod.vue';
 import TransactionSummaryByTransactionCategory from '../views/Reports/TransactionSummaryByTransactionCategory.vue';
+import AccessDenied from '../views/AccessDenied.vue';
 
 
 
@@ -18,7 +19,7 @@ import TransactionSummaryByTransactionCategory from '../views/Reports/Transactio
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: LoginForm },
-
+  { path: '/access-denied', component: AccessDenied, meta: {requiresAuth:true}},
   { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
   { path: '/payment-methods', component: PaymentMethodList, meta: { requiresAuth: true } },
   { path: '/transaction-categories', component: TransactionCategoryList, meta: { requiresAuth: true } },

@@ -150,7 +150,7 @@ app.UseCors("FinanceManagerVue");
 //    var services = scope.ServiceProvider;
 //    var context = services.GetRequiredService<ApplicationDbContext>();
 //    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-//    //await services.SeedIdentityDataAsync();
+//    await services.SeedIdentityDataAsync();
 //    await context.SeedDataAsync(userManager);
 //}
 

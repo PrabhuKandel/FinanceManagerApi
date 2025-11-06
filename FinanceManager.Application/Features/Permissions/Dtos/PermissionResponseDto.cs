@@ -2,11 +2,13 @@
 
 namespace FinanceManager.Application.Features.Permissions.Dtos
 {
-    public class PermissionResponseDto
+    public class RolePermissionsResponseDto
     {
-        public Guid Id { get; set; }
-        public required string Name { get; set; } 
+        public required string RoleId { get; set; }
 
-        public bool IsActive { get; set; }
+        public required string RoleName { get; set; }
+        public List<string> Permissions { get; set; }  = new List<string>();
+
+
     }
 }

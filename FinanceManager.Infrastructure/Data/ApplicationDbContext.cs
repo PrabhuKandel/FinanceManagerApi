@@ -29,6 +29,7 @@ namespace FinanceManager.Infrastructure.Data
 
         public DbSet<Budget> Budgets { get; set; }
 
+        public DbSet<IdentityRoleClaim<string>> RoleClaims { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

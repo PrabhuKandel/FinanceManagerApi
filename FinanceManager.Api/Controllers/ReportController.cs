@@ -4,17 +4,20 @@ using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCateg
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
+using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace FinanceManager.Api.Controllers
 {
+    [Authorize(Policy =PermissionConstants.Report.View)]
     [Route("api/reports/transaction-record")]
     [ApiController]
     public class ReportController(ISender sender) : ControllerBase
     {
-
+        
         [HttpPost("summary/transaction-category")]
         public async Task<IActionResult> GetTransactionRecordSummaryByCategory(TransactionRecordSummaryByTransactionCategoryQuery query)
             {
@@ -47,6 +50,7 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
+        [Authorize(Policy = PermissionConstants.Report.Export)]
         [HttpPost("transaction-category-budget-vs-actual-outflow/export/pdf")]
         public async Task<IActionResult> ExportToPdf(ExportTransactionCategoryBudgetVsActualOutflowQuery query)
         {

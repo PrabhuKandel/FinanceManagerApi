@@ -37,7 +37,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.View)]
+        [Authorize(Policy = PermissionConstants.PaymentMethod.View)]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -62,7 +62,7 @@ namespace FinanceManager.Api.Controllers
         }
 
 
-        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.View)]
+        [Authorize(Policy = PermissionConstants.PaymentMethod.View)]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById( Guid id)
         {
@@ -93,7 +93,7 @@ namespace FinanceManager.Api.Controllers
 
 
 
-        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.Create)]
+        [Authorize(Policy = PermissionConstants.PaymentMethod.Create)]
         [HttpPost]
         public async Task<IActionResult> Create(CreatePaymentMethodCommand createCommand)
         {
@@ -123,7 +123,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.Update)]
+        [Authorize(Policy = PermissionConstants.PaymentMethod.Update)]
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(UpdatePaymentMethodCommand updateCommand)
         {
@@ -151,7 +151,7 @@ namespace FinanceManager.Api.Controllers
 
         }
 
-        [Authorize(Policy = PermissionConstants.PaymentMethodPermissions.Delete)]
+        [Authorize(Policy = PermissionConstants.PaymentMethod.Delete)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {

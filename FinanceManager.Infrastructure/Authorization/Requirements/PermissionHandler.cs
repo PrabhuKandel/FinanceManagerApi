@@ -11,7 +11,6 @@ namespace FinanceManager.Infrastructure.Authorization.Requirements
 
     public class PermissionHandler (
         RoleManager<IdentityRole> _roleManager , 
-        IDistributedCache _distributedCache,
         ICacheService _cacheService
         ) : AuthorizationHandler<PermissionRequirement>
     {

@@ -27,7 +27,7 @@ namespace FinanceManager.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.View)]
+        [Authorize(Policy = PermissionConstants.TransactionCategory.View)]
         public async Task<IActionResult> GetAll()
         {
             var response = await mediator.Send(new GetAllTransactionCategoriesQuery());
@@ -37,7 +37,7 @@ namespace FinanceManager.Api.Controllers
 
 
         [HttpGet("{id}")]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.View)]
+        [Authorize(Policy = PermissionConstants.TransactionCategory.View)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var response = await mediator.Send(new GetTransactionCategoryByIdQuery(id));
@@ -48,7 +48,7 @@ namespace FinanceManager.Api.Controllers
         }   
         [HttpPost]
         //[Authorize(Roles = "Admin")]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.Create)]
+        [Authorize(Policy = PermissionConstants.TransactionCategory.Create)]
         public async Task<IActionResult> Create(CreateTransactionCategoryCommand createCommand)
         {
 
@@ -68,7 +68,7 @@ namespace FinanceManager.Api.Controllers
 
         [HttpPut("{id}")]
         //[Authorize(Roles = "Admin")]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.Update)]
+        [Authorize(Policy = PermissionConstants.TransactionCategory.Update)]
         public async Task<IActionResult> Update(UpdateTransactionCategoryCommand updateCommand)
         {
             var response = await mediator.Send(updateCommand);
@@ -91,7 +91,7 @@ namespace FinanceManager.Api.Controllers
 
         [HttpDelete("{id}")]
         //[Authorize(Roles = "Admin")]
-        [Authorize(Policy = PermissionConstants.TransactionCategoryPermissions.Delete)]
+        [Authorize(Policy = PermissionConstants.TransactionCategory.Delete)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var response = await mediator.Send(new DeleteTransactionCategoryCommand(id));
