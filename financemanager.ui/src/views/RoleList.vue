@@ -2,6 +2,13 @@
   <Layout>
     <div>
       <h2>Role List</h2>
+      <div class="d-flex justify-content-end ">
+        <button class="btn btn-primary" @click="openPermissionsModal()">
+          <i class="bi bi-plus-lg me-1"></i> Create Role
+        </button>
+      </div>
+
+
       <div class="table-responsive shadow-sm rounded" style="max-height: 700px; overflow-y: auto;">
         <table class="table table-hover table-sm custom-table mt-3">
           <thead class="table-primary text-center align-middle sticky-top">
@@ -70,58 +77,54 @@
           <!-- Header -->
           <div class="modal-header">
             <h5 class="modal-title mb-4">
-              Edit Permissions for {{ selectedRole?.name }}
+             {{modalTitle}}
             </h5>
             <button type="button" class="btn btn-close" @click="closeModal"></button>
           </div>
 
           <!-- Body -->
-          <!--<div class="modal-body">
-    <div v-if="permissions.length === 0" class="text-center py-3">
-      Loading permissions...
-    </div>-->
-          <!-- Permissions Grid -->
-          <div class="permissions-grid">
-            <div v-for="group in permissions" :key="group.group" class="permission-group p-3">
-              <h6 class="group-title">{{ group.group }}</h6>
-              <div class="form-check" v-for="perm in group.permissions" :key="perm">
-                <input class="form-check-input" type="checkbox"
-                       :id="perm"
-                       :value="perm"
-                       v-model="selectedPermissions">
-                <label class="form-check-label" :for="perm">{{ perm }}</label>
-              </div>
+          <div class="modal-body">
+            <!-- Role Name Input (only for create) -->
+            <div v-if="isCreateModal" class="mb-3">
+              <label class="form-label">Role Name</label>
+              <input type="text" class="form-control" v-model="roleName" placeholder="Enter role name" />
             </div>
+            <!-- Permissions Grid -->
+            <PermissionsGrid :permissions="permissions"
+                             v-model:selectedPermissions="selectedPermissions"
+                             :idPrefix="modalIdPrefix" />
+
+            <!-- Footer -->
           </div>
-
-          <!-- Footer -->
-          <div class="modal-footer mt-3 ">
-            <button class="btn btn-secondary me-2" @click="closeModal">Cancel</button>
-            <button class="btn btn-primary" @click="savePermissions">Save</button>
-          </div>
+            <div class="modal-footer mt-3 ">
+              <button class="btn btn-secondary me-2" @click="closeModal">Cancel</button>
+              <button class="btn btn-primary" @click="savePermissions">Save</button>
+            </div>
         </div>
-
-
         </div>
-      </div>
-    
-
+        </div>
 
   </Layout>
 </template>
 <script setup>
   import { ref,onMounted } from 'vue';
   import Layout from '../components/Layout.vue';
-  import { getRoles } from '../api/rolesApi'
+  import { getRoles ,createRole} from '../api/rolesApi'
   import { getPermission, assignRolePermissions, getPermissionsByRole } from '../api/permissionApi';
   import { toast } from 'vue3-toastify'
+  import PermissionsGrid from './PermissionsGrid.vue'
  
 
+  const isCreateModal = ref(true)
   const showModal = ref(false);
+  const modalIdPrefix = ref('')
+  const modalTitle = ref('')
 
   const roles = ref([]);
   const loading = ref(false);
   const error = ref('');
+
+  const roleName = ref('');
 
   //permission state
   const permissions = ref([]);
@@ -159,30 +162,56 @@
 
   const savePermissions = async () => {
     try {
-      if (!selectedRole.value) return;
 
-      await assignRolePermissions(selectedRole.value.id, selectedPermissions.value);
-      // Update permissions locally
-      const roleIndex = roles.value.findIndex(r => r.id === selectedRole.value.id);
-      if (roleIndex !== -1) {
-        roles.value[roleIndex].permissions = [...selectedPermissions.value];
+      if (isCreateModal.value) {
+
+        await createRole(roleName.value, selectedPermissions.value);
+        await fetchRoles();
+
+        toast.success('Role created successfully!');
       }
-      toast.success("Permission updated successfully");
-      showModal.value = false;
+      else {
+        //edit permissions of existing role
+        if (!selectedRole.value) return;
+
+        await assignRolePermissions(selectedRole.value.id, selectedPermissions.value);
+        // Update permissions locally
+        const roleIndex = roles.value.findIndex(r => r.id === selectedRole.value.id);
+        if (roleIndex !== -1) {
+          roles.value[roleIndex].permissions = [...selectedPermissions.value];
+        }
+        toast.success("Permission updated successfully");
+      }
+
+      closeModal()
     } catch (err) {
       console.error(err);
-      toast.error('Failed to update permissions.');
+      toast.error('Failed .');
     }
   };
 
 
-  const openPermissionsModal = async (role) => {
-    selectedRole.value = role;
+  const openPermissionsModal = async (role = null) => {
+    if (role) {
+      // Editing existing role
+      isCreateModal.value = false;
+      selectedRole.value = role;
 
-    // Fetch already assigned permissions for this role
-    const rolePermissionsResponse = await getPermissionsByRole(role.id);
-    console.log(rolePermissionsResponse);
-    selectedPermissions.value = rolePermissionsResponse.data.permissions || [];
+      modalIdPrefix.value = 'edit-';
+      modalTitle.value = `Edit Permissions for ${role.name}`;
+
+      const rolePermissionsResponse = await getPermissionsByRole(role.id);
+      selectedPermissions.value = rolePermissionsResponse.data.permissions || [];
+    } else {
+      // Creating new role
+      isCreateModal.value = true;
+      selectedRole.value = null;
+      roleName.value = '';
+      selectedPermissions.value = [];
+      modalIdPrefix.value = 'create-';
+      modalTitle.value = 'Create New Role';
+    }
+
     showModal.value = true;  // show modal
   };
 
