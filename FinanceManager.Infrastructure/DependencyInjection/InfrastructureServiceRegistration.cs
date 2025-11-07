@@ -59,6 +59,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             HandlebarsHelpers.RegisterHandlers();
             services.AddScoped<IExcelService, ExcelService>();
             services.AddScoped<IExcelBuilder<IEnumerable<TransactionCategoryBudgetVsActualOutflowDto>>, TransactionCategoryBudgetVsActualOutflowExcelBuilder>();
+            services.AddScoped<IExcelBuilder<IEnumerable<TransactionRecordSummaryByPaymentMethodDto>>, TransactionRecordSummaryByPaymentMethodExcelBuilder>();
 
             services.AddStackExchangeRedisCache(options =>
             {

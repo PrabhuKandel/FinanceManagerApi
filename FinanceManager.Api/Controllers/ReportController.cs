@@ -4,6 +4,7 @@ using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCateg
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow.ExportToPdf;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod.ExportToExcel;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
 using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
@@ -40,6 +41,18 @@ namespace FinanceManager.Api.Controllers{
             var response = await sender.Send(query);
             return Ok(response);
 
+        }
+        [Authorize(Policy = PermissionConstants.Report.Export)]
+        [HttpPost("summary/payment-method/export/excel")]
+        public async Task<IActionResult> ExportToExcel(ExportExcelTransactionRecordSummaryByPaymentMethodQuery query)
+        {
+            var excelBytes = await sender.Send(query);
+            // Return as a file
+            return File(
+                excelBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "TransactionSummaryByPaymentMethod.xlsx"
+            );
         }
 
         [HttpPost("transaction-category-budget-vs-actual-outflow")]
