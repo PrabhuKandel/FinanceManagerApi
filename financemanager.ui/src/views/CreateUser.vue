@@ -4,7 +4,7 @@
       <div class="modal-content shadow-sm">
         <div class="modal-header">
           <h5 class="modal-title mb-4">Create User</h5>
-          <button type="button" class="btn btn-close" @click="$emit('close')"></button>
+          <button type="button" class="btn btn-close" @click="$emit('close')">X</button>
         </div>
 
         <div class="modal-body">

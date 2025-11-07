@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { Roles } from '../constants/roles.js';
-import { computed,ref } from "vue";
+import { computed } from "vue";
 export function getUserRole() {
   const token = localStorage.getItem("accessToken"); 
 
@@ -8,10 +8,12 @@ export function getUserRole() {
 
   try {
     const decoded = jwtDecode(token);
-    const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    const roleClaim = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
+    if (!roleClaim) return [];
 
-    return role||null; 
+    // Normalize to always be an array
+    return Array.isArray(roleClaim) ? roleClaim : [roleClaim];
   } catch (err) {
     console.error("Invalid token", err);
     return null;
@@ -19,9 +21,7 @@ export function getUserRole() {
 }
 
 export function isAdmin() {
-  const userRole = ref(getUserRole());
-
-
-  return computed(() => userRole.value === Roles.Admin);
+  const roles = getUserRole();
+  return computed(() => roles.includes(Roles.Admin));
 }
 
