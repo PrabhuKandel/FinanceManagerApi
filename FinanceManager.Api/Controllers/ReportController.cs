@@ -1,5 +1,6 @@
 ﻿using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow.ExportToExcel;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow.ExportToPdf;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod;
@@ -10,8 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace FinanceManager.Api.Controllers
-{
+namespace FinanceManager.Api.Controllers{
     [Authorize(Policy =PermissionConstants.Report.View)]
     [Route("api/reports/transaction-record")]
     [ApiController]
@@ -58,7 +58,18 @@ namespace FinanceManager.Api.Controllers
             return File(pdfBytes, "application/pdf", $"TransactionCategoryBudgetVsActualOutflow-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf");
         }
 
-
+        [Authorize(Policy = PermissionConstants.Report.Export)]
+        [HttpPost("transaction-category-budget-vs-actual-outflow/export/excel")]
+        public async Task<IActionResult> ExportToExcel(ExportExcelTransactionCategoryBudgetVsActualOutflowQuery query)
+        {
+            var excelBytes = await sender.Send(query);
+            // Return as a file
+            return File(
+                excelBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "TransactionCategoryBudgetVsActualReport.xlsx"
+            );
+        }
 
 
     }
