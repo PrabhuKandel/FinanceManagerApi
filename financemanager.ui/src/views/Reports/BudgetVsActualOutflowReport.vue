@@ -79,75 +79,82 @@
 
         </div>
       </div>
+    </div>
+
+    <!-- Report Table Section -->
+    <div v-if="results.length" class="mt-4">
+
+      <div class="d-flex justify-content-between align-items-center mb-2">
+
+        <div class="text-muted ">
+          <strong>Period:</strong>
+          {{ formatDate(results[0].periodStart) }} – {{ formatDate(results[0].periodEnd) }}
+        </div>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-success" @click="downloadExcel">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i>
+            Export Excel
+          </button>
+        </div>
       </div>
 
-      <!-- Report Table Section -->
-      <div v-if="results.length" class="mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="table-responsive shadow-sm rounded" style="max-height: 700px; overflow-y: auto;">
+        <table class="table table-hover table-sm custom-table mt-3">
+          <thead class="table-primary text-center align-middle sticky-top">
+            <tr>
+              <th>SN</th>
+              <th v-if="hasTransactionCategory">Transaction Category</th>
+              <th>Budgeted Amount (Rs)</th>
+              <th>Actual Spent (Rs)</th>
+              <th>Remaining Budget</th>
+              <th>Usage (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in results"
+                :key="index"
+                class="text-center align-middle">
+              <td class="fw-semibold">{{ index + 1 }}</td>
+              <td v-if="hasTransactionCategory">
 
-          <div class="text-muted ">
-            <strong>Period:</strong>
-            {{ formatDate(results[0].periodStart) }} – {{ formatDate(results[0].periodEnd) }}
-          </div>
-        </div>
+                {{ item.transactionCategoryName }}
 
-        <div class="table-responsive shadow-sm rounded" style="max-height: 700px; overflow-y: auto;">
-          <table class="table table-hover table-sm custom-table mt-3">
-            <thead class="table-primary text-center align-middle sticky-top">
-              <tr>
-                <th>SN</th>
-                <th v-if="hasTransactionCategory">Transaction Category</th>
-                <th>Budgeted Amount (Rs)</th>
-                <th>Actual Spent (Rs)</th>
-                <th>Remaining Budget</th>
-                <th>Usage (%)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in results"
-                  :key="index"
-                  class="text-center align-middle">
-                <td class="fw-semibold">{{ index + 1 }}</td>
-                <td v-if="hasTransactionCategory">
-
-                  {{ item.transactionCategoryName }}
-
-                </td>
-                <td>{{ item.budgetAmount.toLocaleString() }}</td>
-                <td>{{ item.actualAmount.toLocaleString() }}</td>
-                <td :class="{
-                    'text-danger' : item.remainingBudget < 0,
+              </td>
+              <td>{{ item.budgetAmount.toLocaleString() }}</td>
+              <td>{{ item.actualAmount.toLocaleString() }}</td>
+              <td :class="{
+                  'text-danger' : item.remainingBudget < 0,
                   'text-success': item.remainingBudget >= 0,
                 }"
               >
                 {{ item.remainingBudget.toLocaleString() }}
               </td>
-                <td :class="{ 'text-danger': item.budgetUsagePercent > 100 }">
-                  {{ item.budgetUsagePercent.toFixed(2) }}%
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+              <td :class="{ 'text-danger': item.budgetUsagePercent > 100 }">
+                {{ item.budgetUsagePercent.toFixed(2) }}%
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <!-- Validation Errors -->
-      <div v-if="Object.keys(validationErrors).length" class="alert alert-danger mt-3">
-        <h6 class="fw-bold mb-2">Validation Errors:</h6>
-        <ul class="mb-0">
-          <li v-for="(messages, field) in validationErrors" :key="field">
-            <strong>{{ field }}:</strong>
-            <span v-for="(msg, i) in messages" :key="i">{{ msg }}</span>
-          </li>
-        </ul>
-      </div>
-      <div v-else-if="dataFetched && !loading && results.length === 0" class="alert alert-warning mt-4 text-center">
-        No data found for the selected period.
-      </div>
+    </div>
+    <!-- Validation Errors -->
+    <div v-if="Object.keys(validationErrors).length" class="alert alert-danger mt-3">
+      <h6 class="fw-bold mb-2">Validation Errors:</h6>
+      <ul class="mb-0">
+        <li v-for="(messages, field) in validationErrors" :key="field">
+          <strong>{{ field }}:</strong>
+          <span v-for="(msg, i) in messages" :key="i">{{ msg }}</span>
+        </li>
+      </ul>
+    </div>
+    <div v-else-if="dataFetched && !loading && results.length === 0" class="alert alert-warning mt-4 text-center">
+      No data found for the selected period.
+    </div>
 
-      <div v-if="loading" class="text-center py-3 text-primary">
-        <div class="spinner-border" role="status"></div>
-        <p class="mt-2">Loading report data...</p>
-      </div>
+    <div v-if="loading" class="text-center py-3 text-primary">
+      <div class="spinner-border" role="status"></div>
+      <p class="mt-2">Loading report data...</p>
+    </div>
 
   </Layout>
 </template>
@@ -158,7 +165,8 @@
   import Layout from '../../components/Layout.vue'
   import { ref, onMounted,computed } from 'vue'
   import { getTransactionCategories } from '../../api/transactionCategoryApi'
-  import { generateBudgetVsOutflow } from '../../api/reportApi'
+  import { generateBudgetVsOutflow, exportBudgetVsOutflow } from '../../api/reportApi'
+
   
   const categories = ref([])
   const validationErrors = ref({})
@@ -222,6 +230,29 @@
       loading.value = false
     }
   }
+  const downloadExcel = async (exportAll = false) => {
+    try {
+      const payload = {
+        transactionCategoryId: form.value.transactionCategoryId,
+        periodType: form.value.periodType,
+        periodStart: form.value.periodStart,
+        periodEnd: form.value.periodEnd,
+      }
+
+      const blobData = await exportBudgetVsOutflow(payload);
+
+      const url = window.URL.createObjectURL(new Blob([blobData]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'TransactionCategoryBudgetVsActualReport.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Failed to download Excel:', error);
+      alert('Failed to export Excel. Please try again.');
+    }
+  };
 
 
   const formatDate = (dateString) => {
