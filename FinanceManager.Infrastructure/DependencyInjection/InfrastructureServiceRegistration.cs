@@ -60,6 +60,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddScoped<IExcelService, ExcelService>();
             services.AddScoped<IExcelBuilder<IEnumerable<TransactionCategoryBudgetVsActualOutflowDto>>, TransactionCategoryBudgetVsActualOutflowExcelBuilder>();
             services.AddScoped<IExcelBuilder<IEnumerable<TransactionRecordSummaryByPaymentMethodDto>>, TransactionRecordSummaryByPaymentMethodExcelBuilder>();
+            services.AddScoped<IExcelBuilder<IEnumerable<TransactionRecordSummaryByCategoryDto>>, TransactionRecordSummaryByTransactionCategoryExcelBuilder>();
 
             services.AddStackExchangeRedisCache(options =>
             {
