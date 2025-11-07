@@ -41,7 +41,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Database\StoredProcedures\Reports\" />
-	  <Folder Include="NewFolder\" />
 	</ItemGroup>
 
 </Project>

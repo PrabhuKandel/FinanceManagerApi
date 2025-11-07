@@ -1,17 +1,18 @@
-﻿using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
-using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow;
+﻿using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow.ExportToExcel;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionCategoryBudgetVsActualOutflow.ExportToPdf;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByCategoryType;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByPaymentMethod.ExportToExcel;
 using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory;
+using FinanceManager.Application.FeaturesDapper.Reports.Queries.TransactionRecordSummaryByTransactionCategory.ExportToExcel;
 using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
-namespace FinanceManager.Api.Controllers
-{
+namespace FinanceManager.Api.Controllers{
     [Authorize(Policy =PermissionConstants.Report.View)]
     [Route("api/reports/transaction-record")]
     [ApiController]
@@ -24,8 +25,20 @@ namespace FinanceManager.Api.Controllers
                 var response = await sender.Send(query);
                 return Ok(response);
             }
+        [Authorize(Policy = PermissionConstants.Report.Export)]
+        [HttpPost("summary/transaction-category/export/excel")]
+        public async Task<IActionResult> ExportToExcel(ExportExcelTransactionRecordSummaryByTransactionCategoryQuery query)
+        {
+            var excelBytes = await sender.Send(query);
+            // Return as a file
+            return File(
+                excelBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "TransactionSummaryByTransactionCategory.xlsx"
+            );
+        }
 
-    
+
         [HttpPost("summary/category-type")]
         public async Task<IActionResult> GetIncomeExpenseSummary( TransactionRecordSummaryByCategoryTypeQuery query)
         {
@@ -40,6 +53,18 @@ namespace FinanceManager.Api.Controllers
             var response = await sender.Send(query);
             return Ok(response);
 
+        }
+        [Authorize(Policy = PermissionConstants.Report.Export)]
+        [HttpPost("summary/payment-method/export/excel")]
+        public async Task<IActionResult> ExportToExcel(ExportExcelTransactionRecordSummaryByPaymentMethodQuery query)
+        {
+            var excelBytes = await sender.Send(query);
+            // Return as a file
+            return File(
+                excelBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "TransactionSummaryByPaymentMethod.xlsx"
+            );
         }
 
         [HttpPost("transaction-category-budget-vs-actual-outflow")]
@@ -58,7 +83,18 @@ namespace FinanceManager.Api.Controllers
             return File(pdfBytes, "application/pdf", $"TransactionCategoryBudgetVsActualOutflow-{DateTime.UtcNow:yyyyMMddHHmmss}.pdf");
         }
 
-
+        [Authorize(Policy = PermissionConstants.Report.Export)]
+        [HttpPost("transaction-category-budget-vs-actual-outflow/export/excel")]
+        public async Task<IActionResult> ExportToExcel(ExportExcelTransactionCategoryBudgetVsActualOutflowQuery query)
+        {
+            var excelBytes = await sender.Send(query);
+            // Return as a file
+            return File(
+                excelBytes,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "TransactionCategoryBudgetVsActualReport.xlsx"
+            );
+        }
 
 
     }

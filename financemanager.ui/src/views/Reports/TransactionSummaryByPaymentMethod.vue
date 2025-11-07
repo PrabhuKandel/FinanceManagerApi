@@ -41,6 +41,12 @@
 
       <!-- Table -->
       <div v-if="summaryData.length" class="table-responsive shadow-sm rounded" style="max-height: 600px; overflow-y: auto;">
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-success" @click="downloadExcel">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i>
+            Export Excel
+          </button>
+        </div>
         <table class="table table-hover table-sm custom-table mt-3">
           <thead class="table-primary text-center sticky-top align-middle">
             <tr>
@@ -84,7 +90,7 @@
 import { ref, onMounted } from 'vue'
   import Layout from '../../components/Layout.vue'
   import { getPaymentMethods } from '../../api/paymentMethodApi'
-  import { generateTransactionSummaryByPaymentMethod } from '../../api/reportApi'
+  import { generateTransactionSummaryByPaymentMethod, exportTransactionSummaryByPaymentMethod } from '../../api/reportApi'
 
 const filters = ref({
   paymentMethodId: '',
@@ -139,7 +145,32 @@ const validationErrors = ref({})
   } finally {
     loading.value = false
   }
-}
+  }
+
+  const downloadExcel = async () => {
+    try {
+      const payload = {
+        paymentMethodId: filters.value.paymentMethodId,
+        fromDate: filters.value.fromDate,
+        endDate: filters.value.toDate,
+
+      }
+
+      const blobData = await exportTransactionSummaryByPaymentMethod(payload);
+
+      const url = window.URL.createObjectURL(new Blob([blobData]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'TransactionSummaryByPaymentMethod.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Failed to download Excel:', error);
+      alert('Failed to export Excel. Please try again.');
+    }
+  };
+
 
   onMounted(() => {
     fetchPaymentMethods()

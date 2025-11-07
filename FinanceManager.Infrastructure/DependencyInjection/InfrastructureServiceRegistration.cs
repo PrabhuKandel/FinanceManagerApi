@@ -1,10 +1,12 @@
 ﻿using System.Data;
 using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
+using FinanceManager.Application.FeaturesDapper.Reports.Dtos;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Infrastructure.Authorization.Requirements;
 using FinanceManager.Infrastructure.Caching;
 using FinanceManager.Infrastructure.Data;
+using FinanceManager.Infrastructure.ExcelBuilders;
 using FinanceManager.Infrastructure.Helpers;
 using FinanceManager.Infrastructure.Jobs.FireAndForget;
 using FinanceManager.Infrastructure.Jobs.Recurring;
@@ -55,6 +57,10 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddScoped<TokenCleanupJob>();
 
             HandlebarsHelpers.RegisterHandlers();
+            services.AddScoped<IExcelService, ExcelService>();
+            services.AddScoped<IExcelBuilder<IEnumerable<TransactionCategoryBudgetVsActualOutflowDto>>, TransactionCategoryBudgetVsActualOutflowExcelBuilder>();
+            services.AddScoped<IExcelBuilder<IEnumerable<TransactionRecordSummaryByPaymentMethodDto>>, TransactionRecordSummaryByPaymentMethodExcelBuilder>();
+            services.AddScoped<IExcelBuilder<IEnumerable<TransactionRecordSummaryByCategoryDto>>, TransactionRecordSummaryByTransactionCategoryExcelBuilder>();
 
             services.AddStackExchangeRedisCache(options =>
             {
