@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Features.ApplicationUsers.Commands.UpdateApplicationUser;
+﻿using FinanceManager.Application.Features.ApplicationUsers.Commands.AssignRole;
+using FinanceManager.Application.Features.ApplicationUsers.Commands.UpdateApplicationUser;
 using FinanceManager.Application.Features.ApplicationUsers.Queries.GetAllApplicationUsers;
 using FinanceManager.Application.Features.ApplicationUsers.Queries.GetApplicationUserById;
 using FinanceManager.Infrastructure.Authorization.Permissions;
@@ -36,6 +37,14 @@ namespace FinanceManager.Api.Controllers
         public async Task<IActionResult> Update( UpdateApplicationUserCommand command)
         {
             var response = await sender.Send(command);
+            return Ok(response);
+        }
+
+
+        [HttpPost("assign-roles")]
+        public async Task<IActionResult> AssignRoles(AssignRoleCommand command)
+        {
+            var response = await sender.Send(command);  
             return Ok(response);
         }
 
