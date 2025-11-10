@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FinanceManager.Application.Features.ApplicationUsers.Commands.ToggleUserLockStatus
 {
-    public class ToggleUserLockStatusHandler (UserManager<ApplicationUser> userManager): IRequestHandler<ToggleUserLockStatusCommand, OperationResult<string>>
+    public class ToggleUserLockStatusHandler (UserManager<ApplicationUser> userManager): IRequestHandler<ToggleUserLockStatusCommand, OperationResult<ToggleUserLockStatusResponseDto>>
     {
-        public async Task<OperationResult<string>> Handle(ToggleUserLockStatusCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<ToggleUserLockStatusResponseDto>> Handle(ToggleUserLockStatusCommand request, CancellationToken cancellationToken)
         {
             var user  = await userManager.FindByIdAsync(request.UserId);
             Guard.Against.Null(nameof(user), $"User with Id: {request.UserId} was not found.");
@@ -16,18 +16,36 @@ namespace FinanceManager.Application.Features.ApplicationUsers.Commands.ToggleUs
             var isLocked = await userManager.IsLockedOutAsync(user);
 
             if (isLocked)
+            {
                 user.LockoutEnd = null;
+                user.IsManuallyLocked = false;
+                user.LockReason = null;
+            }
+
 
             else
+            {
+
                 user.LockoutEnd = DateTimeOffset.MaxValue;
+                user.IsManuallyLocked = true;
+                user.LockReason =  "Manually locked by admin";
+            }
 
             var result = await userManager.UpdateAsync(user);
 
-            return new OperationResult<string>
+            var responseDto = new ToggleUserLockStatusResponseDto
             {
-                Message =  isLocked? "User has been unlocked successfully."
-                        : "User has been locked successfully."
-                    
+                UserId = user.Id,
+                IsLocked = !isLocked,
+                IsManuallyLocked = user.IsManuallyLocked,
+                LockReason = user.LockReason
+            };
+
+            return new OperationResult<ToggleUserLockStatusResponseDto>
+            {
+                Message = isLocked ? "User has been unlocked successfully."
+                        : "User has been locked successfully.",
+                  Data = responseDto
             };
 
         }

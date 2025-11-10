@@ -6,7 +6,7 @@ namespace FinanceManager.Application.Features.ApplicationUsers.Commands.ToggleUs
     public record ToggleUserLockStatusCommand
         (
         string UserId
-        ) :IRequest<OperationResult<string>>
+        ) :IRequest<OperationResult<ToggleUserLockStatusResponseDto>>
     {
     }
 }

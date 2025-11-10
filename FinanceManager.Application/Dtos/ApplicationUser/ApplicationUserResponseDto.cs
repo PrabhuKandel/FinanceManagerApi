@@ -12,5 +12,9 @@ namespace FinanceManager.Application.Dtos.ApplicationUser
         public List<string> Roles { get; set; } = new List<string>();
 
         public bool IsLocked { get; set; }
+
+        public bool IsManuallyLocked { get; set; }
+
+        public string ?LockReason { get; set; }
     }
 }

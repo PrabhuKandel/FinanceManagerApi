@@ -28,7 +28,8 @@ namespace FinanceManager.Infrastructure.Data.Configurations
                    .HasMaxLength(100);
 
 
-
+            builder.Property(u => u.LockReason)
+                .HasMaxLength(200);
         }
         }
 }

@@ -14,6 +14,10 @@ namespace FinanceManager.Domain.Entities
        
         public required string Address { get; set; }
 
+        public  bool IsManuallyLocked { get; set; } = false;
+
+        public string? LockReason { get; set; }
+
         public ICollection<RefreshToken>? RefreshTokens { get; set; }
 
         // Transactions created by this user

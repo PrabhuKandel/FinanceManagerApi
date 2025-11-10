@@ -16,6 +16,7 @@
               <th>Address</th>
               <th>Email</th>
               <th>Lock  Status</th>
+              <th> Lock Reason</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -35,6 +36,11 @@
                          @change="toggleUserLock(user)">
                 </div>
               </td>
+              <td>
+                <span v-if="user.isLocked && user.lockReason">{{ user.lockReason }}</span>
+                <span v-else>—</span>
+              </td>
+
 
               <td>
                 <div class="btn-group">
@@ -207,11 +213,15 @@ const closeModal = () => {
   const toggleUserLock = async (user) => {
     try {
     
-      await toggleUserLockStatus(user.id); 
+      var response = await toggleUserLockStatus(user.id);
+      const updated = response.data; // updated info from backend
+      console.log("consoling user :", user);
+      // Update the user object locally
+      user.isLocked = updated.isLocked;
+      user.isManuallyLocked = updated.isManuallyLocked;
+      user.lockReason = updated.lockReason;
       toast.success(`User ${user.firstName} ${user.lastName} is now ${user.isLocked ? 'locked' : 'unlocked'}`);
-
-      // Optionally, update UI locally if backend returns new status
-      // user.isLocked = response.data.isLocked;
+      //fetchUsers();
     } catch (err) {
       console.error(err);
       toast.error('Failed to update lock status');

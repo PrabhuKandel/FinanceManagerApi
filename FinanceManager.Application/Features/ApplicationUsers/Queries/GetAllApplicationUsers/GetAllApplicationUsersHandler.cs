@@ -23,7 +23,10 @@ namespace FinanceManager.Application.Features.ApplicationUsers.Queries.GetAllApp
                              join role in context.Roles on userRole.RoleId equals role.Id
                              where userRole.UserId == u.Id
                              select role.Name).ToList(),
-                   IsLocked = u.LockoutEnabled && u.LockoutEnd.HasValue && u.LockoutEnd > DateTimeOffset.UtcNow
+                   IsLocked = u.LockoutEnabled && u.LockoutEnd.HasValue && u.LockoutEnd > DateTimeOffset.UtcNow,
+                   IsManuallyLocked = u.IsManuallyLocked,
+                   LockReason = u.LockReason??"Temporarily Locked"
+
 
 
                 }).ToListAsync(cancellationToken);
