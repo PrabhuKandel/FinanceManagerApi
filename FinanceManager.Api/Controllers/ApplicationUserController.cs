@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Application.Features.ApplicationUsers.Commands.AssignRole;
+using FinanceManager.Application.Features.ApplicationUsers.Commands.ToggleUserLockStatus;
 using FinanceManager.Application.Features.ApplicationUsers.Commands.UpdateApplicationUser;
 using FinanceManager.Application.Features.ApplicationUsers.Queries.GetAllApplicationUsers;
 using FinanceManager.Application.Features.ApplicationUsers.Queries.GetApplicationUserById;
@@ -48,5 +49,12 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
+
+        [HttpPost("toggle-lock-status")]
+        public async Task<IActionResult> ToggleLockStatus(ToggleUserLockStatusCommand command)
+        {
+            var response = await sender.Send(command);
+            return Ok(response);
+        }
     }
 }

@@ -4,6 +4,7 @@ using FinanceManager.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManager.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110053204_AddLockFieldsInApplicationUser")]
+    partial class AddLockFieldsInApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,7 +166,7 @@ namespace FinanceManager.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedByApplicationUserId");
 
-                    b.ToTable("Budgets", (string)null);
+                    b.ToTable("Budgets");
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.PaymentMethod", b =>
@@ -189,7 +192,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("PaymentMethods", (string)null);
+                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.Permission", b =>
@@ -217,7 +220,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Permissions", (string)null);
+                    b.ToTable("Permissions");
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.RefreshToken", b =>
@@ -255,7 +258,7 @@ namespace FinanceManager.Infrastructure.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionAttachment", b =>
@@ -295,7 +298,7 @@ namespace FinanceManager.Infrastructure.Migrations
 
                     b.HasIndex("UploadedByApplicationUserId");
 
-                    b.ToTable("TransactionAttachments", (string)null);
+                    b.ToTable("TransactionAttachments");
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionCategory", b =>
@@ -321,7 +324,7 @@ namespace FinanceManager.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("TransactionCategories", (string)null);
+                    b.ToTable("TransactionCategories");
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionPayment", b =>
@@ -345,7 +348,7 @@ namespace FinanceManager.Infrastructure.Migrations
 
                     b.HasIndex("TransactionRecordId");
 
-                    b.ToTable("TransactionPayments", (string)null);
+                    b.ToTable("TransactionPayments");
                 });
 
             modelBuilder.Entity("FinanceManager.Domain.Entities.TransactionRecord", b =>
@@ -399,7 +402,7 @@ namespace FinanceManager.Infrastructure.Migrations
 
                     b.HasIndex("UpdatedByApplicationUserId");
 
-                    b.ToTable("TransactionRecords", (string)null);
+                    b.ToTable("TransactionRecords");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

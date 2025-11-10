@@ -103,7 +103,17 @@ builder.Services.AddHangfire(configuration => configuration
 
 
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=>
+{
+    // Enable lockout for all users by default
+    options.Lockout.AllowedForNewUsers = true;
+
+    // Maximum failed login attempts before temporary lockout
+    options.Lockout.MaxFailedAccessAttempts = 3;
+
+    // Duration of temporary lockout
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
+})
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 

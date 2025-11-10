@@ -15,6 +15,8 @@
               <th>User Name</th>
               <th>Address</th>
               <th>Email</th>
+              <th>Lock  Status</th>
+              <th> Lock Reason</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -24,6 +26,22 @@
               <td>{{ user.firstName }} {{ user.lastName }}</td>
               <td>{{ user.address }}</td>
               <td>{{ user.email }}</td>
+              <td>
+                <div class="form-check form-switch d-flex justify-content-center">
+                  <input class="form-check-input"
+                         type="checkbox"
+                         :id="'lockSwitch' + user.id"
+                         v-model="user.isLocked"
+                         :class="user.isLocked ? 'switch-locked' : 'switch-unlocked'"
+                         @change="toggleUserLock(user)">
+                </div>
+              </td>
+              <td>
+                <span v-if="user.isLocked && user.lockReason">{{ user.lockReason }}</span>
+                <span v-else>—</span>
+              </td>
+
+
               <td>
                 <div class="btn-group">
                   <button class="btn btn-sm btn-outline-primary dropdown-toggle"
@@ -103,7 +121,7 @@
 import { ref, onMounted } from 'vue';
   import CreateUser from './CreateUser.vue'; 
   import Layout from '../components/Layout.vue';
-  import { getApplicationUsers,assignRolesToUser } from '../api/applicationUserApi';
+  import { getApplicationUsers, assignRolesToUser, toggleUserLockStatus } from '../api/applicationUserApi';
   import { getRoles } from '../api/rolesApi';
   import { toast } from 'vue3-toastify';
 
@@ -149,7 +167,8 @@ const closeModal = () => {
     error.value = '';
     try {
       const response = await getApplicationUsers();
-      users.value = response.data; 
+      users.value = response.data;
+      console.log(users.value);
     } catch (err) {
       console.error(err);
       error.value = 'Failed to fetch users.';
@@ -187,6 +206,28 @@ const closeModal = () => {
     } catch (err) {
       console.error(err);
       toast.error('Failed to update roles.');
+    }
+  };
+
+
+  const toggleUserLock = async (user) => {
+    try {
+    
+      var response = await toggleUserLockStatus(user.id);
+      const updated = response.data; // updated info from backend
+      console.log("consoling user :", user);
+      // Update the user object locally
+      user.isLocked = updated.isLocked;
+      user.isManuallyLocked = updated.isManuallyLocked;
+      user.lockReason = updated.lockReason;
+      toast.success(`User ${user.firstName} ${user.lastName} is now ${user.isLocked ? 'locked' : 'unlocked'}`);
+      //fetchUsers();
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update lock status');
+
+      // Revert checkbox in case of error
+      user.isLocked = !user.isLocked;
     }
   };
 

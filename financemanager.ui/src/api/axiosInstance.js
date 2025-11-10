@@ -44,6 +44,11 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    // Don't retry login requests
+    if (originalRequest.url.includes('/Auth/login')) {
+      return Promise.reject(error);
+    }
   
     // If 401 and not already retried
     if (error.response?.status === 401 && !originalRequest._retry) {
