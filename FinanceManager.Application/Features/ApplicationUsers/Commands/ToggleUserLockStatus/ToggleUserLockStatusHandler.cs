@@ -19,7 +19,7 @@ namespace FinanceManager.Application.Features.ApplicationUsers.Commands.ToggleUs
                 user.LockoutEnd = null;
 
             else
-                user.LockoutEnd = DateTimeOffset.UtcNow.AddYears(100);
+                user.LockoutEnd = DateTimeOffset.MaxValue;
 
             var result = await userManager.UpdateAsync(user);
 

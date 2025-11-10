@@ -34,15 +34,28 @@ namespace FinanceManager.Application.Features.Auth.Commands
                 throw new AuthenticationException("Invalid email");
             }
 
-            // 1️⃣ Check lockout
-            if (await userManager.IsLockedOutAsync(applicationUser))
-                throw new AuthenticationException("Your account is locked. Please contact support or try later.");
+            //  Check lockout
 
-            var result = await userManager.CheckPasswordAsync(applicationUser, request.LoginUser.Password);
-            if (!result)
+            if (await userManager.IsLockedOutAsync(applicationUser))
             {
+                if (applicationUser.LockoutEnd == DateTimeOffset.MaxValue)
+                    throw new AuthenticationException("Your account is locked. Please contact support or try later.");
+
+                throw new AuthenticationException("Your account is temporarily locked due to multiple failed login attempts. Please try again later.");
+            }
+
+            //validate password
+            var isPasswordValid = await userManager.CheckPasswordAsync(applicationUser, request.LoginUser.Password);
+            if (!isPasswordValid)
+            {
+                if (userManager.SupportsUserLockout)
+                    await userManager.AccessFailedAsync(applicationUser); // increments failed login attempts
+
                 throw new AuthenticationException("Invalid Credentials");
             }
+
+            //  Reset failed attempts on successful login
+            await userManager.ResetAccessFailedCountAsync(applicationUser);
 
             var accessToken = await tokenGenerator.GenerateAccessToken(applicationUser);
             var refreshToken = tokenGenerator.GenerateRefreshToken();
