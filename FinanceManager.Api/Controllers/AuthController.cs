@@ -1,8 +1,11 @@
 ﻿    using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Features.Auth.Commands;
+using FinanceManager.Application.Features.Auth.ForgotPassword.Commands;
+using FinanceManager.Application.Features.Auth.ResetPassword.Commands;
 using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
@@ -65,6 +68,23 @@ namespace FinanceManager.Api.Controllers
             var response = await mediator.Send(command);
             return Ok(response);
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordCommand command)
+        {
+            
+            var response = await mediator.Send(command);
+            return Ok(response);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword( ResetPasswordCommand command)
+        {
+            var response = await mediator.Send(command);
+            return Ok(response);
+
+        }
+
 
     }
 }

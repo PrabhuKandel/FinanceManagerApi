@@ -1,7 +1,9 @@
 ﻿using FinanceManager.Application.Dtos.TransactionPayment;
+using FinanceManager.Application.Features.TransactionRecords.Commands.BulkCreate;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;
 using FinanceManager.Application.Features.TransactionRecords.Commands.PatchApprovalStatus;
+using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Features.TransactionRecords.Queries.GetById;
 using FinanceManager.Application.Interfaces.Services;
 using FinanceManager.Domain.Entities;
@@ -295,7 +297,69 @@ namespace FinanceManager.IntegrationTest.Tests.TransactionRecord
 
 
 
+        [Fact]
+        public async Task BulkCreateTransactionRecords_AsAdmin_WithValidData_ShouldCreateMultipleRecords()
+        {
+            // Arrange
+            var adminUser = _context.Users.First(u => u.UserName == "admin@gmail.com");
+            var roles = await _userManager.GetRolesAsync(adminUser);
+            testUserContext.UserId = adminUser.Id;
+            testUserContext.Role = roles.FirstOrDefault() ?? "Admin";
 
+            var categoryId = _context.TransactionCategories.First().Id;
+            var paymentMethods = _context.PaymentMethods.Take(2).ToList();
+
+            var transactionList = new List<BulkCreateTransactionRecordDto>
+            {
+                new BulkCreateTransactionRecordDto
+                {
+                    TransactionCategoryId = categoryId,
+                    Amount = 120m,
+                    Description = "Bulk transaction 1",
+                    TransactionDate = DateTime.UtcNow,
+                    Payments = new List<TransactionPaymentDto>
+                    {
+                        new TransactionPaymentDto { PaymentMethodId = paymentMethods[0].Id, Amount = 50m },
+                        new TransactionPaymentDto { PaymentMethodId = paymentMethods[1].Id, Amount = 70m }
+                    }
+                },
+                new BulkCreateTransactionRecordDto
+                {
+                    TransactionCategoryId = categoryId,
+                    Amount = 80m,
+                    Description = "Bulk transaction 2",
+                    TransactionDate = DateTime.UtcNow,
+                    Payments = new List<TransactionPaymentDto>
+                    {
+                        new TransactionPaymentDto { PaymentMethodId = paymentMethods[0].Id, Amount = 30m },
+                        new TransactionPaymentDto { PaymentMethodId = paymentMethods[1].Id, Amount = 50m }
+                    }
+                }
+            };
+
+            var command = new BulkCreateTransactionRecordCommand(transactionList);
+
+            // Act
+            var result = await _mediator.Send(command);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.Message.Should().Be("Bulk transaction records created successfully.");
+
+            // Verify records were inserted into DB
+            var createdRecords = _context.TransactionRecords
+                .Where(t => transactionList.Select(x => x.Description).Contains(t.Description))
+                .ToList();
+
+            createdRecords.Should().HaveCount(transactionList.Count);
+
+ 
+
+            // Debug output
+            _output.WriteLine(System.Text.Json.JsonSerializer.Serialize(
+                result,
+                new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+        }
 
 
         public void Dispose()
