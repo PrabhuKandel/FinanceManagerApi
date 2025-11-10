@@ -10,5 +10,7 @@ namespace FinanceManager.Application.Dtos.ApplicationUser
         public required string LastName { get; set; }    
         public required string Address { get; set; }   
         public List<string> Roles { get; set; } = new List<string>();
+
+        public bool IsLocked { get; set; }
     }
 }

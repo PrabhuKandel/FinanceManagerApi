@@ -33,3 +33,14 @@ export const assignRolesToUser = async (userId, roleNames) => {
     throw error;
   }
 }
+
+export const toggleUserLockStatus = (userId) => {
+  try {
+    console.log("hit");
+    var response = axiosInstance.post(`/ApplicationUser/toggle-lock-status`, { userId });
+    return response.data
+  }
+  catch (error) {
+    console.log(error);
+  }
+};

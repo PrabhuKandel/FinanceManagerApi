@@ -33,6 +33,11 @@ namespace FinanceManager.Application.Features.Auth.Commands
             {
                 throw new AuthenticationException("Invalid email");
             }
+
+            // 1️⃣ Check lockout
+            if (await userManager.IsLockedOutAsync(applicationUser))
+                throw new AuthenticationException("Your account is locked. Please contact support or try later.");
+
             var result = await userManager.CheckPasswordAsync(applicationUser, request.LoginUser.Password);
             if (!result)
             {

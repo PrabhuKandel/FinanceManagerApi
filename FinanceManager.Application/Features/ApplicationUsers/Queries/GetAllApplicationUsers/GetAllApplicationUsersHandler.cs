@@ -22,7 +22,10 @@ namespace FinanceManager.Application.Features.ApplicationUsers.Queries.GetAllApp
                    Roles = (from userRole in context.UserRoles
                              join role in context.Roles on userRole.RoleId equals role.Id
                              where userRole.UserId == u.Id
-                             select role.Name).ToList()
+                             select role.Name).ToList(),
+                   IsLocked = u.LockoutEnabled && u.LockoutEnd.HasValue && u.LockoutEnd > DateTimeOffset.UtcNow
+
+
                 }).ToListAsync(cancellationToken);
 
             return new OperationResult<IEnumerable<ApplicationUserResponseDto>>
