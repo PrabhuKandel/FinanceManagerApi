@@ -1,15 +1,16 @@
 ﻿
+
 using ClosedXML.Excel;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Interfaces.Services;
 
-namespace FinanceManager.Infrastructure.Services
+namespace FinanceManager.Infrastructure.ExcelBuilders
 {
-    public class TransactionRecordExportService : ITransactionRecordExportService
+    public class TransactionRecordExcelBuilder : IExcelBuilder<IEnumerable<TransactionRecordExportDto>>
     {
-        public byte[] GenerateExcel(IReadOnlyList<TransactionRecordExportDto> records)
+        public XLWorkbook Build(IEnumerable<TransactionRecordExportDto> records)
         {
-            using var workbook = new XLWorkbook();
+             var workbook = new XLWorkbook();
             var ws = workbook.Worksheets.Add("Transaction Records");
 
             var headers = new[]
@@ -72,9 +73,7 @@ namespace FinanceManager.Infrastructure.Services
             ws.Columns().AdjustToContents();
             ws.SheetView.FreezeRows(1);
 
-            using var stream = new MemoryStream();
-            workbook.SaveAs(stream);
-            return stream.ToArray();
+            return workbook;
         }
     }
 }

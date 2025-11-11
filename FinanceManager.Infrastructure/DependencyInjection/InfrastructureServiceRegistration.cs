@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Features.TransactionRecords.Queries.ExportToPdf;
 using FinanceManager.Application.FeaturesDapper.Reports.Dtos;
 using FinanceManager.Application.Interfaces;
@@ -61,6 +62,7 @@ namespace FinanceManager.Infrastructure.DependencyInjection
             services.AddScoped<IExcelBuilder<IEnumerable<TransactionCategoryBudgetVsActualOutflowDto>>, TransactionCategoryBudgetVsActualOutflowExcelBuilder>();
             services.AddScoped<IExcelBuilder<IEnumerable<TransactionRecordSummaryByPaymentMethodDto>>, TransactionRecordSummaryByPaymentMethodExcelBuilder>();
             services.AddScoped<IExcelBuilder<IEnumerable<TransactionRecordSummaryByCategoryDto>>, TransactionRecordSummaryByTransactionCategoryExcelBuilder>();
+            services.AddScoped<IExcelBuilder<IEnumerable<TransactionRecordExportDto>>, TransactionRecordExcelBuilder>();
 
             services.AddStackExchangeRedisCache(options =>
             {
