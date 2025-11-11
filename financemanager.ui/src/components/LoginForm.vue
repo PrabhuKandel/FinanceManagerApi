@@ -34,7 +34,7 @@
         </div>
 
         <p class="text-center mt-3 text-muted">
-          Forgot your password? <a href="#">Reset</a>
+          Forgot your password? <router-link to="/forgot-password">Reset</router-link>
         </p>
       </form>
     </div>

@@ -3,9 +3,9 @@
 using FinanceManager.Application.Common;
 using MediatR;
 
-namespace FinanceManager.Application.Features.Auth.ForgotPassword.Commands
+namespace FinanceManager.Application.Features.Auth.GeneratePasswordResetToken.Commands
 {
-    public record ForgotPasswordCommand
+    public record GeneratePasswordResetToken
         (
             string Email,
             string ClientURI
