@@ -391,7 +391,7 @@
   });
 
   const userRole = ref(getUserRole());
-  const isAdmin = computed(() => userRole.value === Roles.Admin);
+  const isAdmin = computed(() => userRole.value.includes(Roles.Admin));
 
   // create flash store instance
   const flash = useFlashStore()

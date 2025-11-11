@@ -16,6 +16,12 @@
 
         <div v-if="message" class="alert alert-success mt-3">{{ message }}</div>
         <div v-if="error" class="alert alert-danger mt-3">{{ error }}</div>
+
+        <p class="text-center mt-3 text-muted">
+          Remember your password?
+          <a href="/login" class="text-decoration-none">Back to Login</a>
+        </p>
+
       </form>
     </div>
   </div>
