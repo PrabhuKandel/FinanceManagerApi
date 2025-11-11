@@ -1,6 +1,6 @@
 ﻿    using FinanceManager.Application.Dtos.ApplicationUser;
 using FinanceManager.Application.Features.Auth.Commands;
-using FinanceManager.Application.Features.Auth.ForgotPassword.Commands;
+using FinanceManager.Application.Features.Auth.GeneratePasswordResetToken.Commands;
 using FinanceManager.Application.Features.Auth.ResetPassword.Commands;
 using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
@@ -69,8 +69,8 @@ namespace FinanceManager.Api.Controllers
             return Ok(response);
         }
 
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordCommand command)
+        [HttpPost("generate-password-reset-token")]
+        public async Task<IActionResult> GeneratePasswordResetToken(GeneratePasswordResetToken command)
         {
             
             var response = await mediator.Send(command);

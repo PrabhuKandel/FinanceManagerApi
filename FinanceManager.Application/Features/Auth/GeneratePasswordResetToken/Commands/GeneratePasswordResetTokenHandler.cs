@@ -6,11 +6,11 @@ using FinanceManager.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace FinanceManager.Application.Features.Auth.ForgotPassword.Commands
+namespace FinanceManager.Application.Features.Auth.GeneratePasswordResetToken.Commands
 {
-    public class ForgotPasswordHandler(UserManager<ApplicationUser> _userManager, IEmailService _emailService) : IRequestHandler<ForgotPasswordCommand, OperationResult<string>>
+    public class GeneratePasswordResetTokenHandler(UserManager<ApplicationUser> _userManager, IEmailService _emailService) : IRequestHandler<GeneratePasswordResetToken, OperationResult<string>>
     {
-        public async Task<OperationResult<string>> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<string>> Handle(GeneratePasswordResetToken request, CancellationToken cancellationToken)
         {
             var user  = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
@@ -28,10 +28,23 @@ namespace FinanceManager.Application.Features.Auth.ForgotPassword.Commands
             // Build reset link for frontend
             var resetLink = $"{request.ClientURI}?email={user.Email}&token={Uri.EscapeDataString(token)}";
 
+            var message = $@"
+        <p>Hello {user.FirstName ?? "User"},</p>
+        <p>You requested to reset your password. Click the link below to continue:</p>
+        <p>
+            <a href='{resetLink}' target='_blank' style='color: #1a73e8; text-decoration: none;'>
+                Reset your password
+            </a>
+        </p>
+        <p>If you did not request this, please ignore this email.</p>
+        <br />
+        <p>Thanks,<br />Finance Manager</p>
+    ";
+
             await _emailService.SendEmailAsync(
                 to: user.Email,
                 subject: "Password Reset Request",
-                body: $"Click the link to reset your password: {resetLink}"
+                body: message
             );
 
             return new OperationResult<string>

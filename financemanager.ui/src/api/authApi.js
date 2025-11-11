@@ -16,6 +16,24 @@ export async  function login(email, password) {
   return payload;
 }
 
+export async function sendPasswordResetLink({ email, clientURI }) {
+  const { data } = await axiosInstance.post('/Auth/generate-password-reset-token', {
+    email,
+    clientURI
+  });
+  return data;
+}
+
+export async function resetPassword({ email, token, newPassword }) {
+  const { data } = await axiosInstance.post('/Auth/reset-password', {
+    email,
+    token,
+    newPassword
+  });
+  return data;
+}
+
+
 export function logout() {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('user');

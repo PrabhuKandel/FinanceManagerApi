@@ -12,6 +12,8 @@ import BudgetVsActualOutflowReport from '../views/Reports/BudgetVsActualOutflowR
 import TransactionSummaryByPaymentMethod from '../views/Reports/TransactionSummaryByPaymentMethod.vue';
 import TransactionSummaryByTransactionCategory from '../views/Reports/TransactionSummaryByTransactionCategory.vue';
 import AccessDenied from '../views/AccessDenied.vue';
+import ForgotPasswordPage from '../views/ForgotPasswordPage.vue';
+import ResetPasswordPage from '../views/ResetPasswordPage.vue';
 
 
 
@@ -19,6 +21,8 @@ import AccessDenied from '../views/AccessDenied.vue';
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', component: LoginForm },
+  { path: '/forgot-password', component: ForgotPasswordPage },
+  { path:'/reset-password',component:ResetPasswordPage},
   { path: '/access-denied', component: AccessDenied, meta: {requiresAuth:true}},
   { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
   { path: '/payment-methods', component: PaymentMethodList, meta: { requiresAuth: true } },
