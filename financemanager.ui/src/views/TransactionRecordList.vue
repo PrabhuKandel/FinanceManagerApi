@@ -589,7 +589,10 @@
   // Fetch when component mounts
   onMounted(() => {
     fetchTransactionRecords();
+      if (isAdmin.value) {
     fetchApplicationUsers();
+  }
+
   });
 
 
