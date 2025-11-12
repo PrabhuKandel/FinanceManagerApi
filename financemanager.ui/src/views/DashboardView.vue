@@ -56,9 +56,7 @@
 <script setup>
   import { ref, onMounted } from 'vue'
   import Layout from '../components/Layout.vue'
-  import { getPaymentMethods } from '../api/paymentMethodApi'
-  import { getTransactionCategories } from '../api/transactionCategoryApi'
-  import { getTransactionRecords } from '../api/transactionRecordApi'
+  import { getDashboardSummary } from '../api/dashboardApi'
 
   const totalPaymentMethods = ref(0)
   const activePaymentMethods = ref(0)
@@ -68,17 +66,15 @@
 
   const fetchDashboardData = async () => {
     try {
-      const paymentMethods = await getPaymentMethods()
-      const data = paymentMethods.data
-      totalPaymentMethods.value = data.length
-      activePaymentMethods.value = data.filter(pm => pm.isActive).length
-      inactivePaymentMethods.value = data.filter(pm => !pm.isActive).length
+      const response = await getDashboardSummary()
+      const data = response.data 
 
-      const transactionCategories = await getTransactionCategories()
-      totalTransactionCategories.value = transactionCategories.data.length
-
-      const transactions = await getTransactionRecords()
-      totalTransactions.value = transactions.totalCount ?? transactions.data.length
+  
+      totalPaymentMethods.value = data.totalPaymentMethods
+      activePaymentMethods.value = data.activePaymentMethods
+      inactivePaymentMethods.value = data.inactivePaymentMethods
+      totalTransactionCategories.value = data.totalTransactionCategories
+      totalTransactions.value = data.totalTransactions
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
     }

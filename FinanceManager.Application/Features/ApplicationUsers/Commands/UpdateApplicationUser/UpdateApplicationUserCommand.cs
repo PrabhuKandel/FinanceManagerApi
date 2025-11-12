@@ -1,5 +1,5 @@
 ﻿using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.ApplicationUser;
+using FinanceManager.Application.Features.ApplicationUsers.Dtos;
 using MediatR;
 
 namespace FinanceManager.Application.Features.ApplicationUsers.Commands.UpdateApplicationUser

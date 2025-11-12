@@ -9,12 +9,12 @@
 
 
   <ItemGroup>
-    <None Remove="FeaturesDapper\Reports\Queries\TransactionCategoryBudgetVsActualOutflow\ExportToPdf\ExportTransactionCategoryBudgetVsActualOutflow-template.hbs" />
+    <None Remove="FeaturesDapper\Reports\TransactionCategoryBudgetVsActualOutflow\ExportToPdf\ExportTransactionCategoryBudgetVsActualOutflow-template.hbs" />
     <None Remove="Features\TransactionRecords\Queries\ExportToPdf\Templates\transactions-template.hbs" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="FeaturesDapper\Reports\Queries\TransactionCategoryBudgetVsActualOutflow\ExportToPdf\ExportTransactionCategoryBudgetVsActualOutflow-template.hbs" />
+    <EmbeddedResource Include="FeaturesDapper\Reports\TransactionCategoryBudgetVsActualOutflow\ExportToPdf\ExportTransactionCategoryBudgetVsActualOutflow-template.hbs" />
     <EmbeddedResource Include="Features\TransactionRecords\Queries\ExportToPdf\Templates\transactions-template.hbs" />
   </ItemGroup>
 

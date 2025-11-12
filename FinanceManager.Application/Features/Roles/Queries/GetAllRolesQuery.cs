@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.Roles;
+using FinanceManager.Application.Features.Roles.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
