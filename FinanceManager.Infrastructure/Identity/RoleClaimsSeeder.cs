@@ -1,6 +1,7 @@
 ﻿
 using FinanceManager.Application.Common;
 using FinanceManager.Application.Interfaces;
+using FinanceManager.Domain.Entities;
 using FinanceManager.Infrastructure.Authorization;
 using FinanceManager.Infrastructure.Authorization.ClaimTypes;
 using FinanceManager.Infrastructure.Authorization.Permissions;
@@ -37,6 +38,40 @@ namespace FinanceManager.Infrastructure.Identity
                 }
             }
         }
+
+        public static async Task SeedAdminUserAsync(UserManager<ApplicationUser> userManager)
+        {
+            string FirstName = "Admin";
+            String LastName = "User";
+            String Address = " Admin Country";
+            String adminEmail = "admin@gmail.com";
+            String adminPassword = "Admin@123";
+
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser == null)
+            {
+                adminUser = new ApplicationUser
+                {
+                    FirstName = FirstName,
+                    LastName = LastName,
+                    Address = Address,
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    EmailConfirmed = true
+
+
+                };
+
+                var result = await userManager.CreateAsync(adminUser, adminPassword);
+                if (result.Succeeded)
+                {
+
+                    await userManager.AddToRoleAsync(adminUser, RoleConstants.Admin);
+
+                }
+            }
+        }
+
 
         private static async Task<IdentityRole> EnsureRoleExistsAsync(RoleManager<IdentityRole> roleManager, string roleName)
         {

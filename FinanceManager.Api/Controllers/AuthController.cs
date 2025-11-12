@@ -1,11 +1,13 @@
-﻿    using FinanceManager.Application.Dtos.ApplicationUser;
-using FinanceManager.Application.Features.Auth.Commands;
-using FinanceManager.Application.Features.Auth.GeneratePasswordResetToken.Commands;
-using FinanceManager.Application.Features.Auth.ResetPassword.Commands;
+﻿using FinanceManager.Application.Features.Auth.Commands.ApplicationUserLogin;
+using FinanceManager.Application.Features.Auth.Commands.ApplicationUserRegister;
+using FinanceManager.Application.Features.Auth.Commands.ChangePassword;
+using FinanceManager.Application.Features.Auth.Commands.GeneratePasswordResetToken;
+using FinanceManager.Application.Features.Auth.Commands.RefreshTokens;
+using FinanceManager.Application.Features.Auth.Commands.ResetPassword;
+using FinanceManager.Application.Features.Auth.Commands.RevokeToken;
 using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceManager.Api.Controllers
@@ -24,9 +26,9 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.Auth.RegisterUser)]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(ApplicationUserRegisterDto registerUser)
+        public async Task<IActionResult> Register(ApplicationUserRegisterCommand registerUser)
         {
-            var response  =  await mediator.Send(new ApplicationUserRegisterCommand(registerUser));
+            var response  =  await mediator.Send(registerUser);
                 return Ok(response);
            
           
@@ -35,9 +37,9 @@ namespace FinanceManager.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(ApplicationUserLoginDto loginUser)
+        public async Task<IActionResult> Login(ApplicationUserLoginCommand loginUser)
         {
-            var response = await mediator.Send(new ApplicationUserLoginCommand(loginUser));
+            var response = await mediator.Send(loginUser);
             return Ok(response);
 
         }

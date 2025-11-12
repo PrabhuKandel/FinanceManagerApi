@@ -10,7 +10,7 @@ namespace FinanceManager.Infrastructure.Identity
     public static class IdentitySeedExtensions
     {
         public static async Task SeedIdentityDataAsync(
-      this IServiceProvider serviceProvider)
+      this IServiceProvider serviceProvider,UserManager<ApplicationUser> userManager)
         {
             using var scope = serviceProvider.CreateScope();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -18,6 +18,8 @@ namespace FinanceManager.Infrastructure.Identity
 
 
             await RoleClaimsSeeder.SeedRoleClaimsAsync(roleManager);
+            await RoleClaimsSeeder.SeedAdminUserAsync(userManager);
+
 
          
         }

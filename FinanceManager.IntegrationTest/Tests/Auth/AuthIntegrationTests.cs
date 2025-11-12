@@ -1,6 +1,6 @@
-﻿using FinanceManager.Application.Dtos.ApplicationUser;
-using FinanceManager.Application.Exceptions;
-using FinanceManager.Application.Features.Auth.Commands;
+﻿using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Features.Auth.Commands.ApplicationUserLogin;
+using FinanceManager.Application.Features.Auth.Commands.ApplicationUserRegister;
 using FinanceManager.Domain.Entities;
 using FinanceManager.IntegrationTest.Shared;
 using FluentAssertions;
@@ -39,13 +39,12 @@ namespace FinanceManager.IntegrationTest.Tests.Auth
         {
 
             // Arrange
-            var loginUser = new ApplicationUserLoginDto
-            {
-                Email = "admin@gmail.com",
-                Password = "Admin@123"
-            };
 
-            var command = new ApplicationUserLoginCommand(loginUser);
+            var Email = "admin@gmail.com";
+            var Password = "Admin@123";
+            
+
+            var command = new ApplicationUserLoginCommand(Email,Password);
 
             // Act
             var result = await _mediator.Send(command);
@@ -56,7 +55,7 @@ namespace FinanceManager.IntegrationTest.Tests.Auth
             result.Data?.AccessToken.Should().NotBeNullOrEmpty();
             result.Data?.RefreshToken.Should().NotBeNullOrEmpty();
             result.Data?.UserId.Should().NotBeNullOrEmpty();
-            result.Data?.Email.Should().Be(loginUser.Email);
+            result.Data?.Email.Should().Be(Email);
 
             //output
 
@@ -68,13 +67,12 @@ namespace FinanceManager.IntegrationTest.Tests.Auth
         public async Task LoginApplicationUser_WithInvalidPassword_ShouldThrowUnauthorized()
         {
             // Arrange
-            var loginUser = new ApplicationUserLoginDto
-            {
-                Email = "admin@gmail.com",
-                Password = "wrongpassword"
-            };
 
-            var command = new ApplicationUserLoginCommand(loginUser);
+           var  Email = "admin@gmail.com";
+            var Password = "wrongpassword";
+            
+
+            var command = new ApplicationUserLoginCommand(Email,Password);
 
             // Act
 
@@ -95,16 +93,15 @@ namespace FinanceManager.IntegrationTest.Tests.Auth
         {
             // Arrange
             var role = await _roleManager.FindByNameAsync("Admin");
-            var registerUser = new ApplicationUserRegisterDto
-            {
-                FirstName = "Test",
-                LastName = "Test",
-                Address = "Test Address",
-                Email = "test@gmail.com",
-                RoleId = role?.Id
-            };
 
-            var command = new ApplicationUserRegisterCommand(registerUser); 
+            var FirstName = "Test";
+            var LastName = "Test";
+            var Address = "Test Address";
+            var Email = "test@gmail.com";
+            var RoleId = role?.Id;
+            
+
+            var command = new ApplicationUserRegisterCommand(FirstName,LastName,Address,Email,RoleId); 
 
             // Act
             var result = await _mediator.Send(command);
@@ -115,9 +112,9 @@ namespace FinanceManager.IntegrationTest.Tests.Auth
             result.Message.Should().Be("Registration Successfulll!!");
 
             // Optionally verify the user exists in the DB
-            var user = await _userManager.FindByEmailAsync(registerUser.Email);
+            var user = await _userManager.FindByEmailAsync(Email);
             user.Should().NotBeNull();
-            user.FirstName.Should().Be(registerUser.FirstName);
+            user.FirstName.Should().Be(FirstName);
 
 
         }

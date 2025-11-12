@@ -1,6 +1,6 @@
 ﻿
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.Roles;
+using FinanceManager.Application.Features.Roles.Dtos;
 using FinanceManager.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;

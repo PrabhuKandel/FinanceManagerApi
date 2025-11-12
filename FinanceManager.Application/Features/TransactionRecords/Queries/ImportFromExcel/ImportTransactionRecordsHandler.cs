@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Drawing.Diagrams;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionPayment;
+using FinanceManager.Application.Dtos.Shared;
 using FinanceManager.Application.Features.TransactionRecords.Commands.BulkCreate;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using FinanceManager.Application.Interfaces;

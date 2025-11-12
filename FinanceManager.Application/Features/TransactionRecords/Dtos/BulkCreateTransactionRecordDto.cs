@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FinanceManager.Application.Dtos.TransactionPayment;
+using FinanceManager.Application.Dtos.Shared;
 
 namespace FinanceManager.Application.Features.TransactionRecords.Dtos
 {
