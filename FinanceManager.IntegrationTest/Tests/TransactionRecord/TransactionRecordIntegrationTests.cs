@@ -1,4 +1,4 @@
-﻿using FinanceManager.Application.Dtos.TransactionPayment;
+﻿using FinanceManager.Application.Dtos.Shared;
 using FinanceManager.Application.Features.TransactionRecords.Commands.BulkCreate;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Create;
 using FinanceManager.Application.Features.TransactionRecords.Commands.Delete;

@@ -1,6 +1,6 @@
 ﻿
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.TransactionPayment;
+using FinanceManager.Application.Dtos.Shared;
 using FinanceManager.Application.Features.TransactionRecords.Dtos;
 using MediatR;
 

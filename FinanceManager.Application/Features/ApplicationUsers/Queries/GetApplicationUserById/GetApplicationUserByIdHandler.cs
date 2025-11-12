@@ -1,6 +1,8 @@
 ﻿
+using Ardalis.GuardClauses;
 using FinanceManager.Application.Common;
-using FinanceManager.Application.Dtos.ApplicationUser;
+using FinanceManager.Application.Exceptions;
+using FinanceManager.Application.Features.ApplicationUsers.Dtos;
 using FinanceManager.Application.Interfaces;
 using FinanceManager.Domain.Entities;
 using MediatR;
@@ -13,17 +15,19 @@ namespace FinanceManager.Application.Features.ApplicationUsers.Queries.GetApplic
     {
         public async Task<OperationResult<ApplicationUserResponseDto>> Handle(GetApplicationUserByIdQuery request, CancellationToken cancellationToken)
         {
-
+            Guard.Against.NullOrEmpty(request.Id, nameof(request.Id));
             var applicationUser = await context.ApplicationUsers
                 .Where(u=>u.Id == request.Id)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            var roles = await userManager.GetRolesAsync(applicationUser);
+            if (applicationUser == null) throw new BusinessValidationException("User doesn't exist") ;
+
+            var roles = await userManager.GetRolesAsync(applicationUser!);
 
             // Map to DTO
             var dto = new ApplicationUserResponseDto
             {
-                Id = applicationUser.Id,
+                Id = applicationUser!.Id,
                 Email = applicationUser.Email!,
                 FirstName = applicationUser.FirstName,
                 LastName = applicationUser.LastName,
