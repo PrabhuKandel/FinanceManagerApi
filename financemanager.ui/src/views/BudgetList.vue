@@ -2,8 +2,27 @@
   <Layout>
     <div>
       <h2>Budget List</h2>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-primary mb-3" @click="showModal = true">   <i class="bi bi-plus-lg me-1"></i> Create Budget</button>
+      </div>
+
+      <!-- Period Tabs -->
+      <ul class="nav nav-pills mb-4">
+        <li class="nav-item" v-for="(label, value) in periodTypes" :key="value">
+          <button class="nav-link"
+                  :class="{ active: selectedPeriodType === value }"
+                  @click="handlePeriodChange(value)">
+                  {{ label }}
+          </button>
+        </li>
+      </ul>
+
+
+      <BudgetModal :show="showModal"
+                   @close="showModal = false"
+                   @created="fetchBudgets" />
       <div class="table-responsive shadow-sm rounded" style="max-height: 700px; overflow-y: auto;">
-        <table class="table table-hover table-sm custom-table mt-3">
+        <table class="table table-hover table-sm custom-table mt-1">
           <thead class="table-primary text-center align-middle sticky-top">
             <tr>
               <th>SN</th>
@@ -24,6 +43,9 @@
               <td>{{ formatDate(budget.periodEnd) }}</td>
             </tr>
           </tbody>
+          <tr v-else-if="!loading && !error && budgets.length === 0">
+            <td colspan="6" class="text-center text-muted">No budgets found for this period.</td>
+          </tr>
         </table>
 
         <div v-if="loading" class="text-center py-3">Loading budgets...</div>
@@ -37,8 +59,12 @@
 import { ref, onMounted } from 'vue'
 import Layout from '../components/Layout.vue'
 import { getAllBudgets } from '../api/budgetApi'
-import { toast } from 'vue3-toastify'
+  import { toast } from 'vue3-toastify'
+  import BudgetModal from './CreateBudgetForm.vue'
 
+  const selectedPeriodType = ref(0)
+
+  const showModal = ref(false)
 const budgets = ref([])
 const loading = ref(false)
 const error = ref('')
@@ -48,7 +74,7 @@ const fetchBudgets = async () => {
   loading.value = true
   error.value = ''
   try {
-    const { data } = await getAllBudgets()
+    const { data } = await getAllBudgets(selectedPeriodType.value)
     budgets.value = data
   } catch (err) {
     error.value = 'Failed to load budgets'
@@ -58,6 +84,21 @@ const fetchBudgets = async () => {
     loading.value = false
   }
 }
+
+  // Handle period type tab change
+  const handlePeriodChange = (value) => {
+    selectedPeriodType.value = value
+    fetchBudgets()
+  }
+
+  // Period type labels
+  // Period types mapping
+  const periodTypes = {
+    0: 'Daily',
+    1: 'Weekly',
+    2: 'Monthly',
+    3: 'Yearly'
+  }
 
 // Format dates for display
 const formatDate = (dateStr) => {

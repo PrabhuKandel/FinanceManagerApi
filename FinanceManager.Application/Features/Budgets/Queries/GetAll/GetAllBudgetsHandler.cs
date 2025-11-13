@@ -12,9 +12,9 @@ namespace FinanceManager.Application.Features.Budgets.Queries.GetAll
         {
             var budgets = await context.Budgets
                   .Include(b => b.TransactionCategory)
-                  .Where(b => b.IsActive)
-                  .OrderBy(b => b.PeriodType)      
-                  .ThenBy(b => b.PeriodStart)      
+                  .Where(b => b.IsActive && b.PeriodType==request.PeriodType)
+                  .OrderBy(b => b.PeriodType)
+                  .ThenByDescending(b => b.PeriodEnd)      
                   .Select(b => new BudgetResponseDto
                   {
                       Id = b.Id,
