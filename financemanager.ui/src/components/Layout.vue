@@ -11,7 +11,7 @@
           <li><router-link to="/payment-methods">    <i class="bi bi-credit-card me-2"></i>Payment Methods</router-link></li>
           <li><router-link to="/transaction-categories"><i class="bi bi-tags me-2"></i>Transaction Category </router-link></li>
           <li><router-link to="/transaction-records"><i class="bi bi-wallet2 me-2"></i>Transactions</router-link></li>
-
+          <li v-if="isAdmin().value"><router-link to="/budgets"><i class="bi bi-folder2-open me-2"></i>Budgets</router-link></li>
           <li v-if="isAdmin().value"><router-link to="/users"> <i class="bi bi-people me-2"></i>Users</router-link></li>
           <li v-if="isAdmin().value"><router-link to="/roles"> <i class="bi bi-person-badge me-2"></i>Roles</router-link></li>
           <li v-if="isAdmin().value"><router-link to="/reports"><i class="bi bi-folder2-open me-2"></i>Reports</router-link></li>
