@@ -14,6 +14,7 @@ import TransactionSummaryByTransactionCategory from '../views/Reports/Transactio
 import AccessDenied from '../views/AccessDenied.vue';
 import ForgotPasswordPage from '../views/ForgotPasswordPage.vue';
 import ResetPasswordPage from '../views/ResetPasswordPage.vue';
+import BudgetList from '../views/BudgetList.vue';
 
 
 
@@ -34,6 +35,7 @@ const routes = [
   { path: '/reports/budget-vs-actual-ouflow', component: BudgetVsActualOutflowReport, meta: { requiresAuth: true, requiresAdmin: true } },
   { path: '/reports/payment-method-summary', component: TransactionSummaryByPaymentMethod, meta: { requiresAuth: true, requiresAdmin: true } },
   { path: '/reports/transaction-caetgory-summary', component: TransactionSummaryByTransactionCategory, meta: { requiresAuth: true, requiresAdmin: true } },
+  { path: '/budgets', component: BudgetList, meta: { requiresAuth: true, requiresAdmin:true } },
 
 
 
