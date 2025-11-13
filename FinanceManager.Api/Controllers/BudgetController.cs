@@ -1,4 +1,5 @@
 ﻿using FinanceManager.Application.Features.Budgets.Commands.Create;
+using FinanceManager.Application.Features.Budgets.Queries.GetAll;
 using FinanceManager.Application.Features.PaymentMethods.Commands.Create;
 using FinanceManager.Infrastructure.Authorization.Permissions;
 using MediatR;
@@ -18,6 +19,16 @@ namespace FinanceManager.Api.Controllers
         {
 
             var response = await sender.Send(command);
+            return Ok(response);
+
+        }
+
+
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAll()
+        {
+          
+            var response = await sender.Send(new GetAllBudgetsQuery());
             return Ok(response);
 
         }
