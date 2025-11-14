@@ -42,9 +42,9 @@
       <!-- Table -->
       <div v-if="summaryData.length" class="table-responsive shadow-sm rounded" style="max-height: 600px; overflow-y: auto;">
         <div class="d-flex justify-content-end">
-          <button class="btn btn-success" @click="downloadExcel">
+          <button class="btn btn-success" :disabled="exporting" @click="downloadExcel">
             <i class="bi bi-file-earmark-spreadsheet me-1"></i>
-            Export Excel
+            {{ exporting ? 'Exporting...' : 'Export Excel' }}
           </button>
         </div>
         <table class="table table-hover table-sm custom-table mt-3">
@@ -95,7 +95,9 @@ import { ref, onMounted } from 'vue'
   import Layout from '../../components/Layout.vue'
   import { getTransactionCategories } from '../../api/transactionCategoryApi'
   import { generateTransactionSummaryByTransactionCategory, exportTransactionSummaryByTransactionCategory } from '../../api/reportApi'
+import { toast } from 'vue3-toastify'
 
+  const exporting = ref(false);
 const filters = ref({
   transactionCategoryId: '',
   fromDate: null,
@@ -151,6 +153,7 @@ const validationErrors = ref({})
   }
 
   const downloadExcel = async () => {
+    exporting.value = true;
     try {
       const payload = {
         paymentMethodId: filters.value.transactionCategoryId,
@@ -168,9 +171,13 @@ const validationErrors = ref({})
       document.body.appendChild(link);
       link.click();
       link.remove();
+      toast.success('Excel exported successfully!');
     } catch (error) {
       console.error('Failed to download Excel:', error);
-      alert('Failed to export Excel. Please try again.');
+      toast.error('Failed to export Excel. Please try again.'); 
+    }
+    finally {
+      exporting.value = false
     }
   };
 

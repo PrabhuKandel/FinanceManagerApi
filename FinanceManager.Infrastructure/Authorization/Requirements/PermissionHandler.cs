@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace FinanceManager.Infrastructure.Authorization.Requirements
 {
@@ -26,11 +27,19 @@ namespace FinanceManager.Infrastructure.Authorization.Requirements
             foreach (var roleName in roleClaims)
 
             {
-  
-                //fetch from cache
-                var cachedPermissions = await _cacheService.GetAsync<List<string>>(roleName);
+                var cachedPermissions= new List<string>();
+                //fetch from cachetry{
+                try
+                {
+                     cachedPermissions = await _cacheService.GetAsync<List<string>>(roleName);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex.Message);
+                }
 
-                if (cachedPermissions == null)
+
+                if (cachedPermissions == null || !cachedPermissions.Any())
                 {
                     //not in cache, get from database
                     var role = await _roleManager.FindByNameAsync(roleName);
@@ -41,7 +50,16 @@ namespace FinanceManager.Infrastructure.Authorization.Requirements
 
 
                     //store in cache
+                    try
+                    {
+
                     await _cacheService.SetAsync<List<string>>(roleName, permissions);
+                    }
+                    catch(Exception ex)
+                    {
+                        Log.Warning(ex.Message);
+
+                    }
 
 
                     //return result

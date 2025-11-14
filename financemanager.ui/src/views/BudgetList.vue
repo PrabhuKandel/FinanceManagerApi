@@ -10,7 +10,7 @@
       <ul class="nav nav-pills mb-4">
         <li class="nav-item" v-for="(label, value) in periodTypes" :key="value">
           <button class="nav-link"
-                  :class="{ active: selectedPeriodType === value }"
+                  :class="{ active: selectedPeriodType === Number(value) }"
                   @click="handlePeriodChange(value)">
                   {{ label }}
           </button>
@@ -87,7 +87,7 @@ const fetchBudgets = async () => {
 
   // Handle period type tab change
   const handlePeriodChange = (value) => {
-    selectedPeriodType.value = value
+    selectedPeriodType.value = Number(value)
     fetchBudgets()
   }
 
@@ -105,8 +105,11 @@ const formatDate = (dateStr) => {
   const date = new Date(dateStr)
   return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })
 }
-
-onMounted(fetchBudgets)
+  onMounted(() => {
+    // Ensure Daily tab (0) is selected initially
+    selectedPeriodType.value = 0
+    fetchBudgets()
+  })
 </script>
 
 <style>

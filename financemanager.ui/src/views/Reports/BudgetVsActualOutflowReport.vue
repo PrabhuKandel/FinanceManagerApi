@@ -84,16 +84,16 @@
     <!-- Report Table Section -->
     <div v-if="results.length" class="mt-4">
 
-      <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="d-flex justify-content-end align-items-center mb-2">
 
-        <div class="text-muted ">
+        <!--<div class="text-muted ">
           <strong>Period:</strong>
-          {{ formatDate(results[0].periodStart) }} – {{ formatDate(results[0].periodEnd) }}
-        </div>
+          {{ formatDate(form.periodStart) }} – {{ formatDate(form.periodEnd) }}
+        </div>-->
         <div class="d-flex justify-content-end">
-          <button class="btn btn-success" @click="downloadExcel">
+          <button class="btn btn-success" :disabled="exporting" @click="downloadExcel">
             <i class="bi bi-file-earmark-spreadsheet me-1"></i>
-            Export Excel
+            {{ exporting ? 'Exporting...' : 'Export Excel' }}
           </button>
         </div>
       </div>
@@ -103,6 +103,8 @@
           <thead class="table-primary text-center align-middle sticky-top">
             <tr>
               <th>SN</th>
+              <th>Period Start</th>
+              <th>Period End</th>
               <th v-if="hasTransactionCategory">Transaction Category</th>
               <th>Budgeted Amount (Rs)</th>
               <th>Actual Spent (Rs)</th>
@@ -115,6 +117,8 @@
                 :key="index"
                 class="text-center align-middle">
               <td class="fw-semibold">{{ index + 1 }}</td>
+              <td>{{formatDate(item.periodStart)}}</td>
+              <td>{{formatDate(item.periodEnd)}}</td>
               <td v-if="hasTransactionCategory">
 
                 {{ item.transactionCategoryName }}
@@ -166,8 +170,10 @@
   import { ref, onMounted,computed } from 'vue'
   import { getTransactionCategories } from '../../api/transactionCategoryApi'
   import { generateBudgetVsOutflow, exportBudgetVsOutflow } from '../../api/reportApi'
+import { toast } from 'vue3-toastify'
 
-  
+  const exporting = ref(false);
+
   const categories = ref([])
   const validationErrors = ref({})
   const results = ref([])
@@ -231,6 +237,7 @@
     }
   }
   const downloadExcel = async (exportAll = false) => {
+    exporting.value = true; // start loading
     try {
       const payload = {
         transactionCategoryId: form.value.transactionCategoryId,
@@ -248,16 +255,21 @@
       document.body.appendChild(link);
       link.click();
       link.remove();
+      toast.success('Excel exported successfully!');
     } catch (error) {
       console.error('Failed to download Excel:', error);
-      alert('Failed to export Excel. Please try again.');
+      toast.error("    toast.error('Failed to export Excel. Please try again.");
+    }
+    finally {
+      exporting.value = false; // reset loading
     }
   };
 
 
   const formatDate = (dateString) => {
     if (!dateString) return ''
-    return new Date(dateString).toLocaleDateString()
+    const date = new Date(dateString)
+    return date.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' })
   }
 </script>
 <style>

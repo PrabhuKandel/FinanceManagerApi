@@ -25,9 +25,8 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands.Update
 
         public async Task<OperationResult<TransactionRecordResponseDto>> Handle(UpdateTransactionRecordCommand request, CancellationToken cancellationToken)
         {
-            var errors = new Dictionary<string, string[]>();
 
-            // Load TransactionRecord with related payments
+               // Load TransactionRecord with related payments
             var transactionRecord = await context.TransactionRecords
                 .Include(tr => tr.TransactionPayments)
                 .FirstOrDefaultAsync(tr => tr.Id == request.Id, cancellationToken);
@@ -37,39 +36,37 @@ namespace FinanceManager.Application.Features.TransactionRecords.Commands.Update
             if (!userContext.IsAdmin() && transactionRecord?.CreatedByApplicationUserId != userContext.UserId)
                 throw new AuthorizationException("You can't access this record.");
 
-
-            //optimization remaining.....
+       
             // Preload active payment method IDs
             var activePaymentMethodIds = await context.PaymentMethods
                 .Where(pm => pm.IsActive)
                 .Select(pm => pm.Id)
                 .ToHashSetAsync(cancellationToken);
 
+            //payments already stored in database
+            var existingPaymentMethodIds = transactionRecord.TransactionPayments
+            .Select(tp => tp.PaymentMethodId)
+            .ToHashSet();
+
             // Loop through incoming payments
             for (int i = 0; i < request.Payments.Count; i++)
             {
                 var payment = request.Payments[i];
+                // NEW payment (only validate new)
+                bool isNewPayment = !existingPaymentMethodIds.Contains(payment.PaymentMethodId);
 
-                // Skip existing payments
-                if (transactionRecord.TransactionPayments.Any(tp => tp.PaymentMethodId == payment.PaymentMethodId))
-                    continue;
-
-                // PaymentMethodId validation
-                if (!activePaymentMethodIds.Contains(payment.PaymentMethodId))
-                    errors[$"TransactionRecord.Payments[{i}].PaymentMethodId"] = new[] { "Invalid or inactive payment method" };
+                if(isNewPayment)
+                {
+                    // PaymentMethodId validation
+                    if (!activePaymentMethodIds.Contains(payment.PaymentMethodId))
+                        throw new BusinessValidationException($"TransactionRecord.Payments[{i}].PaymentMethodId", new[] { "Invalid or inactive payment method" });
+                    
+                }
 
                 // Amount validation
                 if (payment.Amount <= 0)
-                    errors[$"TransactionRecord.Payments[{i}].Amount"] = new[] { "Payment amount must be greater than 0" };
+                    throw new BusinessValidationException($"TransactionRecord.Payments[{i}].Amount", new[] { "Payment amount must be greater than 0" });
             }
-
-            // Throw if any errors
-            if (errors.Any())
-                throw new BusinessValidationException(errors);
-
-
-        
-           
 
             transactionRecord.UpdatedByApplicationUserId = userContext.UserId;
             transactionRecord.UpdatedAt = DateTime.UtcNow;
