@@ -17,13 +17,7 @@ namespace FinanceManager.Application.Features.Auth.Commands.ChangePassword
 
             var result = await _userManager.ChangePasswordAsync(user!, request.CurrentPassword, request.NewPassword);
             if (!result.Succeeded)
-            {
-                var errors = new Dictionary<string, string[]>
-                        {
-                            { "Error", result.Errors.Select(e => e.Description).ToArray() }
-                        };
-                throw new BusinessValidationException(errors);
-            }
+                throw new BusinessValidationException("Errors", result.Errors.Select(e => e.Description).ToArray());
 
             return new OperationResult<string>
             {

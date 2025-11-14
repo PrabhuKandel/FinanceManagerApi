@@ -88,6 +88,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries.GetAll
             var totalCount = await query.CountAsync(cancellationToken);
             var skip = (request.PageNumber - 1) * request.PageSize;
             var transactionRecordsFromDb = await query
+                .OrderByDescending(tr=>tr.TransactionDate)
                 .Skip(skip)
                 .Take(request.PageSize)
                 .ToListAsync(cancellationToken);
