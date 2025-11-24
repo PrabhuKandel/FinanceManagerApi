@@ -22,7 +22,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands.Create
         {
            
             var entity = request.ToEntity();
-            await context.PaymentMethods.AddAsync(entity);
+            await context.PaymentMethods.AddAsync(entity,cancellationToken);
             await context.SaveChangesAsync(cancellationToken);  
           
             return new OperationResult<PaymentMethodResponseDto>

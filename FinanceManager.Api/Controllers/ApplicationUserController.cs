@@ -18,42 +18,42 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.ApplicationUser.View)]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var response = await sender.Send(new GetAllApplicationUsersQuery());
+            var response = await sender.Send(new GetAllApplicationUsersQuery(),cancellationToken);
 
             return Ok(response);
         }
 
         [Authorize(Policy = PermissionConstants.ApplicationUser.View)]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(string id)
+        public async Task<IActionResult> GetById(string id,CancellationToken cancellationToken)
         {
-            var response = await sender.Send(new GetApplicationUserByIdQuery(id));
+            var response = await sender.Send(new GetApplicationUserByIdQuery(id),cancellationToken);
             return Ok(response);
         }
 
         [Authorize(Policy = PermissionConstants.ApplicationUser.Update)]
         [HttpPut]
-        public async Task<IActionResult> Update( UpdateApplicationUserCommand command)
+        public async Task<IActionResult> Update( UpdateApplicationUserCommand command,CancellationToken cancellationToken)
         {
-            var response = await sender.Send(command);
+            var response = await sender.Send(command,cancellationToken);
             return Ok(response);
         }
 
 
         [HttpPost("assign-roles")]
-        public async Task<IActionResult> AssignRoles(AssignRoleCommand command)
+        public async Task<IActionResult> AssignRoles(AssignRoleCommand command,CancellationToken cancellationToken)
         {
-            var response = await sender.Send(command);  
+            var response = await sender.Send(command,cancellationToken);  
             return Ok(response);
         }
 
 
         [HttpPost("toggle-lock-status")]
-        public async Task<IActionResult> ToggleLockStatus(ToggleUserLockStatusCommand command)
+        public async Task<IActionResult> ToggleLockStatus(ToggleUserLockStatusCommand command,CancellationToken cancellationToken)
         {
-            var response = await sender.Send(command);
+            var response = await sender.Send(command,cancellationToken);
             return Ok(response);
         }
     }

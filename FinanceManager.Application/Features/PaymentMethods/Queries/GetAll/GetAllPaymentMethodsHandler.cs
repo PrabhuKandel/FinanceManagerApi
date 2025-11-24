@@ -19,7 +19,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Queries.GetAll
 
         public async Task<OperationResult<IEnumerable<PaymentMethodResponseDto>>>Handle(GetAllPaymentMethodsQuery request, CancellationToken cancellationToken)
         {
-            var paymentMethods = await context.PaymentMethods.ToListAsync();
+            var paymentMethods = await context.PaymentMethods.ToListAsync(cancellationToken);
             var paymentMethodDtos = paymentMethods.ToResponseDtoList();
             return new OperationResult<IEnumerable<PaymentMethodResponseDto>>
             {

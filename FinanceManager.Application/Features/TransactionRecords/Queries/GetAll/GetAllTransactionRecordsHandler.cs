@@ -32,7 +32,7 @@ namespace FinanceManager.Application.Features.TransactionRecords.Queries.GetAll
         public async Task<PaginatedOperationResult<IEnumerable<TransactionRecordResponseDto>>> Handle(GetAllTransactionRecordsQuery request, CancellationToken cancellationToken)
         {
             var query =    context.TransactionRecords
-                .Include(tr => tr.TransactionCategory)
+                                .Include(tr => tr.TransactionCategory)
                  .Include(tr => tr.TransactionPayments)
                         .ThenInclude(tp => tp.PaymentMethod)
                 .Include(t => t.CreatedByApplicationUser)

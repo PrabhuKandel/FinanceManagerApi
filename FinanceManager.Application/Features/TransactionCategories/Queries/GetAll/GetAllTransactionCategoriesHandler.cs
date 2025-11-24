@@ -1,4 +1,5 @@
-﻿using FinanceManager.Application.Common;
+﻿using System.Linq.Dynamic.Core.Tokenizer;
+using FinanceManager.Application.Common;
 using FinanceManager.Application.Features.TransactionCategories.Dtos;
 using FinanceManager.Application.Features.TransactionCategories.Mapping;
 using FinanceManager.Application.Interfaces;
@@ -18,7 +19,13 @@ namespace FinanceManager.Application.Features.TransactionCategories.Queries.GetA
 
         public async Task<OperationResult<IEnumerable<TransactionCategoryResponseDto>>>Handle(GetAllTransactionCategoriesQuery request, CancellationToken cancellationToken)
         {
-            var transactionCategories = await context.TransactionCategories.ToListAsync();
+            
+            if (cancellationToken == CancellationToken.None)
+            {
+               Console.WriteLine("No cancellation requested.");
+            }
+
+            var transactionCategories = await context.TransactionCategories.ToListAsync(cancellationToken);
             var transactionCategoriesDtos = transactionCategories.ToResponseDtoList();
 
             return new OperationResult<IEnumerable<TransactionCategoryResponseDto>>

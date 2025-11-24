@@ -16,20 +16,20 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy =PermissionConstants.Budeget.Create)]
         [HttpPost]
-        public async Task<IActionResult> Create(CreateBudgetCommand command)
+        public async Task<IActionResult> Create(CreateBudgetCommand command,CancellationToken cancellationToken)
         {
 
-            var response = await sender.Send(command);
+            var response = await sender.Send(command,cancellationToken);
             return Ok(response);
 
         }
 
 
         [HttpGet("get-all/{periodType}")]
-        public async Task<IActionResult> GetAll(PeriodType periodType)
+        public async Task<IActionResult> GetAll(PeriodType periodType,CancellationToken cancellationToken)
         {
           
-            var response = await sender.Send(new GetAllBudgetsQuery(periodType));
+            var response = await sender.Send(new GetAllBudgetsQuery(periodType),cancellationToken);
             return Ok(response);
 
         }

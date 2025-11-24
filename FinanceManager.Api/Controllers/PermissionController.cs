@@ -27,9 +27,9 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.Permission.View)]
         [HttpGet("{roleId}/get-by-role")]
-        public async Task<IActionResult> GetByRole(string roleId)
+        public async Task<IActionResult> GetByRole(string roleId,CancellationToken cancellationToken)
         {
-            var response = await _sender.Send(new GetByRoleCommand(roleId));
+            var response = await _sender.Send(new GetByRoleCommand(roleId),cancellationToken);
             return Ok(response);
 
         }

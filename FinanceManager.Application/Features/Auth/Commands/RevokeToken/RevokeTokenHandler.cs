@@ -11,7 +11,7 @@ namespace FinanceManager.Application.Features.Auth.Commands.RevokeToken
         public async Task<OperationResult<string>> Handle(RevokeTokenCommand request, CancellationToken cancellationToken)
         {
             var tokenFromDb = await context.RefreshTokens
-                    .FirstOrDefaultAsync(rt => rt.Token == request.Token );
+                    .FirstOrDefaultAsync(rt => rt.Token == request.Token,cancellationToken );
             Guard.Against.Null(tokenFromDb, nameof(tokenFromDb));
 
             tokenFromDb.RevokedAt = DateTime.UtcNow;

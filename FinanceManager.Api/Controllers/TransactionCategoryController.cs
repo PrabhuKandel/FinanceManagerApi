@@ -28,9 +28,9 @@ namespace FinanceManager.Api.Controllers
 
         [HttpGet]
         [Authorize(Policy = PermissionConstants.TransactionCategory.View)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(new GetAllTransactionCategoriesQuery());
+            var response = await mediator.Send(new GetAllTransactionCategoriesQuery(),cancellationToken);
 
             return Ok(response);
         }
@@ -38,9 +38,9 @@ namespace FinanceManager.Api.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Policy = PermissionConstants.TransactionCategory.View)]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id,CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(new GetTransactionCategoryByIdQuery(id));
+            var response = await mediator.Send(new GetTransactionCategoryByIdQuery(id),cancellationToken);
 
             return Ok(response);
 
@@ -49,10 +49,10 @@ namespace FinanceManager.Api.Controllers
         [HttpPost]
         //[Authorize(Roles = "Admin")]
         [Authorize(Policy = PermissionConstants.TransactionCategory.Create)]
-        public async Task<IActionResult> Create(CreateTransactionCategoryCommand createCommand)
+        public async Task<IActionResult> Create(CreateTransactionCategoryCommand createCommand,CancellationToken cancellationToken)
         {
 
-            var response = await mediator.Send(createCommand);
+            var response = await mediator.Send(createCommand,cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
@@ -69,9 +69,9 @@ namespace FinanceManager.Api.Controllers
         [HttpPut("{id}")]
         //[Authorize(Roles = "Admin")]
         [Authorize(Policy = PermissionConstants.TransactionCategory.Update)]
-        public async Task<IActionResult> Update(UpdateTransactionCategoryCommand updateCommand)
+        public async Task<IActionResult> Update(UpdateTransactionCategoryCommand updateCommand, CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(updateCommand);
+            var response = await mediator.Send(updateCommand, cancellationToken);
             return Ok(response);
             
 

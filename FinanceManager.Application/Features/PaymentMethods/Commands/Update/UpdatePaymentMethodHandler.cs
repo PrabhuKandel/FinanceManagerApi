@@ -22,7 +22,7 @@ namespace FinanceManager.Application.Features.PaymentMethods.Commands.Update
             var paymentMethod = await context.PaymentMethods.FindAsync(request.Id);
            Guard.Against.Null(paymentMethod, nameof(paymentMethod), "Payment method not found");
             paymentMethod.UpdateEntity(request);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
             return new OperationResult<PaymentMethodResponseDto>
             {
 

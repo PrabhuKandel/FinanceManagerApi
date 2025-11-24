@@ -9,7 +9,7 @@ namespace FinanceManager.Api.Controllers
     public class DashboardController(ISender sender) : ControllerBase
     {
         [HttpGet("summary")]
-        public async Task<IActionResult> GetDashboardSummary()
+        public async Task<IActionResult> GetDashboardSummary(CancellationToken )
         {
             return Ok(await sender.Send(new GetDashboardSummaryQuery()));
         }

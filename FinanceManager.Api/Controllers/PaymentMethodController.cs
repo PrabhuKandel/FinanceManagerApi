@@ -39,9 +39,9 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.PaymentMethod.View)]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(new GetAllPaymentMethodsQuery());
+            var response = await mediator.Send(new GetAllPaymentMethodsQuery(),cancellationToken);
 
             return Ok(response);
         }
@@ -64,9 +64,9 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.PaymentMethod.View)]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById( Guid id)
+        public async Task<IActionResult> GetById( Guid id,CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(new GetPaymentMethodByIdQuery(id));
+            var response = await mediator.Send(new GetPaymentMethodByIdQuery(id),cancellationToken);
 
             return Ok(response);
 
@@ -95,10 +95,10 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.PaymentMethod.Create)]
         [HttpPost]
-        public async Task<IActionResult> Create(CreatePaymentMethodCommand createCommand)
+        public async Task<IActionResult> Create(CreatePaymentMethodCommand createCommand,CancellationToken cancellationToken)
         {
 
-            var response = await mediator.Send(createCommand);
+            var response = await mediator.Send(createCommand,cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = response.Data?.Id }, response);
 
         }
@@ -125,9 +125,9 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.PaymentMethod.Update)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(UpdatePaymentMethodCommand updateCommand)
+        public async Task<IActionResult> Update(UpdatePaymentMethodCommand updateCommand,CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(updateCommand);
+            var response = await mediator.Send(updateCommand,cancellationToken);
             return Ok(response);
             
         }
@@ -153,9 +153,9 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.PaymentMethod.Delete)]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id,CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(new DeletePaymentMethodCommand(id));
+            var response = await mediator.Send(new DeletePaymentMethodCommand(id),cancellationToken);
             return Ok(response);    
 
 
@@ -179,9 +179,9 @@ namespace FinanceManager.Api.Controllers
         [HttpDelete("dapperDelete/{id}")]
 
 
-        public async Task<IActionResult> DapperDelete(Guid id)
+        public async Task<IActionResult> DapperDelete(Guid id,CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(new DeletePaymentMethodDapperCommand(id));
+            var response = await mediator.Send(new DeletePaymentMethodDapperCommand(id),cancellationToken);
             return Ok(response);
 
 

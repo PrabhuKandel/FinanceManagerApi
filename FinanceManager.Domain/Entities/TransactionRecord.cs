@@ -8,7 +8,7 @@ namespace FinanceManager.Domain.Entities
   
         public Guid Id { get; set; } = Guid.NewGuid();
         public Guid TransactionCategoryId { get; set; }
-        public  TransactionCategory? TransactionCategory { get; set; }
+        public TransactionCategory? TransactionCategory { get; set; } 
 
         public decimal Amount { get; set; }
         public string? Description { get; set; }

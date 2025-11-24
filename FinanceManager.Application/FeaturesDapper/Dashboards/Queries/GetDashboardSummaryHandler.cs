@@ -14,12 +14,15 @@ namespace FinanceManager.Application.FeaturesDapper.Dashboards.Queries
 
             var applicationUserId = userContext.IsAdmin() ? null: userContext.UserId;
 
-        
-
-            var dashbordSummary = await connection.QuerySingleAsync<DashboardSummaryResponseDto>(
+         var command  = new CommandDefinition
+                (
                 "usp_GetDashboardSummary",
                  new { ApplicationUserId = applicationUserId },
-                commandType: CommandType.StoredProcedure);
+                commandType: CommandType.StoredProcedure,
+                cancellationToken: cancellationToken
+                );
+
+            var dashbordSummary = await connection.QuerySingleAsync<DashboardSummaryResponseDto>(command);
 
             return new OperationResult<DashboardSummaryResponseDto>
             {

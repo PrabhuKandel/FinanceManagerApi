@@ -1,4 +1,6 @@
-﻿using FinanceManager.Application.Services;
+﻿using FinanceManager.Application.Interfaces;
+using FinanceManager.Application.Services;
+using FinanceManager.Domain.Entities;
 using Hangfire;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +10,7 @@ namespace FinanceManager.Api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class TestController : ControllerBase
+    public class TestController(IApplicationDbContext context) : ControllerBase
     {
         // In-memory list with initial data and IDs
         public  static List<User> _users = new List<User>
@@ -22,12 +24,32 @@ namespace FinanceManager.Api.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_users);
+            IEnumerable<PaymentMethod> paymentMethods = context.PaymentMethods;
+            foreach (var method in paymentMethods)
+            {
+                Console.WriteLine($"Payment Method first time: {method.Name}");
+            }
+            foreach (var method in paymentMethods)
+            {
+                Console.WriteLine($"Payment Method second time: {method.Name}");
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("async-await")]
+        public async Task<IActionResult> TestAsyncAwait()
+        {
+            ThreadPool.GetMinThreads(out int workerMin, out int ioMin);
+            ThreadPool.GetMaxThreads(out int workerMax, out int ioMax);
+            ThreadPool.GetAvailableThreads(out int workerAvailable, out int ioAvailable);
+
+
+            return Ok(new { MinWorkerThreads = workerMin, MaxWorkerThreads = workerMax });
         }
 
 
 
-       
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {

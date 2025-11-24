@@ -65,9 +65,9 @@ namespace FinanceManager.Api.Controllers
 
         [Authorize(Policy = PermissionConstants.Auth.RevokeToken)]
         [HttpPost("revoke-token")]
-        public async Task<IActionResult> RevokeToken(RevokeTokenCommand command)
+        public async Task<IActionResult> RevokeToken(RevokeTokenCommand command,CancellationToken cancellationToken)
         {
-            var response = await mediator.Send(command);
+            var response = await mediator.Send(command,cancellationToken);
             return Ok(response);
         }
 
